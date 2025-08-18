@@ -33,3 +33,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Ai Tattoo Maker"
 include(":app")
+include(":stickerlibrary")

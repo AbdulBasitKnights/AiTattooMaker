@@ -26,6 +26,7 @@ import com.bumptech.glide.Glide
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.segmentation.Segmentation
 import com.google.mlkit.vision.segmentation.selfie.SelfieSegmenterOptions
+import com.lcw.library.stickerview.Sticker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -93,11 +94,17 @@ class AiToolsFragment : Fragment() {
                 setImageAndMask(baseBitmap, maskBitmap)
 
                 // Load tattoo sticker PNG
-                val sticker = BitmapFactory.decodeResource(
-                    requireActivity().resources,
-                    R.drawable.tattoo
+//                val sticker = BitmapFactory.decodeResource(
+//                    requireActivity().resources,
+//                    R.drawable.tattoo
+//                )
+//                setSticker(sticker)
+                val stickers = Sticker(
+                    requireContext(),
+                    BitmapFactory.decodeResource(resources, R.drawable.tattoo)
                 )
-                setSticker(sticker)
+
+                binding?.slStickerLayout?.addSticker(stickers)
             }
             binding?.bgImage?.apply {
                 setImageAndMask(bgBitmap, bgBitmap)
