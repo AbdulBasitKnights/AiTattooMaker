@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_aicreate"
+        android:icon="@drawable/ai_create"
+        android:title="@string/title_aicreate" />
+
+    <item
+        android:id="@+id/navigation_aitools"
+        android:icon="@drawable/ai_tools_svg"
+        android:title="@string/title_aitools" />
+
+    <item
+        android:id="@+id/navigation_search"
+        android:icon="@drawable/ai_search_svg"
+        android:title="@string/title_search" />
+    <item
+        android:id="@+id/navigation_profile"
+        android:icon="@drawable/profile_svg"
+        android:title="@string/title_profile" />
+
+</menu>
