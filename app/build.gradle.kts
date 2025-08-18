@@ -70,7 +70,8 @@ dependencies {
     // Hilt
 //    implementation (libs.hilt.android)
 //    kapt (libs.hilt.compiler)
-
+//Wait Dialogue
+//    implementation(libs.kprogresshud)
     // ViewBinding
     implementation (libs.androidx.viewbinding)
 }

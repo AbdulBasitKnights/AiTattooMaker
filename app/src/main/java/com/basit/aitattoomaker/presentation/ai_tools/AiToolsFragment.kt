@@ -23,10 +23,12 @@ import androidx.core.view.drawToBitmap
 import androidx.fragment.app.Fragment
 import com.basit.aitattoomaker.R
 import com.basit.aitattoomaker.databinding.FragmentAitoolsBinding
+import com.basit.aitattoomaker.presentation.utils.DialogUtils
 import com.bumptech.glide.Glide
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.segmentation.Segmentation
 import com.google.mlkit.vision.segmentation.selfie.SelfieSegmenterOptions
+//import com.kaopiz.kprogresshud.KProgressHUD
 import com.lcw.library.stickerview.Sticker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -42,7 +44,7 @@ class AiToolsFragment : Fragment() {
 
     private var binding: FragmentAitoolsBinding? = null
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
-
+//    private var imageSavingDialogue: KProgressHUD? = null
     private val pickStickerLauncher = registerForActivityResult(
         ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
@@ -63,8 +65,16 @@ class AiToolsFragment : Fragment() {
 
     override fun onViewCreated(v: View, s: Bundle?) {
         super.onViewCreated(v, s)
+        DialogUtils.show(requireContext(), "Saving...")
+        binding?.btnLoadDefault?.setOnClickListener {
+            val stickers = Sticker(
+                requireContext(),
+                BitmapFactory.decodeResource(resources, R.drawable.tattoo)
+            )
 
-        binding?.btnLoadDefault?.setOnClickListener { loadDefaultPhotoAndMask() }
+            binding?.slStickerLayout?.addSticker(stickers)
+
+        }
         binding?.btnPickSticker?.setOnClickListener { pickStickerLauncher.launch("image/*") }
         binding?.btnSave?.setOnClickListener { saveToGallery() }
 
@@ -100,12 +110,6 @@ class AiToolsFragment : Fragment() {
 //                    R.drawable.tattoo
 //                )
 //                setSticker(sticker)
-                val stickers = Sticker(
-                    requireContext(),
-                    BitmapFactory.decodeResource(resources, R.drawable.tattoo)
-                )
-
-                binding?.slStickerLayout?.addSticker(stickers)
             }
             binding?.bgImage?.apply {
                 setImageAndMask(bgBitmap, bgBitmap)
@@ -208,6 +212,8 @@ class AiToolsFragment : Fragment() {
         return bitmap
     }
     private fun saveToGallery() {
+        binding?.slStickerLayout?.clearFocus()
+        DialogUtils.dialog?.show()
         val out = binding?.photoContainer?.drawToBitmap()
         if (out == null) {
             Toast.makeText(requireContext(), "Nothing to save", Toast.LENGTH_SHORT).show()
@@ -216,6 +222,7 @@ class AiToolsFragment : Fragment() {
         scope.launch(Dispatchers.IO) {
             val saved = saveBitmapToGallery(out, "tattoo_result_${System.currentTimeMillis()}.png")
             withContext(Dispatchers.Main) {
+                DialogUtils.dialog?.dismiss()
                 Toast.makeText(requireContext(), if (saved) "Saved to gallery" else "Save failed", Toast.LENGTH_SHORT).show()
             }
         }
