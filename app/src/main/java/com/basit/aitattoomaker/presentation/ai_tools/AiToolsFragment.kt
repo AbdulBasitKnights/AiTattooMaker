@@ -19,6 +19,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.graphics.scale
+import androidx.core.view.drawToBitmap
 import androidx.fragment.app.Fragment
 import com.basit.aitattoomaker.R
 import com.basit.aitattoomaker.databinding.FragmentAitoolsBinding
@@ -200,9 +201,14 @@ class AiToolsFragment : Fragment() {
             }
         }
     }
-
+    fun View.toBitmap(): Bitmap {
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        draw(canvas)
+        return bitmap
+    }
     private fun saveToGallery() {
-        val out = binding?.bgImage?.exportResult()
+        val out = binding?.photoContainer?.drawToBitmap()
         if (out == null) {
             Toast.makeText(requireContext(), "Nothing to save", Toast.LENGTH_SHORT).show()
             return
