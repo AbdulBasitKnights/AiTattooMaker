@@ -1,4 +1,4 @@
-package com.lcw.library.stickerview
+package com.basit.library.stickerview
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -22,7 +22,7 @@ abstract class BaseSticker(
     val bitmap: Bitmap
 ) : ISupportOperation {
     private val mDelBitmap: Bitmap =
-        BitmapFactory.decodeResource(context.resources, R.mipmap.icon_delete) //Delete Sticker
+        BitmapFactory.decodeResource(context.resources, R.mipmap.cross) //Delete Sticker
     val matrix: Matrix = Matrix() // Matrix that manages image transformations
     @JvmField
     var isFocus: Boolean = false // Indicates whether it is currently focused
@@ -30,20 +30,20 @@ abstract class BaseSticker(
 
     private val mSrcPoints = floatArrayOf(
         0f, 0f,
-        bitmap.getWidth().toFloat(), 0f,
-        bitmap.getWidth().toFloat(), bitmap.getHeight().toFloat(),
-        0f, bitmap.getHeight().toFloat(),
-        (bitmap.getWidth() / 2).toFloat(), (bitmap.getHeight() / 2).toFloat()
+        bitmap.width.toFloat(), 0f,
+        bitmap.width.toFloat(), bitmap.height.toFloat(),
+        0f, bitmap.height.toFloat(),
+        (bitmap.width / 2).toFloat(), (bitmap.height / 2).toFloat()
     ) // Coordinates of the points before matrix transformation
     private val mDstPoints: FloatArray =
         mSrcPoints.clone() // Coordinates of points after matrix transformation
     val stickerBitmapBound: RectF? =
-        RectF(0f, 0f, bitmap.getWidth().toFloat(), bitmap.getHeight().toFloat()) // Sticker bounds
+        RectF(0f, 0f, bitmap.width.toFloat(), bitmap.height.toFloat()) // Sticker bounds
     val delBitmapBound: RectF? = RectF(
-        (0 - mDelBitmap.getWidth() / 2 - PADDING).toFloat(),
-        (0 - mDelBitmap.getHeight() / 2 - PADDING).toFloat(),
-        (mDelBitmap.getWidth() / 2 + PADDING).toFloat(),
-        (mDelBitmap.getHeight() / 2 + PADDING).toFloat()
+        (0 - mDelBitmap.width / 2 - PADDING).toFloat(),
+        (0 - mDelBitmap.height / 2 - PADDING).toFloat(),
+        (mDelBitmap.width / 2 + PADDING).toFloat(),
+        (mDelBitmap.height / 2 + PADDING).toFloat()
     ) // Delete button area
     private val mMidPointF: PointF = PointF() // Coordinates of the sticker's center point
 
@@ -53,8 +53,8 @@ abstract class BaseSticker(
         val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val displayMetrics = DisplayMetrics()
         windowManager.getDefaultDisplay().getMetrics(displayMetrics)
-        val dx = (displayMetrics.widthPixels / 2 - bitmap.getWidth() / 2).toFloat()
-        val dy = (displayMetrics.heightPixels / 2 - bitmap.getHeight() / 2).toFloat()
+        val dx = (displayMetrics.widthPixels / 2 - bitmap.width / 2).toFloat()
+        val dy = (displayMetrics.heightPixels / 2 - bitmap.height / 2).toFloat()
         translate(dx, dy)
         // By default, scale the sticker to half its original size
         scale(0.5f, 0.5f)

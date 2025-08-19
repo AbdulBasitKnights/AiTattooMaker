@@ -1,4 +1,4 @@
-package com.lcw.library.stickerview
+package com.basit.library.stickerview
 
 import android.graphics.Canvas
 import android.graphics.Paint

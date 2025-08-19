@@ -12,7 +12,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,12 +23,11 @@ import androidx.fragment.app.Fragment
 import com.basit.aitattoomaker.R
 import com.basit.aitattoomaker.databinding.FragmentAitoolsBinding
 import com.basit.aitattoomaker.presentation.utils.DialogUtils
-import com.bumptech.glide.Glide
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.segmentation.Segmentation
 import com.google.mlkit.vision.segmentation.selfie.SelfieSegmenterOptions
 //import com.kaopiz.kprogresshud.KProgressHUD
-import com.lcw.library.stickerview.Sticker
+import com.basit.library.stickerview.Sticker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob

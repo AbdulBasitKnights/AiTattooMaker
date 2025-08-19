@@ -1,4 +1,4 @@
-package com.lcw.library.stickerview
+package com.basit.library.stickerview
 
 import android.content.Context
 import android.graphics.Bitmap

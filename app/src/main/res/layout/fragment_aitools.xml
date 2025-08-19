@@ -33,7 +33,7 @@
             android:filterTouchesWhenObscured="true"
             android:focusableInTouchMode="true"
             android:layerType="software" />
-        <com.lcw.library.stickerview.StickerLayout
+        <com.basit.library.stickerview.StickerLayout
             android:id="@+id/sl_sticker_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />

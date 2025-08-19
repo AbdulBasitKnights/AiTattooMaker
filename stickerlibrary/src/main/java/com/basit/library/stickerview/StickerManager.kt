@@ -1,4 +1,4 @@
-package com.lcw.library.stickerview
+package com.basit.library.stickerview
 
 import android.graphics.Matrix
 import kotlin.concurrent.Volatile
