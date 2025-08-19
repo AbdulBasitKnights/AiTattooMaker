@@ -3,6 +3,7 @@ package com.basit.aitattoomaker.presentation.camera
 import android.app.Activity
 import android.app.Dialog
 import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -29,6 +30,7 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.viewModels
 import com.basit.aitattoomaker.R
 import com.basit.aitattoomaker.data.repo.TattooRepositoryImpl
@@ -47,7 +49,18 @@ class CameraScreen : Fragment() {
     private val cameraExecutor by lazy { Executors.newSingleThreadExecutor() }
     private val viewModel: CameraViewModel by viewModels { CameraViewModelFactory( requireActivity().application, TattooRepositoryImpl(requireContext()) ) }
     private var defaultTattoo: Bitmap? = null
+    private var mActivity: FragmentActivity?=null
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mActivity=requireActivity()
+    }
 
+    override fun onDetach() {
+        super.onDetach()
+        mActivity=null
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {

@@ -1,6 +1,7 @@
 package com.basit.aitattoomaker.presentation.ai_tools
 
 import android.content.ContentValues
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
@@ -20,6 +21,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.graphics.scale
 import androidx.core.view.drawToBitmap
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import com.basit.aitattoomaker.R
 import com.basit.aitattoomaker.databinding.FragmentAitoolsBinding
 import com.basit.aitattoomaker.presentation.utils.DialogUtils
@@ -41,6 +43,7 @@ import java.nio.FloatBuffer
 class AiToolsFragment : Fragment() {
 
     private var binding: FragmentAitoolsBinding? = null
+
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 //    private var imageSavingDialogue: KProgressHUD? = null
     private val pickStickerLauncher = registerForActivityResult(
@@ -48,9 +51,18 @@ class AiToolsFragment : Fragment() {
     ) { uri: Uri? ->
         uri?.let { loadSticker(it) }
     }
+    private var mActivity: FragmentActivity?=null
     // This property is only valid between onCreateView and
     // onDestroyView.
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mActivity=requireActivity()
+    }
 
+    override fun onDetach() {
+        super.onDetach()
+        mActivity=null
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -63,34 +75,36 @@ class AiToolsFragment : Fragment() {
 
     override fun onViewCreated(v: View, s: Bundle?) {
         super.onViewCreated(v, s)
-        DialogUtils.show(requireContext(), "Saving...")
-        binding?.btnLoadDefault?.setOnClickListener {
-            val stickers = Sticker(
-                requireContext(),
-                BitmapFactory.decodeResource(resources, R.drawable.tattoo))
-            binding?.slStickerLayout?.addSticker(stickers)
+        mActivity?.let { activity ->
+            DialogUtils.show(activity, "Saving...")
+            binding?.btnLoadDefault?.setOnClickListener {
+                val stickers = Sticker(
+                    activity,
+                    BitmapFactory.decodeResource(resources, R.drawable.tattoo))
+                binding?.slStickerLayout?.addSticker(stickers)
+            }
+            binding?.btnPickSticker?.setOnClickListener { pickStickerLauncher.launch("image/*") }
+            binding?.btnSave?.setOnClickListener { saveToGallery() }
+            // Load something right away
+            loadDefaultPhotoAndMask()
         }
-        binding?.btnPickSticker?.setOnClickListener { pickStickerLauncher.launch("image/*") }
-        binding?.btnSave?.setOnClickListener { saveToGallery() }
-        // Load something right away
-        loadDefaultPhotoAndMask()
-        // Set a default sticker (png in drawable)
+
 
     }
     private fun loadDefaultPhotoAndMask() {
         // Load default person photo from drawable
         val base = BitmapFactory.decodeResource(
-            requireActivity().resources,
+            mActivity?.resources,
             R.drawable.boy1
         ) ?: run {
-            Toast.makeText(requireContext(), "Failed to load default photo", Toast.LENGTH_SHORT).show()
+            Toast.makeText(mActivity, "Failed to load default photo", Toast.LENGTH_SHORT).show()
             return
         }
 
         // Run segmentation on the base image
         runSegmentation(base) { (baseBitmap, maskBitmap, bgBitmap) ->
             if (maskBitmap == null || baseBitmap == null || bgBitmap == null) {
-                Toast.makeText(requireContext(), "Segmentation failed", Toast.LENGTH_SHORT).show()
+                Toast.makeText(mActivity, "Segmentation failed", Toast.LENGTH_SHORT).show()
                 return@runSegmentation
             }
             // Apply image + mask to your custom view

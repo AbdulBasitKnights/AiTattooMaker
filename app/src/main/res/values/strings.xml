@@ -7,7 +7,7 @@
     <string name="title_profile">Profile</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
-    <string name="load_default">Load Default</string>
-    <string name="pick_sticker">Pick Sticker</string>
+    <string name="load_default">Load Sticker</string>
+    <string name="pick_sticker">Pick Image</string>
     <string name="save">Save</string>
 </resources>
