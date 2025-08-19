@@ -8,6 +8,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
+import com.basit.library.stickerview.StickerFactory.currentSticker
 
 /**
  * M Abdul Basit
@@ -80,6 +81,36 @@ class StickerLayout : View, View.OnTouchListener {
             ).show()
         }
     }
+    fun addOrUpdateSticker(sticker: Sticker?,alpha:Int=128) {
+        val manager = StickerManager.getInstance()
+        val focused = manager.getFocusSticker()
+        if (focused != null && sticker != null) {
+            focused.bitmap = sticker.bitmap
+            focused.alpha = alpha
+
+            focused.clearColorFilter()
+            sticker.getColorFilterData()?.let { (color, mode) ->
+                focused.setColorFilter(color, mode)
+            }
+            invalidate()
+
+    } else {
+            // No focused sticker → add new one
+            val size = manager.stickerList.size
+            if (size < 9) {
+                manager.addSticker(sticker)
+                manager.setFocusSticker(sticker)
+                invalidate()
+            } else {
+                Toast.makeText(
+                    mContext,
+                    "// The maximum number of stickers cannot exceed 9",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
     fun clearFocusAll() {
         StickerManager.getInstance().clearAllFocus()
         invalidate()
@@ -142,6 +173,7 @@ class StickerLayout : View, View.OnTouchListener {
                     }
                 }
                 if (mStick != null) {
+                    currentSticker=mStick
                     StickerManager.getInstance().setFocusSticker(mStick)
                 }
             }

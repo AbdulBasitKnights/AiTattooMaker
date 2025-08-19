@@ -114,6 +114,12 @@ class StickerManager {
         }
         return null
     }
+    /**
+     * Get the currently focused sticker
+     */
+    fun getFocusSticker(): Sticker? {
+        return stickerList.firstOrNull { it.isFocus }
+    }
 
 
     companion object {

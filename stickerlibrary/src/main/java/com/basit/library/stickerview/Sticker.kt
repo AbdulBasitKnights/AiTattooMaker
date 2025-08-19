@@ -1,30 +1,64 @@
 package com.basit.library.stickerview
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.PointF
+import android.graphics.*
 import android.view.MotionEvent
 import kotlin.math.atan2
 import kotlin.math.sqrt
 
-/**
- * M Abdul Basit
- * Create by: Abdul Basit
- * Date: 2025/8/19
- * Time: 9:44 AM
- */
 class Sticker(context: Context, bitmap: Bitmap) : BaseSticker(context, bitmap) {
     private val mLastSinglePoint = PointF()
     private val mLastDistanceVector = PointF()
     private val mDistanceVector = PointF()
-    private var mLastDistance = 0f //last distance
+    private var mLastDistance = 0f
 
-    //Initial Point
+    // Initial Points
     private val mFirstPoint = PointF()
     private val mSecondPoint = PointF()
+    private var filterColor: Int? = null
+    private var filterMode: PorterDuff.Mode? = null
+    // Color and alpha properties
+    private var mColorFilter: PorterDuffColorFilter? = null
+    var alpha: Int = 255
+        set(value) {
+            field = value.coerceIn(0, 255)
+        }
 
     /**
-     * Reset State
+     * Set color filter for the sticker
+     */
+//    fun setColorFilter(color: Int, mode: PorterDuff.Mode = PorterDuff.Mode.SRC_ATOP) {
+//        mColorFilter = PorterDuffColorFilter(color, mode)
+//    }
+
+    /**
+     * Set color filter for the sticker
+     */
+    fun setColorFilter(color: Int, mode: PorterDuff.Mode = PorterDuff.Mode.SRC_ATOP) {
+        filterColor = color
+        filterMode = mode
+        mColorFilter = PorterDuffColorFilter(color, mode)
+    }
+
+    /**
+     * Clear color filter
+     */
+    fun clearColorFilter() {
+        filterColor = null
+        filterMode = null
+        mColorFilter = null
+    }
+    /**
+     * Clear color filter
+     */
+
+    fun getColorFilterData(): Pair<Int, PorterDuff.Mode>? {
+        return if (filterColor != null && filterMode != null) {
+            filterColor!! to filterMode!!
+        } else null
+    }
+    /**
+     * Reset touch state
      */
     fun reset() {
         mLastSinglePoint.set(0f, 0f)
@@ -35,81 +69,118 @@ class Sticker(context: Context, bitmap: Bitmap) : BaseSticker(context, bitmap) {
     }
 
     /**
-     * Distance
+     * Calculate distance between two points
      */
-    fun calculateDistance(firstPointF: PointF, secondPointF: PointF): Float {
-        val x = firstPointF.x - secondPointF.x
-        val y = firstPointF.y - secondPointF.y
-        return sqrt((x * x + y * y).toDouble()).toFloat()
+    private fun calculateDistance(first: PointF, second: PointF): Float {
+        val dx = first.x - second.x
+        val dy = first.y - second.y
+        return sqrt(dx * dx + dy * dy)
     }
 
-
     /**
-     * Degree Calculation
-     *
-     * @param lastVector
-     * @param currentVector
-     * @return
+     * Calculate rotation angle between two vectors
      */
-    fun calculateDegrees(lastVector: PointF, currentVector: PointF): Float {
-        val lastDegrees = atan2(lastVector.y.toDouble(), lastVector.x.toDouble()).toFloat()
-        val currentDegrees = atan2(currentVector.y.toDouble(), currentVector.x.toDouble()).toFloat()
-        return Math.toDegrees((currentDegrees - lastDegrees).toDouble()).toFloat()
+    private fun calculateDegrees(last: PointF, current: PointF): Float {
+        val lastAngle = atan2(last.y, last.x)
+        val currentAngle = atan2(current.y, current.x)
+        return Math.toDegrees((currentAngle - lastAngle).toDouble()).toFloat()
     }
 
-
     /**
-     * Touch Event
-     *
-     * @param event
+     * Handle touch events
      */
     override fun onTouch(event: MotionEvent?) {
-        when (event?.action?.and(MotionEvent.ACTION_MASK)) {
-            MotionEvent.ACTION_DOWN -> {
-                mMode = MODE_SINGLE
-
-                mLastSinglePoint.set(event.x, event.y)
-            }
-
-            MotionEvent.ACTION_POINTER_DOWN -> if (event.pointerCount == 2) {
-                mMode = MODE_MULTIPLE
-
-                mFirstPoint.set(event.getX(0), event.getY(0))
-                mSecondPoint.set(event.getX(1), event.getY(1))
-
-                mLastDistanceVector.set(
-                    mFirstPoint.x - mSecondPoint.x,
-                    mFirstPoint.y - mSecondPoint.y
-                )
-
-                mLastDistance = calculateDistance(mFirstPoint, mSecondPoint)
-            }
-
-            MotionEvent.ACTION_MOVE -> {
-                if (mMode == MODE_SINGLE) {
-                    translate(event.x - mLastSinglePoint.x, event.y - mLastSinglePoint.y)
-                    mLastSinglePoint.set(event.x, event.y)
+        event?.let {
+            when (it.action and MotionEvent.ACTION_MASK) {
+                MotionEvent.ACTION_DOWN -> {
+                    mMode = MODE_SINGLE
+                    mLastSinglePoint.set(it.x, it.y)
                 }
-                if (mMode == MODE_MULTIPLE && event.pointerCount == 2) {
-                    mFirstPoint.set(event.getX(0), event.getY(0))
-                    mSecondPoint.set(event.getX(1), event.getY(1))
 
-                    val distance = calculateDistance(mFirstPoint, mSecondPoint)
-
-                    val scale = distance / mLastDistance
-                    scale(scale, scale)
-                    mLastDistance = distance
-
-                    mDistanceVector.set(
+                MotionEvent.ACTION_POINTER_DOWN -> if (it.pointerCount == 2) {
+                    mMode = MODE_MULTIPLE
+                    mFirstPoint.set(it.getX(0), it.getY(0))
+                    mSecondPoint.set(it.getX(1), it.getY(1))
+                    mLastDistanceVector.set(
                         mFirstPoint.x - mSecondPoint.x,
                         mFirstPoint.y - mSecondPoint.y
                     )
-                    rotate(calculateDegrees(mLastDistanceVector, mDistanceVector))
-                    mLastDistanceVector.set(mDistanceVector.x, mDistanceVector.y)
+                    mLastDistance = calculateDistance(mFirstPoint, mSecondPoint)
                 }
-            }
 
-            MotionEvent.ACTION_UP -> reset()
+                MotionEvent.ACTION_MOVE -> {
+                    if (mMode == MODE_SINGLE) {
+                        translate(it.x - mLastSinglePoint.x, it.y - mLastSinglePoint.y)
+                        mLastSinglePoint.set(it.x, it.y)
+                    }
+                    if (mMode == MODE_MULTIPLE && it.pointerCount == 2) {
+                        mFirstPoint.set(it.getX(0), it.getY(0))
+                        mSecondPoint.set(it.getX(1), it.getY(1))
+
+                        val distance = calculateDistance(mFirstPoint, mSecondPoint)
+                        val scale = distance / mLastDistance
+                        this.scale(scale, scale)
+                        mLastDistance = distance
+
+                        mDistanceVector.set(
+                            mFirstPoint.x - mSecondPoint.x,
+                            mFirstPoint.y - mSecondPoint.y
+                        )
+                        rotate(calculateDegrees(mLastDistanceVector, mDistanceVector))
+                        mLastDistanceVector.set(mDistanceVector.x, mDistanceVector.y)
+                    }
+                }
+
+                MotionEvent.ACTION_UP -> reset()
+            }
         }
+    }
+
+    /**
+     * Override draw to apply color filter and alpha
+     */
+  /*  override fun onDraw(canvas: Canvas?, paint: Paint?) {
+        paint?.let { p ->
+            // Save original paint properties
+            val originalAlpha = p.alpha
+            val originalColorFilter = p.colorFilter
+
+            // Apply our custom properties
+            p.alpha = alpha
+            mColorFilter?.let { p.colorFilter = it }
+
+            // Let base class handle the drawing
+            super.onDraw(canvas, p)
+
+            // Restore original paint properties
+            p.alpha = originalAlpha
+            p.colorFilter = originalColorFilter
+        } ?: run {
+            // If no paint was provided, create one with our settings
+            val tempPaint = Paint().apply {
+                alpha = this@Sticker.alpha
+                mColorFilter?.let { colorFilter = it }
+            }
+            super.onDraw(canvas, tempPaint)
+        }
+    }*/
+    override fun onDraw(canvas: Canvas?, paint: Paint?) {
+        // Create a paint just for the tattoo
+        val tattooPaint = Paint().apply {
+            alpha = this@Sticker.alpha
+            mColorFilter?.let { colorFilter = it }
+        }
+
+        // Draw tattoo bitmap with custom paint
+        drawStickerBitmap(canvas, tattooPaint)
+
+        // Draw border + delete icon without affecting alpha/color
+        drawControls(canvas, paint)
+    }
+    companion object {
+        // Touch modes
+        const val MODE_NONE = 0
+        const val MODE_SINGLE = 1
+        const val MODE_MULTIPLE = 2
     }
 }

@@ -30,6 +30,7 @@ import com.google.mlkit.vision.segmentation.Segmentation
 import com.google.mlkit.vision.segmentation.selfie.SelfieSegmenterOptions
 //import com.kaopiz.kprogresshud.KProgressHUD
 import com.basit.library.stickerview.Sticker
+import com.basit.library.stickerview.StickerFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -43,7 +44,6 @@ import java.nio.FloatBuffer
 class AiToolsFragment : Fragment() {
 
     private var binding: FragmentAitoolsBinding? = null
-
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 //    private var imageSavingDialogue: KProgressHUD? = null
     private val pickStickerLauncher = registerForActivityResult(
@@ -78,18 +78,25 @@ class AiToolsFragment : Fragment() {
         mActivity?.let { activity ->
             DialogUtils.show(activity, "Saving...")
             binding?.btnLoadDefault?.setOnClickListener {
-                val stickers = Sticker(
-                    activity,
-                    BitmapFactory.decodeResource(resources, R.drawable.tattoo))
-                binding?.slStickerLayout?.addSticker(stickers)
+                StickerFactory.currentSticker = StickerFactory.createSticker(activity, R.drawable.tattoo, alpha = 128)
+                binding?.slStickerLayout?.addOrUpdateSticker(StickerFactory.currentSticker)
             }
-            binding?.btnPickSticker?.setOnClickListener { pickStickerLauncher.launch("image/*") }
+            binding?.btnPickSticker?.setOnClickListener {
+                StickerFactory.currentSticker = StickerFactory.createSticker(activity, R.drawable.dragon, alpha = 128)
+                binding?.slStickerLayout?.addOrUpdateSticker(StickerFactory.currentSticker)
+//                pickStickerLauncher.launch("image/*")
+            }
+            binding?.btnAlpha?.setOnClickListener {
+                StickerFactory.currentSticker?.let {
+                    binding?.slStickerLayout?.addOrUpdateSticker(StickerFactory.currentSticker,64)
+                }
+//                pickStickerLauncher.launch("image/*")
+            }
+//            stickerAlpha=binding?.slStickerLayout?.stickers?.get(0)
             binding?.btnSave?.setOnClickListener { saveToGallery() }
             // Load something right away
             loadDefaultPhotoAndMask()
         }
-
-
     }
     private fun loadDefaultPhotoAndMask() {
         // Load default person photo from drawable

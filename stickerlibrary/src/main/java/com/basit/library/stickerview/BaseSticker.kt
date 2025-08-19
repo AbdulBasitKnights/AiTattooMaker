@@ -19,7 +19,7 @@ import android.view.WindowManager
  */
 abstract class BaseSticker(
     context: Context, // Sticker image
-    val bitmap: Bitmap
+    var bitmap: Bitmap
 ) : ISupportOperation {
     private val mDelBitmap: Bitmap =
         BitmapFactory.decodeResource(context.resources, R.mipmap.cross) //Delete Sticker
@@ -108,7 +108,7 @@ abstract class BaseSticker(
      * @param canvas
      * @param paint
      */
-    override fun onDraw(canvas: Canvas?, paint: Paint?) {
+/*    override fun onDraw(canvas: Canvas?, paint: Paint?) {
         // Draw the sticker
         canvas?.drawBitmap(this.bitmap, this.matrix, paint)
         if (isFocus) {
@@ -151,6 +151,57 @@ abstract class BaseSticker(
                 paint
             )
         }
+    }*/
+    open fun drawStickerBitmap(canvas: Canvas?, paint: Paint?) {
+        canvas?.drawBitmap(this.bitmap, this.matrix, paint)
+    }
+
+    open fun drawControls(canvas: Canvas?, paint: Paint?) {
+        if (isFocus) {
+            // Draw border
+            paint?.let {
+                canvas?.drawLine(
+                    mDstPoints[0] - PADDING,
+                    mDstPoints[1] - PADDING,
+                    mDstPoints[2] + PADDING,
+                    mDstPoints[3] - PADDING,
+                    it
+                )
+                canvas?.drawLine(
+                    mDstPoints[2] + PADDING,
+                    mDstPoints[3] - PADDING,
+                    mDstPoints[4] + PADDING,
+                    mDstPoints[5] + PADDING,
+                    it
+                )
+                canvas?.drawLine(
+                    mDstPoints[4] + PADDING,
+                    mDstPoints[5] + PADDING,
+                    mDstPoints[6] - PADDING,
+                    mDstPoints[7] + PADDING,
+                    it
+                )
+                canvas?.drawLine(
+                    mDstPoints[6] - PADDING,
+                    mDstPoints[7] + PADDING,
+                    mDstPoints[0] - PADDING,
+                    mDstPoints[1] - PADDING,
+                    it
+                )
+            }
+            // Draw delete button
+            canvas?.drawBitmap(
+                mDelBitmap,
+                mDstPoints[0] - mDelBitmap.width / 2 - PADDING,
+                mDstPoints[1] - mDelBitmap.height / 2 - PADDING,
+                null // ❌ don't use same paint
+            )
+        }
+    }
+
+    override fun onDraw(canvas: Canvas?, paint: Paint?) {
+        drawStickerBitmap(canvas, paint)
+        drawControls(canvas, paint)
     }
 
     companion object {
