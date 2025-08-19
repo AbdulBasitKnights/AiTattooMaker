@@ -18,6 +18,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.graphics.scale
 import androidx.core.view.drawToBitmap
 import androidx.fragment.app.Fragment
@@ -46,7 +47,7 @@ class AiToolsFragment : Fragment() {
 
     private var binding: FragmentAitoolsBinding? = null
     private lateinit var adapter: TattooAdapter
-    var model:Int=1
+    var model:Int=0
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 //    private var imageSavingDialogue: KProgressHUD? = null
     private val pickStickerLauncher = registerForActivityResult(
@@ -81,6 +82,11 @@ class AiToolsFragment : Fragment() {
 
         binding = FragmentAitoolsBinding.inflate(inflater, container, false)
         return binding?.root
+    }
+    private fun applyContainerRatio(photoW: Int, photoH: Int) {
+        val params = binding?.photoContainer?.layoutParams as ConstraintLayout.LayoutParams
+        params.dimensionRatio = "H,${photoW}:${photoH}"
+        binding?.photoContainer?.layoutParams = params
     }
 
     override fun onViewCreated(v: View, s: Bundle?) {
@@ -160,6 +166,7 @@ class AiToolsFragment : Fragment() {
                 Toast.makeText(mActivity, "Segmentation failed", Toast.LENGTH_SHORT).show()
                 return@runSegmentation
             }
+            applyContainerRatio(base.width, base.height)
             // Apply image + mask to your custom view
             binding?.maskedStickerView?.apply {
                 setImageAndMask(baseBitmap, maskBitmap)

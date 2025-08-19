@@ -112,11 +112,16 @@ class MaskedStickerView @JvmOverloads constructor(
 
 	// ---------- Layout helpers ----------
 
+//	override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+//		super.onSizeChanged(w, h, oldw, oldh)
+//		computeContentRect()
+//		if (!stickerInitPlaced) initStickerPlacement()
+//		computeMaskMatrix()
+//	}
 	override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
 		super.onSizeChanged(w, h, oldw, oldh)
-		computeContentRect()
+		maskBounds.set(0f, 0f, w.toFloat(), h.toFloat())  // used for clamping
 		if (!stickerInitPlaced) initStickerPlacement()
-		computeMaskMatrix()
 	}
 
 	private fun computeContentRect() {
@@ -152,7 +157,7 @@ class MaskedStickerView @JvmOverloads constructor(
 		maskBounds.set(contentRect)
 	}
 
-	private fun initStickerPlacement() {
+/*	private fun initStickerPlacement() {
 		val sticker = stickerBitmap ?: return
 		val mask = maskBitmap ?: return
 		if (contentRect.isEmpty) return
@@ -173,6 +178,24 @@ class MaskedStickerView @JvmOverloads constructor(
 			stickerMatrix.postScale(targetW / sticker.width, targetH / sticker.height)
 			stickerMatrix.postTranslate(cx, cy)
 		}
+		stickerInitPlaced = true
+	}*/
+	private fun initStickerPlacement() {
+		val s = stickerBitmap ?: return
+		if (width == 0 || height == 0) return
+
+		val targetW = width * 0.25f
+		val aspect = s.width.toFloat() / s.height
+		val targetH = targetW / aspect
+
+		val cx = width / 2f
+		val cy = height / 2f
+
+		stickerMatrix.reset()
+		stickerMatrix.postTranslate(-s.width / 2f, -s.height / 2f)
+		stickerMatrix.postScale(targetW / s.width, targetH / s.height)
+		stickerMatrix.postTranslate(cx, cy)
+
 		stickerInitPlaced = true
 	}
 
@@ -228,7 +251,7 @@ class MaskedStickerView @JvmOverloads constructor(
 			dy + srcRect.bottom * scale
 		)
 	}
-	override fun onDraw(canvas: Canvas) {
+	/*override fun onDraw(canvas: Canvas) {
 		// Draw base image into its fitted rect
 		val base = baseBitmap ?: return
 		canvas.drawBitmap(base, null, contentRect, drawPaint)
@@ -283,7 +306,24 @@ class MaskedStickerView @JvmOverloads constructor(
         canvas.drawBitmap(maskedSticker, 0f, 0f, drawPaint)
         // 6. Clean up
         maskedSticker.recycle()
+	}*/
+	override fun onDraw(canvas: Canvas) {
+		val base = baseBitmap ?: return
+		// draw base to full view bounds; no stretch because container ratio == image ratio
+		canvas.drawBitmap(base, null, Rect(0, 0, width, height), drawPaint)
+
+		val mask = maskBitmap ?: return
+		val save = canvas.saveLayer(0f, 0f, width.toFloat(), height.toFloat(), null)
+
+		// draw sticker with its matrix (set once on placement + gestures)
+		stickerBitmap?.let { canvas.drawBitmap(it, stickerMatrix, drawPaint) }
+
+		// clip by mask (also drawn to full bounds)
+		canvas.drawBitmap(mask, null, Rect(0, 0, width, height), maskPaint)
+
+		canvas.restoreToCount(save)
 	}
+
 
 	// ---------- Touch (drag + pinch) ----------
 
