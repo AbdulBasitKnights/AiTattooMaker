@@ -7,11 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 贴纸素材管理器
- * Create by: chenWei.li
- * Date: 2019/2/3
- * Time: 8:44 PM
- * Email: lichenwei.me@foxmail.com
+ * M Abdul Basit
+ * Create by: Abdul Basit
+ * Date: 2025/8/19
+ * Time: 9:44 AM
  */
 public class StickerManager {
 
@@ -39,7 +38,7 @@ public class StickerManager {
     }
 
     /**
-     * 移除指定贴纸
+     * removeSticker
      *
      * @param sticker
      */
@@ -53,7 +52,7 @@ public class StickerManager {
     }
 
     /**
-     * 移除所有贴纸
+     * removeAllSticker
      */
     public void removeAllSticker() {
         for (int i = 0; i < mStickerList.size(); i++) {
@@ -66,7 +65,7 @@ public class StickerManager {
     }
 
     /**
-     * 设置当前贴纸为焦点贴纸
+     * setFocusSticker
      *
      * @param focusSticker
      */
@@ -82,7 +81,7 @@ public class StickerManager {
     }
 
     /**
-     * 清除所有焦点
+     * clearAllFocus
      */
     public void clearAllFocus() {
         for (int i = 0; i < mStickerList.size(); i++) {
@@ -92,7 +91,7 @@ public class StickerManager {
     }
 
     /**
-     * 根据触摸坐标返回当前触摸的贴纸
+     * getSticker
      *
      * @param x
      * @param y
@@ -116,7 +115,7 @@ public class StickerManager {
     }
 
     /**
-     * 根据触摸是否触摸到删除按钮，返回对应删除按钮的贴纸
+     * To get Delete Button View
      *
      * @param x
      * @param y

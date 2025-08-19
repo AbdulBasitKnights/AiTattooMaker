@@ -12,18 +12,17 @@ import android.widget.Toast;
 import java.util.List;
 
 /**
- * 贴纸布局（管理分发各种贴纸处理事件）
- * Create by: chenWei.li
- * Date: 2019/2/3
- * Time: 6:57 PM
- * Email: lichenwei.me@foxmail.com
+ * M Abdul Basit
+ * Create by: Abdul Basit
+ * Date: 2025/8/19
+ * Time: 9:44 AM
  */
 public class StickerLayout extends View implements View.OnTouchListener {
 
     private Context mContext;
     private Paint mPaint;
 
-    //记录当前操作的贴纸对象
+    // Records the currently operated sticker object
     private Sticker mStick;
 
     public StickerLayout(Context context) {
@@ -42,11 +41,11 @@ public class StickerLayout extends View implements View.OnTouchListener {
     }
 
     /**
-     * 初始化操作
+     * Initial operation / initialization operation
      */
     private void init(Context context) {
         this.mContext = context;
-        //设置触摸监听
+        // Set touch listener
         setOnTouchListener(this);
     }
 
@@ -65,7 +64,7 @@ public class StickerLayout extends View implements View.OnTouchListener {
 
 
     /**
-     * 添加贴纸
+     * Add New Sticker
      *
      * @param sticker
      */
@@ -76,12 +75,12 @@ public class StickerLayout extends View implements View.OnTouchListener {
             StickerManager.getInstance().setFocusSticker(sticker);
             invalidate();
         } else {
-            Toast.makeText(mContext, "贴纸最大数量不能超过9个", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "// The maximum number of stickers cannot exceed 9", Toast.LENGTH_SHORT).show();
         }
     }
 
     /**
-     * 移除贴纸（只有在贴纸聚焦的时候才可以删除，避免误触碰）
+     * Remove Selected Sticker
      *
      * @param sticker
      */
@@ -93,7 +92,7 @@ public class StickerLayout extends View implements View.OnTouchListener {
     }
 
     /**
-     * 清空贴纸
+     * Remove All Stickers
      */
     public void removeAllSticker() {
         StickerManager.getInstance().removeAllSticker();
@@ -124,17 +123,17 @@ public class StickerLayout extends View implements View.OnTouchListener {
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_POINTER_DOWN:
-                //判断是否按到删除按钮
+                // Determines whether the delete button is pressed
                 mStick = StickerManager.getInstance().getDelButton(event.getX(), event.getY());
                 if (mStick != null) {
                     removeSticker(mStick);
                     mStick = null;
                 }
-                //单指是否触摸到贴纸
+                // Indicates whether a single finger is touching the sticker
                 mStick = StickerManager.getInstance().getSticker(event.getX(), event.getY());
                 if (mStick == null) {
                     if (event.getPointerCount() == 2) {
-                        //处理双指触摸屏幕，第一指没有触摸到贴纸，第二指触摸到贴纸情况
+                        // Handles two-finger touch: the first finger does not touch the sticker, but the second finger does touch the sticker
                         mStick = StickerManager.getInstance().getSticker(event.getX(1), event.getY(1));
                     }
                 }

@@ -69,15 +69,11 @@ class AiToolsFragment : Fragment() {
         binding?.btnLoadDefault?.setOnClickListener {
             val stickers = Sticker(
                 requireContext(),
-                BitmapFactory.decodeResource(resources, R.drawable.tattoo)
-            )
-
+                BitmapFactory.decodeResource(resources, R.drawable.tattoo))
             binding?.slStickerLayout?.addSticker(stickers)
-
         }
         binding?.btnPickSticker?.setOnClickListener { pickStickerLauncher.launch("image/*") }
         binding?.btnSave?.setOnClickListener { saveToGallery() }
-
         // Load something right away
         loadDefaultPhotoAndMask()
         // Set a default sticker (png in drawable)
@@ -99,22 +95,13 @@ class AiToolsFragment : Fragment() {
                 Toast.makeText(requireContext(), "Segmentation failed", Toast.LENGTH_SHORT).show()
                 return@runSegmentation
             }
-
             // Apply image + mask to your custom view
             binding?.maskedStickerView?.apply {
                 setImageAndMask(baseBitmap, maskBitmap)
-
-                // Load tattoo sticker PNG
-//                val sticker = BitmapFactory.decodeResource(
-//                    requireActivity().resources,
-//                    R.drawable.tattoo
-//                )
-//                setSticker(sticker)
             }
             binding?.bgImage?.apply {
                 setImageAndMask(bgBitmap, bgBitmap)
             }
-
             // (Optional) Preview background without person
             // Glide.with(requireContext())
             //     .load(bgBitmap)
@@ -205,12 +192,6 @@ class AiToolsFragment : Fragment() {
             }
         }
     }
-    fun View.toBitmap(): Bitmap {
-        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
-        draw(canvas)
-        return bitmap
-    }
     private fun saveToGallery() {
         binding?.slStickerLayout?.clearFocus()
         DialogUtils.dialog?.show()
@@ -269,23 +250,6 @@ class AiToolsFragment : Fragment() {
         scope.cancel()
     }
 }
-
-/** Convert ML Kit SegmentationMask buffer (FloatBuffer, person probs) into ARGB mask bitmap. */
-//private fun floatsToMaskBitmap(buffer: java.nio.ByteBuffer, width: Int, height: Int): Bitmap {
-//    buffer.rewind()
-//    val fb = buffer.asFloatBuffer()
-//    val pixels = IntArray(width * height)
-//    val tmp = FloatArray(width * height)
-//    fb.get(tmp)
-//
-//    for (i in tmp.indices) {
-//        val p = (tmp[i] * 255f).toInt().coerceIn(0, 255) // person prob -> alpha
-//        // White with alpha = person probability
-//        pixels[i] = Color.argb(p, 255, 255, 255)
-//    }
-//    return Bitmap.createBitmap(pixels, width, height, Bitmap.Config.ARGB_8888)
-//}
-
 /** tiny suspend helper to await Task<T> */
 private suspend fun <T> com.google.android.gms.tasks.Task<T>.await(): T =
     suspendCancellableCoroutine { cont ->

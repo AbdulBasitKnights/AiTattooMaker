@@ -6,20 +6,19 @@ import android.graphics.PointF;
 import android.view.MotionEvent;
 
 /**
- * 贴纸类（手势与贴纸的关系）
- * Create by: chenWei.li
- * Date: 2019/2/3
- * Time: 8:44 PM
- * Email: lichenwei.me@foxmail.com
+ * M Abdul Basit
+ * Create by: Abdul Basit
+ * Date: 2025/8/19
+ * Time: 9:44 AM
  */
 public class Sticker extends BaseSticker {
 
-    private PointF mLastSinglePoint = new PointF();//记录上一次单指触摸屏幕的点坐标
-    private PointF mLastDistanceVector = new PointF();//记录上一次双指之间的向量
-    private PointF mDistanceVector = new PointF();//记录当前双指之间的向量
-    private float mLastDistance;//记录上一次双指之间的距离
+    private PointF mLastSinglePoint = new PointF();
+    private PointF mLastDistanceVector = new PointF();
+    private PointF mDistanceVector = new PointF();
+    private float mLastDistance;//last distance
 
-    //记录点坐标，减少对象在onTouch中的创建
+    //Initial Point
     private PointF mFirstPoint = new PointF();
     private PointF mSecondPoint = new PointF();
 
@@ -28,7 +27,7 @@ public class Sticker extends BaseSticker {
     }
 
     /**
-     * 重置状态
+     * Reset State
      */
     public void reset() {
         mLastSinglePoint.set(0f, 0f);
@@ -39,7 +38,7 @@ public class Sticker extends BaseSticker {
     }
 
     /**
-     * 计算两点之间的距离
+     * Distance
      */
     public float calculateDistance(PointF firstPointF, PointF secondPointF) {
         float x = firstPointF.x - secondPointF.x;
@@ -49,7 +48,7 @@ public class Sticker extends BaseSticker {
 
 
     /**
-     * 计算旋转角度
+     * Degree Calculation
      *
      * @param lastVector
      * @param currentVector
@@ -63,27 +62,27 @@ public class Sticker extends BaseSticker {
 
 
     /**
-     * 处理触摸事件
+     * Touch Event
      *
      * @param event
      */
     public void onTouch(MotionEvent event) {
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
-                //有触摸到贴纸
+
                 mMode = Sticker.MODE_SINGLE;
-                //记录按下的位置
+
                 mLastSinglePoint.set(event.getX(), event.getY());
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
                 if (event.getPointerCount() == 2) {
                     mMode = Sticker.MODE_MULTIPLE;
-                    //记录双指的点位置
+
                     mFirstPoint.set(event.getX(0), event.getY(0));
                     mSecondPoint.set(event.getX(1), event.getY(1));
-                    //计算双指之间向量
+
                     mLastDistanceVector.set(mFirstPoint.x - mSecondPoint.x, mFirstPoint.y - mSecondPoint.y);
-                    //计算双指之间距离
+
                     mLastDistance = calculateDistance(mFirstPoint, mSecondPoint);
                 }
                 break;
@@ -93,16 +92,16 @@ public class Sticker extends BaseSticker {
                     mLastSinglePoint.set(event.getX(), event.getY());
                 }
                 if (mMode == MODE_MULTIPLE && event.getPointerCount() == 2) {
-                    //记录双指的点位置
+
                     mFirstPoint.set(event.getX(0), event.getY(0));
                     mSecondPoint.set(event.getX(1), event.getY(1));
-                    //操作自由缩放
+
                     float distance = calculateDistance(mFirstPoint, mSecondPoint);
-                    //根据双指移动的距离获取缩放因子
+
                     float scale = distance / mLastDistance;
                     scale(scale, scale);
                     mLastDistance = distance;
-                    //操作自由旋转
+
                     mDistanceVector.set(mFirstPoint.x - mSecondPoint.x, mFirstPoint.y - mSecondPoint.y);
                     rotate(calculateDegrees(mLastDistanceVector, mDistanceVector));
                     mLastDistanceVector.set(mDistanceVector.x, mDistanceVector.y);
