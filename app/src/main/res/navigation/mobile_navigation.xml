@@ -9,7 +9,11 @@
         android:id="@+id/navigation_home"
         android:name="com.basit.aitattoomaker.presentation.home.HomeFragment"
         android:label="@string/title_aicreate"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_aitools"
+            app:destination="@id/navigation_aitools" />
+    </fragment>
     <fragment
         android:id="@+id/navigation_aicreate"
         android:name="com.basit.aitattoomaker.presentation.camera.CameraScreen"

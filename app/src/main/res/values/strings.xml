@@ -11,4 +11,6 @@
     <string name="pick_sticker">Sticker 2</string>
     <string name="save">Save</string>
     <string name="opacity">Opacity</string>
+    <string name="ai_tattoo">Ai Tattoo</string>
+    <string name="ai_camera">Ai Camera</string>
 </resources>

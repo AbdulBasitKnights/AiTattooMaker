@@ -110,7 +110,24 @@ class StickerLayout : View, View.OnTouchListener {
             }
         }
     }
+    fun updateSticker(alpha:Int=128) {
+        currentSticker?.let {sticker->
+            val manager = StickerManager.getInstance()
+            val focused = manager.getFocusSticker()
+            if (focused != null && sticker != null) {
+                focused.bitmap = sticker.bitmap
+                focused.alpha = alpha
 
+                focused.clearColorFilter()
+                sticker?.getColorFilterData()?.let { (color, mode) ->
+                    focused.setColorFilter(color, mode)
+                }
+                invalidate()
+
+            }
+        }
+
+    }
     fun clearFocusAll() {
         StickerManager.getInstance().clearAllFocus()
         invalidate()
@@ -181,7 +198,7 @@ class StickerLayout : View, View.OnTouchListener {
             else -> {}
         }
         if (mStick != null) {
-            mStick!!.onTouch(event)
+            mStick?.onTouch(event)
         } else {
             StickerManager.getInstance().clearAllFocus()
         }

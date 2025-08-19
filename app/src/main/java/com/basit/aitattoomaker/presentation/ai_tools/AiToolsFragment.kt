@@ -61,6 +61,12 @@ class AiToolsFragment : Fragment() {
 
     override fun onDetach() {
         super.onDetach()
+        try {
+            binding?.slStickerLayout?.removeAllSticker()
+            scope.cancel()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
         mActivity=null
     }
     override fun onCreateView(
@@ -79,17 +85,15 @@ class AiToolsFragment : Fragment() {
             DialogUtils.show(activity, "Saving...")
             binding?.btnLoadDefault?.setOnClickListener {
                 StickerFactory.currentSticker = StickerFactory.createSticker(activity, R.drawable.tattoo, alpha = 128)
-                binding?.slStickerLayout?.addOrUpdateSticker(StickerFactory.currentSticker)
+                binding?.slStickerLayout?.addSticker(StickerFactory.currentSticker)
             }
             binding?.btnPickSticker?.setOnClickListener {
                 StickerFactory.currentSticker = StickerFactory.createSticker(activity, R.drawable.dragon, alpha = 128)
-                binding?.slStickerLayout?.addOrUpdateSticker(StickerFactory.currentSticker)
+                binding?.slStickerLayout?.addSticker(StickerFactory.currentSticker)
 //                pickStickerLauncher.launch("image/*")
             }
             binding?.btnAlpha?.setOnClickListener {
-                StickerFactory.currentSticker?.let {
-                    binding?.slStickerLayout?.addOrUpdateSticker(StickerFactory.currentSticker,64)
-                }
+                binding?.slStickerLayout?.updateSticker(64)
 //                pickStickerLauncher.launch("image/*")
             }
 //            stickerAlpha=binding?.slStickerLayout?.stickers?.get(0)

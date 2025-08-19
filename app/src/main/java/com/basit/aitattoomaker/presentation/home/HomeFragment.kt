@@ -6,9 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.basit.aitattoomaker.databinding.FragmentHomeBinding
 
 class HomeFragment : Fragment() {
@@ -41,11 +43,21 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val textView: TextView = binding.textHome
-        homeViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
         return root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        mActivity?.let { activity->
+            binding?.apply {
+                textTattoo?.setOnClickListener {
+                    findNavController().navigate(HomeFragmentDirections.actionNavigationHomeToNavigationAitools())
+                }
+                textAiCamera?.setOnClickListener {
+                    Toast.makeText(activity, "Upcoming Feature", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     override fun onDestroyView() {
