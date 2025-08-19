@@ -24,12 +24,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.basit.aitattoomaker.R
 import com.basit.aitattoomaker.databinding.FragmentAitoolsBinding
+import com.basit.aitattoomaker.presentation.ai_tools.adapter.TattooAdapter
+import com.basit.aitattoomaker.presentation.ai_tools.model.Tattoo
 import com.basit.aitattoomaker.presentation.utils.DialogUtils
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.segmentation.Segmentation
 import com.google.mlkit.vision.segmentation.selfie.SelfieSegmenterOptions
 //import com.kaopiz.kprogresshud.KProgressHUD
-import com.basit.library.stickerview.Sticker
 import com.basit.library.stickerview.StickerFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -44,6 +45,7 @@ import java.nio.FloatBuffer
 class AiToolsFragment : Fragment() {
 
     private var binding: FragmentAitoolsBinding? = null
+    private lateinit var adapter: TattooAdapter
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 //    private var imageSavingDialogue: KProgressHUD? = null
     private val pickStickerLauncher = registerForActivityResult(
@@ -51,6 +53,7 @@ class AiToolsFragment : Fragment() {
     ) { uri: Uri? ->
         uri?.let { loadSticker(it) }
     }
+    val tattoo_list: ArrayList<Tattoo>?=arrayListOf(Tattoo("Dragon",R.drawable.dragon),Tattoo("Flower",R.drawable.flower),Tattoo("Fire",R.drawable.tattoo),Tattoo("Heart",R.drawable.heart))
     private var mActivity: FragmentActivity?=null
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -82,14 +85,22 @@ class AiToolsFragment : Fragment() {
     override fun onViewCreated(v: View, s: Bundle?) {
         super.onViewCreated(v, s)
         mActivity?.let { activity ->
-            DialogUtils.show(activity, "Saving...")
-            binding?.btnLoadDefault?.setOnClickListener {
-                StickerFactory.currentSticker = StickerFactory.createSticker(activity, R.drawable.tattoo, color = R.color.purple_200, alpha = 128)
+            adapter = TattooAdapter { tattoo ->
+                StickerFactory.currentSticker = StickerFactory.createSticker(context=activity, drawableId = tattoo.tattooId, alpha = 128)
                 binding?.slStickerLayout?.addSticker(StickerFactory.currentSticker)
             }
+            binding?.rvTattoo?.adapter = adapter
+            binding?.rvTattoo?.setHasFixedSize(true)
+            adapter.submitList(tattoo_list)
+            DialogUtils.show(activity, "Saving...")
+            binding?.btnLoadDefault?.setOnClickListener {
+                if(binding?.rvTattoo?.visibility==View.VISIBLE){
+                    binding?.rvTattoo?.visibility=View.GONE
+                }else{
+                    binding?.rvTattoo?.visibility=View.VISIBLE
+                }
+            }
             binding?.btnPickSticker?.setOnClickListener {
-                StickerFactory.currentSticker = StickerFactory.createSticker(activity, R.drawable.dragon, color = R.color.purple_500, alpha = 128)
-                binding?.slStickerLayout?.addSticker(StickerFactory.currentSticker)
 //                pickStickerLauncher.launch("image/*")
             }
             binding?.btnAlpha?.setOnClickListener {

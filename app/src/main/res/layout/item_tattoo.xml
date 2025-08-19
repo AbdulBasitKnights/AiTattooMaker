@@ -3,28 +3,29 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:layout_margin="5dp"
     android:padding="8dp">
 
     <ImageView
         android:id="@+id/ivTattoo"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:scaleType="centerCrop"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:adjustViewBounds="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:src="@color/purple_200" />
+        android:background="@drawable/bg_loader_round"
+        tools:src="@drawable/tattoo" />
 
     <TextView
         android:id="@+id/tvTattooName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:textColor="@android:color/white"
+        android:textColor="@color/purple_200"
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="@id/ivTattoo"
         app:layout_constraintStart_toStartOf="@id/ivTattoo"
