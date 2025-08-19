@@ -52,7 +52,7 @@ class StickerLayout : View, View.OnTouchListener {
         get() {
             if (mPaint == null) {
                 mPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-                mPaint?.setColor(Color.BLACK)
+                mPaint?.color = Color.BLACK
                 mPaint?.strokeWidth = 2f
             }
             return mPaint

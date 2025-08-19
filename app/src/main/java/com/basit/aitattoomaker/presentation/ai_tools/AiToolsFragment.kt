@@ -84,11 +84,11 @@ class AiToolsFragment : Fragment() {
         mActivity?.let { activity ->
             DialogUtils.show(activity, "Saving...")
             binding?.btnLoadDefault?.setOnClickListener {
-                StickerFactory.currentSticker = StickerFactory.createSticker(activity, R.drawable.tattoo, alpha = 128)
+                StickerFactory.currentSticker = StickerFactory.createSticker(activity, R.drawable.tattoo, color = R.color.purple_200, alpha = 128)
                 binding?.slStickerLayout?.addSticker(StickerFactory.currentSticker)
             }
             binding?.btnPickSticker?.setOnClickListener {
-                StickerFactory.currentSticker = StickerFactory.createSticker(activity, R.drawable.dragon, alpha = 128)
+                StickerFactory.currentSticker = StickerFactory.createSticker(activity, R.drawable.dragon, color = R.color.purple_500, alpha = 128)
                 binding?.slStickerLayout?.addSticker(StickerFactory.currentSticker)
 //                pickStickerLauncher.launch("image/*")
             }
@@ -106,7 +106,7 @@ class AiToolsFragment : Fragment() {
         // Load default person photo from drawable
         val base = BitmapFactory.decodeResource(
             mActivity?.resources,
-            R.drawable.boy1
+            R.drawable.boy2
         ) ?: run {
             Toast.makeText(mActivity, "Failed to load default photo", Toast.LENGTH_SHORT).show()
             return

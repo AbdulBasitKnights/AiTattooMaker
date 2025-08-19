@@ -15,11 +15,11 @@ object StickerFactory {
     ): Sticker {
         val bitmap = BitmapFactory.decodeResource(context.resources, drawableId)
         val sticker = Sticker(context, bitmap)
-        // Apply alpha if provided, otherwise default 255
-        sticker.alpha = alpha ?: 255
+        // Apply alpha if provided, otherwise default 128
+        sticker.alpha = alpha ?: 128
         // Apply color filter if provided
         color?.let {
-            sticker.setColorFilter(it, mode)
+            sticker.setColorFilter(it, PorterDuff.Mode.SRC_ATOP)
         }
 
         return sticker

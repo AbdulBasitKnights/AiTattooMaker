@@ -19,9 +19,9 @@ class Sticker(context: Context, bitmap: Bitmap) : BaseSticker(context, bitmap) {
     private var filterMode: PorterDuff.Mode? = null
     // Color and alpha properties
     private var mColorFilter: PorterDuffColorFilter? = null
-    var alpha: Int = 255
+    var alpha: Int = 150
         set(value) {
-            field = value.coerceIn(0, 255)
+            field = value.coerceIn(0, 150)
         }
 
     /**
@@ -139,31 +139,6 @@ class Sticker(context: Context, bitmap: Bitmap) : BaseSticker(context, bitmap) {
     /**
      * Override draw to apply color filter and alpha
      */
-  /*  override fun onDraw(canvas: Canvas?, paint: Paint?) {
-        paint?.let { p ->
-            // Save original paint properties
-            val originalAlpha = p.alpha
-            val originalColorFilter = p.colorFilter
-
-            // Apply our custom properties
-            p.alpha = alpha
-            mColorFilter?.let { p.colorFilter = it }
-
-            // Let base class handle the drawing
-            super.onDraw(canvas, p)
-
-            // Restore original paint properties
-            p.alpha = originalAlpha
-            p.colorFilter = originalColorFilter
-        } ?: run {
-            // If no paint was provided, create one with our settings
-            val tempPaint = Paint().apply {
-                alpha = this@Sticker.alpha
-                mColorFilter?.let { colorFilter = it }
-            }
-            super.onDraw(canvas, tempPaint)
-        }
-    }*/
     override fun onDraw(canvas: Canvas?, paint: Paint?) {
         // Create a paint just for the tattoo
         val tattooPaint = Paint().apply {
