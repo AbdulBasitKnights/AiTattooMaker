@@ -46,6 +46,7 @@ class AiToolsFragment : Fragment() {
 
     private var binding: FragmentAitoolsBinding? = null
     private lateinit var adapter: TattooAdapter
+    var model:Int=1
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 //    private var imageSavingDialogue: KProgressHUD? = null
     private val pickStickerLauncher = registerForActivityResult(
@@ -92,7 +93,7 @@ class AiToolsFragment : Fragment() {
             binding?.rvTattoo?.adapter = adapter
             binding?.rvTattoo?.setHasFixedSize(true)
             adapter.submitList(tattoo_list)
-            DialogUtils.show(activity, "Saving...")
+            DialogUtils.show(activity, "Processing...")
             binding?.btnLoadDefault?.setOnClickListener {
                 if(binding?.rvTattoo?.visibility==View.VISIBLE){
                     binding?.rvTattoo?.visibility=View.GONE
@@ -130,14 +131,24 @@ class AiToolsFragment : Fragment() {
 //            stickerAlpha=binding?.slStickerLayout?.stickers?.get(0)
             binding?.btnSave?.setOnClickListener { saveToGallery() }
             // Load something right away
-            loadDefaultPhotoAndMask()
+            binding?.changePhoto?.setOnClickListener {
+                DialogUtils.dialog?.show()
+                if(model==4){
+                    model=1
+                }
+                else{
+                    model++
+                }
+                loadDefaultPhotoAndMask(model)
+            }
         }
     }
-    private fun loadDefaultPhotoAndMask() {
+    private fun loadDefaultPhotoAndMask(model:Int) {
         // Load default person photo from drawable
         val base = BitmapFactory.decodeResource(
             mActivity?.resources,
-            R.drawable.boy2
+            if(model==1)
+            R.drawable.model1 else if(model==2) R.drawable.model2 else if(model==3) R.drawable.model3 else R.drawable.model4
         ) ?: run {
             Toast.makeText(mActivity, "Failed to load default photo", Toast.LENGTH_SHORT).show()
             return
@@ -152,9 +163,11 @@ class AiToolsFragment : Fragment() {
             // Apply image + mask to your custom view
             binding?.maskedStickerView?.apply {
                 setImageAndMask(baseBitmap, maskBitmap)
+                DialogUtils.dialog?.dismiss()
             }
             binding?.bgImage?.apply {
                 setImageAndMask(bgBitmap, bgBitmap)
+                DialogUtils.dialog?.dismiss()
             }
             // (Optional) Preview background without person
             // Glide.with(requireContext())
