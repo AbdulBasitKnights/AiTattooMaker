@@ -205,7 +205,7 @@ class AiToolsFragment : Fragment() {
         }
     }
     private fun saveToGallery() {
-        binding?.slStickerLayout?.clearFocus()
+        binding?.slStickerLayout?.clearFocusAll()
         DialogUtils.dialog?.show()
         val out = binding?.photoContainer?.drawToBitmap()
         if (out == null) {
@@ -259,6 +259,7 @@ class AiToolsFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
+        binding?.slStickerLayout?.removeAllSticker()
         scope.cancel()
     }
 }

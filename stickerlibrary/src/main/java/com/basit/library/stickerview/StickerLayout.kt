@@ -80,6 +80,10 @@ class StickerLayout : View, View.OnTouchListener {
             ).show()
         }
     }
+    fun clearFocusAll() {
+        StickerManager.getInstance().clearAllFocus()
+        invalidate()
+    }
 
     /**
      * Remove Selected Sticker
