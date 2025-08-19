@@ -51,8 +51,8 @@ class StickerLayout : View, View.OnTouchListener {
         get() {
             if (mPaint == null) {
                 mPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-                mPaint!!.setColor(Color.BLACK)
-                mPaint!!.setStrokeWidth(2f)
+                mPaint?.setColor(Color.BLACK)
+                mPaint?.strokeWidth = 2f
             }
             return mPaint
         }
@@ -120,10 +120,10 @@ class StickerLayout : View, View.OnTouchListener {
     }
 
     override fun onTouch(v: View?, event: MotionEvent): Boolean {
-        when (event.getAction() and MotionEvent.ACTION_MASK) {
+        when (event.action and MotionEvent.ACTION_MASK) {
             MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_DOWN -> {
                 // Determines whether the delete button is pressed
-                mStick = StickerManager.getInstance().getDelButton(event.getX(), event.getY())
+                mStick = StickerManager.getInstance().getDelButton(event.x, event.y)
                 if (mStick != null) {
                     removeSticker(mStick!!)
                     mStick = null
