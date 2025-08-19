@@ -19,9 +19,9 @@ class Sticker(context: Context, bitmap: Bitmap) : BaseSticker(context, bitmap) {
     private var filterMode: PorterDuff.Mode? = null
     // Color and alpha properties
     private var mColorFilter: PorterDuffColorFilter? = null
-    var alpha: Int = 150
+    var alpha: Int = 255
         set(value) {
-            field = value.coerceIn(0, 150)
+            field = value.coerceIn(0, 255)
         }
 
     /**

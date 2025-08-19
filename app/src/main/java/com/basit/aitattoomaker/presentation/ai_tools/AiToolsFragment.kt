@@ -96,16 +96,36 @@ class AiToolsFragment : Fragment() {
             binding?.btnLoadDefault?.setOnClickListener {
                 if(binding?.rvTattoo?.visibility==View.VISIBLE){
                     binding?.rvTattoo?.visibility=View.GONE
+                    binding?.opacityList?.visibility=View.GONE
                 }else{
                     binding?.rvTattoo?.visibility=View.VISIBLE
+                    binding?.opacityList?.visibility=View.GONE
                 }
             }
             binding?.btnPickSticker?.setOnClickListener {
 //                pickStickerLauncher.launch("image/*")
             }
             binding?.btnAlpha?.setOnClickListener {
-                binding?.slStickerLayout?.updateSticker(64)
+                if(binding?.opacityList?.visibility==View.VISIBLE){
+                    binding?.opacityList?.visibility=View.GONE
+                    binding?.rvTattoo?.visibility= View.GONE
+                }else{
+                    binding?.opacityList?.visibility=View.VISIBLE
+                    binding?.rvTattoo?.visibility= View.GONE
+                }
 //                pickStickerLauncher.launch("image/*")
+            }
+            binding?.opacity64?.setOnClickListener {
+                binding?.slStickerLayout?.updateSticker(64)
+            }
+            binding?.opacity128?.setOnClickListener {
+                binding?.slStickerLayout?.updateSticker(128)
+            }
+            binding?.opacity192?.setOnClickListener {
+                binding?.slStickerLayout?.updateSticker(192)
+            }
+            binding?.opacity255?.setOnClickListener {
+                binding?.slStickerLayout?.updateSticker(255)
             }
 //            stickerAlpha=binding?.slStickerLayout?.stickers?.get(0)
             binding?.btnSave?.setOnClickListener { saveToGallery() }

@@ -49,6 +49,10 @@
             android:layerType="software"
             android:scaleType="centerCrop"
             android:visibility="visible" />
+        <com.basit.library.stickerview.StickerLayout
+            android:id="@+id/sl_sticker_layout2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
     </FrameLayout>
 
     <!-- Bottom controls -->
@@ -107,6 +111,54 @@
             android:textAllCaps="false"
             android:background="@drawable/bg_loader_round"
             android:textColor="@color/purple_200" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/opacity_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:paddingVertical="5dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/bottom">
+        <TextView
+            android:id="@+id/opacity255"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0 %"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:textColor="@color/purple_200"
+            android:background="@drawable/bg_loader_round"/>
+        <TextView
+            android:id="@+id/opacity192"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="25%"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:textColor="@color/purple_200"
+            android:background="@drawable/bg_loader_round"/>
+        <TextView
+            android:id="@+id/opacity128"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="50%"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:textColor="@color/purple_200"
+            android:background="@drawable/bg_loader_round"/>
+        <TextView
+            android:id="@+id/opacity64"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="75%"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:textColor="@color/purple_200"
+            android:background="@drawable/bg_loader_round"/>
+
     </LinearLayout>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_tattoo"
