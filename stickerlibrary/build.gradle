@@ -1,3 +1,6 @@
+plugins {
+    alias(libs.plugins.kotlin.android)
+}
 apply plugin: 'com.android.library'
 
 android {
@@ -22,9 +25,13 @@ android {
     lintOptions {
         abortOnError false
     }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
 
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation libs.core.ktx
 }

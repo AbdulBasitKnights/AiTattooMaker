@@ -1,8 +1,8 @@
-package com.lcw.library.stickerview;
+package com.lcw.library.stickerview
 
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.view.MotionEvent;
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.view.MotionEvent
 
 /**
  * M Abdul Basit
@@ -10,15 +10,14 @@ import android.view.MotionEvent;
  * Date: 2025/8/19
  * Time: 9:44 AM
  */
-public interface ISupportOperation {
-
+interface ISupportOperation {
     /**
      *
      *
      * @param dx
      * @param dy
      */
-    void translate(float dx, float dy);
+    fun translate(dx: Float, dy: Float)
 
     /**
      *
@@ -26,14 +25,14 @@ public interface ISupportOperation {
      * @param sx
      * @param sy
      */
-    void scale(float sx, float sy);
+    fun scale(sx: Float, sy: Float)
 
     /**
      *
      *
      * @param degrees
      */
-    void rotate(float degrees);
+    fun rotate(degrees: Float)
 
 
     /**
@@ -42,13 +41,12 @@ public interface ISupportOperation {
      * @param canvas
      * @param paint
      */
-    void onDraw(Canvas canvas, Paint paint);
+    fun onDraw(canvas: Canvas?, paint: Paint?)
 
     /**
      *
      *
      * @param event
      */
-    void onTouch(MotionEvent event);
-
+    fun onTouch(event: MotionEvent?)
 }

@@ -1,15 +1,13 @@
-package com.lcw.library.stickerview;
+package com.lcw.library.stickerview
 
-import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.util.AttributeSet;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.Toast;
-
-import java.util.List;
+import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.util.AttributeSet
+import android.view.MotionEvent
+import android.view.View
+import android.widget.Toast
 
 /**
  * M Abdul Basit
@@ -17,50 +15,50 @@ import java.util.List;
  * Date: 2025/8/19
  * Time: 9:44 AM
  */
-public class StickerLayout extends View implements View.OnTouchListener {
-
-    private Context mContext;
-    private Paint mPaint;
+class StickerLayout : View, View.OnTouchListener {
+    private var mContext: Context? = null
+    private var mPaint: Paint? = null
 
     // Records the currently operated sticker object
-    private Sticker mStick;
+    private var mStick: Sticker? = null
 
-    public StickerLayout(Context context) {
-        super(context);
-        init(context);
+    constructor(context: Context?) : super(context) {
+        init(context)
     }
 
-    public StickerLayout(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init(context);
+    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
+        init(context)
     }
 
-    public StickerLayout(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init(context);
+    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    ) {
+        init(context)
     }
 
     /**
      * Initial operation / initialization operation
      */
-    private void init(Context context) {
-        this.mContext = context;
+    private fun init(context: Context?) {
+        this.mContext = context
         // Set touch listener
-        setOnTouchListener(this);
+        setOnTouchListener(this)
     }
 
-    public Paint getPaint() {
-        if (mPaint == null) {
-            mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            mPaint.setColor(Color.BLACK);
-            mPaint.setStrokeWidth(2);
+    var paint: Paint?
+        get() {
+            if (mPaint == null) {
+                mPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+                mPaint!!.setColor(Color.BLACK)
+                mPaint!!.setStrokeWidth(2f)
+            }
+            return mPaint
         }
-        return mPaint;
-    }
-
-    public void setPaint(Paint mPaint) {
-        this.mPaint = mPaint;
-    }
+        set(mPaint) {
+            this.mPaint = mPaint
+        }
 
 
     /**
@@ -68,14 +66,18 @@ public class StickerLayout extends View implements View.OnTouchListener {
      *
      * @param sticker
      */
-    public void addSticker(Sticker sticker) {
-        int size = StickerManager.getInstance().getStickerList().size();
+    fun addSticker(sticker: Sticker?) {
+        val size = StickerManager.getInstance().stickerList.size
         if (size < 9) {
-            StickerManager.getInstance().addSticker(sticker);
-            StickerManager.getInstance().setFocusSticker(sticker);
-            invalidate();
+            StickerManager.getInstance().addSticker(sticker)
+            StickerManager.getInstance().setFocusSticker(sticker)
+            invalidate()
         } else {
-            Toast.makeText(mContext, "// The maximum number of stickers cannot exceed 9", Toast.LENGTH_SHORT).show();
+            Toast.makeText(
+                mContext,
+                "// The maximum number of stickers cannot exceed 9",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
@@ -84,72 +86,70 @@ public class StickerLayout extends View implements View.OnTouchListener {
      *
      * @param sticker
      */
-    public void removeSticker(Sticker sticker) {
-        if (sticker.isFocus()) {
-            StickerManager.getInstance().removeSticker(sticker);
-            invalidate();
+    fun removeSticker(sticker: Sticker) {
+        if (sticker.isFocus) {
+            StickerManager.getInstance().removeSticker(sticker)
+            invalidate()
         }
     }
 
     /**
      * Remove All Stickers
      */
-    public void removeAllSticker() {
-        StickerManager.getInstance().removeAllSticker();
-        invalidate();
+    fun removeAllSticker() {
+        StickerManager.getInstance().removeAllSticker()
+        invalidate()
     }
 
 
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        List<Sticker> stickerList = StickerManager.getInstance().getStickerList();
-        Sticker focusSticker = null;
-        for (int i = 0; i < stickerList.size(); i++) {
-            Sticker sticker = stickerList.get(i);
-            if (sticker.isFocus()) {
-                focusSticker = sticker;
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+        val stickerList = StickerManager.getInstance().stickerList
+        var focusSticker: Sticker? = null
+        for (i in stickerList.indices) {
+            val sticker = stickerList[i]
+            if (sticker.isFocus) {
+                focusSticker = sticker
             } else {
-                sticker.onDraw(canvas, getPaint());
+                sticker.onDraw(canvas, this.paint)
             }
         }
         if (focusSticker != null) {
-            focusSticker.onDraw(canvas, getPaint());
+            focusSticker.onDraw(canvas, this.paint)
         }
     }
 
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        switch (event.getAction() & MotionEvent.ACTION_MASK) {
-            case MotionEvent.ACTION_DOWN:
-            case MotionEvent.ACTION_POINTER_DOWN:
+    override fun onTouch(v: View?, event: MotionEvent): Boolean {
+        when (event.getAction() and MotionEvent.ACTION_MASK) {
+            MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_DOWN -> {
                 // Determines whether the delete button is pressed
-                mStick = StickerManager.getInstance().getDelButton(event.getX(), event.getY());
+                mStick = StickerManager.getInstance().getDelButton(event.getX(), event.getY())
                 if (mStick != null) {
-                    removeSticker(mStick);
-                    mStick = null;
+                    removeSticker(mStick!!)
+                    mStick = null
                 }
                 // Indicates whether a single finger is touching the sticker
-                mStick = StickerManager.getInstance().getSticker(event.getX(), event.getY());
+                mStick = StickerManager.getInstance().getSticker(event.x, event.y)
                 if (mStick == null) {
-                    if (event.getPointerCount() == 2) {
+                    if (event.pointerCount == 2) {
                         // Handles two-finger touch: the first finger does not touch the sticker, but the second finger does touch the sticker
-                        mStick = StickerManager.getInstance().getSticker(event.getX(1), event.getY(1));
+                        mStick =
+                            StickerManager.getInstance().getSticker(event.getX(1), event.getY(1))
                     }
                 }
                 if (mStick != null) {
-                    StickerManager.getInstance().setFocusSticker(mStick);
+                    StickerManager.getInstance().setFocusSticker(mStick)
                 }
-                break;
-            default:
-                break;
+            }
+
+            else -> {}
         }
         if (mStick != null) {
-            mStick.onTouch(event);
+            mStick!!.onTouch(event)
         } else {
-            StickerManager.getInstance().clearAllFocus();
+            StickerManager.getInstance().clearAllFocus()
         }
-        invalidate();
-        return true;
+        invalidate()
+        return true
     }
 }
