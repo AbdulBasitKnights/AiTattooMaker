@@ -20,7 +20,6 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentAiCreateBinding.bind(view)
-
         setupRecycler()
         setupTextWatcher()
     }
@@ -43,6 +42,10 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
     }
 
     private fun setupTextWatcher() {
+        binding.etPrompt.setOnTouchListener { v, event ->
+            v.parent.requestDisallowInterceptTouchEvent(true)
+            false
+        }
         binding.etPrompt.addTextChangedListener {
             binding.btnCreate.isEnabled = !it.isNullOrBlank()
         }
