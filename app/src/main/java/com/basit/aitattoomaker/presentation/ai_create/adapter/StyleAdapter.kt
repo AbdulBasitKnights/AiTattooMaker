@@ -21,10 +21,10 @@ class StyleAdapter(
     inner class StyleViewHolder(private val binding: ItemStyleBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: StyleItem) {
-            binding.tvStyle.text = item.title
-            Glide.with(binding.imgStyle)
+            binding.tvTattooName.text = item.title
+            Glide.with(binding.ivTattoo)
                 .load(item.url)
-                .into(binding.imgStyle)
+                .into(binding.ivTattoo)
             binding.root.setOnClickListener { onClick(item) }
         }
     }

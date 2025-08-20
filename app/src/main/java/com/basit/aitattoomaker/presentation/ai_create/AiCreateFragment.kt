@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.basit.aitattoomaker.R
 import com.basit.aitattoomaker.databinding.FragmentAiCreateBinding
 import com.basit.aitattoomaker.presentation.ai_create.adapter.StyleAdapter
@@ -46,8 +47,11 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
             v.parent.requestDisallowInterceptTouchEvent(true)
             false
         }
-        binding.etPrompt.addTextChangedListener {
-            binding.btnCreate.isEnabled = !it.isNullOrBlank()
+//        binding.etPrompt.addTextChangedListener {
+//            binding.btnCreate.isEnabled = !it.isNullOrBlank()
+//        }
+        binding?.btnCreate?.setOnClickListener {
+            findNavController().navigate(AiCreateFragmentDirections.actionNavigationAicreateToNavigationAitools())
         }
     }
 

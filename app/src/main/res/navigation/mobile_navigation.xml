@@ -10,15 +10,25 @@
         android:name="com.basit.aitattoomaker.presentation.home.HomeFragment"
         android:label="@string/title_aicreate"
         tools:layout="@layout/fragment_home" >
+
         <action
-            android:id="@+id/action_navigation_home_to_navigation_aitools"
-            app:destination="@id/navigation_aitools" />
+            android:id="@+id/action_navigation_home_to_navigation_aicreate"
+            app:destination="@id/navigation_aicreate" />
     </fragment>
     <fragment
-        android:id="@+id/navigation_aicreate"
+        android:id="@+id/navigation_aicamera"
         android:name="com.basit.aitattoomaker.presentation.camera.CameraScreen"
         android:label="@string/title_aicreate"
         tools:layout="@layout/fragment_camera" />
+    <fragment
+        android:id="@+id/navigation_aicreate"
+        android:name="com.basit.aitattoomaker.presentation.ai_create.AiCreateFragment"
+        android:label="@string/title_aicreate"
+        tools:layout="@layout/fragment_ai_create" >
+        <action
+            android:id="@+id/action_navigation_aicreate_to_navigation_aitools"
+            app:destination="@id/navigation_aitools" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_aitools"

@@ -51,7 +51,7 @@ class HomeFragment : Fragment() {
         mActivity?.let { activity->
             binding?.apply {
                 textTattoo?.setOnClickListener {
-                    findNavController().navigate(HomeFragmentDirections.actionNavigationHomeToNavigationAitools())
+                    findNavController().navigate(HomeFragmentDirections.actionNavigationHomeToNavigationAicreate())
                 }
                 textAiCamera?.setOnClickListener {
                     Toast.makeText(activity, "Upcoming Feature", Toast.LENGTH_SHORT).show()
