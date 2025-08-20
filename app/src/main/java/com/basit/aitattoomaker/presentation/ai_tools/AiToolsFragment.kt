@@ -29,6 +29,7 @@ import com.basit.aitattoomaker.databinding.FragmentAitoolsBinding
 import com.basit.aitattoomaker.presentation.ai_tools.adapter.TattooAdapter
 import com.basit.aitattoomaker.presentation.ai_tools.model.Tattoo
 import com.basit.aitattoomaker.presentation.utils.DialogUtils
+import com.basit.aitattoomaker.presentation.utils.DialogUtils.dialog
 import com.basit.library.stickerview.StickerFactory
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.segmentation.Segmentation
@@ -78,11 +79,15 @@ class AiToolsFragment : Fragment() {
 
     override fun onViewCreated(v: View, s: Bundle?) {
         super.onViewCreated(v, s)
-        setupRecycler()
-        setupClicks()
-        // Initial load
-        DialogUtils.show(requireActivity(), "Processing...")
-        cycleAndLoadModel() // loads model1 initially
+        requireActivity()?.let {
+            setupRecycler()
+            setupClicks()
+            // Initial load
+            DialogUtils.show(requireActivity(), "Processing...")
+            dialog?.show()
+            cycleAndLoadModel() // loads model1 initially
+        }
+
     }
 
     // ---- UI setup ----
@@ -124,7 +129,7 @@ class AiToolsFragment : Fragment() {
         btnSave.setOnClickListener { saveToGallery() }
 
         changePhoto.setOnClickListener {
-            DialogUtils.show(requireActivity(), "Processing...")
+            dialog?.show()
             cycleAndLoadModel()
         }
     }
@@ -154,14 +159,14 @@ class AiToolsFragment : Fragment() {
         val base = BitmapFactory.decodeResource(resources, resId)
         if (base == null) {
             Toast.makeText(requireContext(), "Failed to load default photo", Toast.LENGTH_SHORT).show()
-            DialogUtils.dialog?.dismiss()
+            dialog?.dismiss()
             return
         }
 
         runSegmentation(base) { baseBitmap, maskBitmap, bgBitmap ->
             if (baseBitmap == null || maskBitmap == null || bgBitmap == null) {
                 Toast.makeText(requireContext(), "Segmentation failed", Toast.LENGTH_SHORT).show()
-                DialogUtils.dialog?.dismiss()
+                dialog?.dismiss()
                 return@runSegmentation
             }
 
@@ -249,11 +254,12 @@ class AiToolsFragment : Fragment() {
         binding.slStickerLayout.clearFocusAll()
 
         DialogUtils.show(requireActivity(), "Saving...")
+        dialog?.show()
         val outBitmap = binding.photoContainer.drawToBitmap() // composed output
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
             val ok = saveBitmapToGallery(outBitmap, "tattoo_result_${System.currentTimeMillis()}.png")
             withContext(Dispatchers.Main) {
-                DialogUtils.dialog?.dismiss()
+                dialog?.dismiss()
                 Toast.makeText(requireContext(), if (ok) "Saved to gallery" else "Save failed", Toast.LENGTH_SHORT).show()
             }
         }

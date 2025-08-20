@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Ai Tattoo Maker</string>
     <string name="title_home">Home</string>
-    <string name="title_aicreate">Ai Create</string>
+    <string name="title_aicreate">Create</string>
     <string name="title_aitools">Ai Tools</string>
     <string name="title_search">Search</string>
     <string name="title_profile">Profile</string>
@@ -20,4 +20,7 @@
     <string name="create">Generate Tattoo</string>
     <string name="see_all">See All</string>
     <string name="clear">Clear</string>
+    <string name="setting">Setting</string>
+    <string name="ai_try">Ai try</string>
+    <string name="history">History</string>
 </resources>

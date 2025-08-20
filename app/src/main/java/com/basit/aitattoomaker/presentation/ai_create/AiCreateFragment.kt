@@ -6,6 +6,7 @@ import android.content.res.Resources
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.view.ViewCompat
@@ -33,11 +34,13 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentAiCreateBinding.bind(view)
+        requireActivity()?.let {
+            setupRecycler()
+            setupPromptField()
+            setupImeAwareScrolling()
+            setupOutsideTapToClearFocus()
+        }
 
-        setupRecycler()
-        setupPromptField()
-        setupImeAwareScrolling()
-        setupOutsideTapToClearFocus()
     }
 
     private fun setupRecycler() = with(binding) {
@@ -95,7 +98,28 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
             binding.etPrompt.text?.clear()
         }
     }
+    override fun onResume() {
+        super.onResume()
+        try {
+            requireActivity().window.setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 
+    override fun onPause() {
+        super.onPause()
+        // Reset back to resize if needed elsewhere
+        try {
+            requireActivity().window.setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
     /**
      * Keyboard-aware padding + fast snapping to EditText when IME shows,
      * and clear focus when IME hides.
