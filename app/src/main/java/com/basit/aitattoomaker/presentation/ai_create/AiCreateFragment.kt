@@ -3,12 +3,14 @@ package com.basit.aitattoomaker.presentation.ai_create
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Resources
+import android.graphics.Color
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsAnimationCompat
 import androidx.core.view.WindowInsetsCompat
@@ -18,8 +20,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.basit.aitattoomaker.R
 import com.basit.aitattoomaker.databinding.FragmentAiCreateBinding
+import com.basit.aitattoomaker.extension.dp
 import com.basit.aitattoomaker.presentation.ai_create.adapter.StyleAdapter
 import com.basit.aitattoomaker.presentation.ai_create.model.StyleItem
+import com.basit.aitattoomaker.presentation.utils.GradientStrokeDrawable
 
 class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
 
@@ -180,7 +184,18 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
         root.setOnTouchListener { _, _ ->
             if (etPrompt.hasFocus()) {
                 etPrompt.clearFocus()
+                promptCard.background = ContextCompat.getDrawable(root.context, R.drawable.bg_loader_round)
                 hideKeyboardFrom(etPrompt)
+            }
+            else{
+                promptCard.background = GradientStrokeDrawable(
+                    radiusPx = root.dp(10),
+                    strokePx = root.dp(2),
+                    startColor = ContextCompat.getColor(root.context, R.color.colorprimary),
+                    endColor = ContextCompat.getColor(root.context, R.color.colorsecondary),
+                    angleDeg = 0f,  // 0 = left→right gradient
+                    fillColor  = Color.TRANSPARENT
+                )
             }
             false
         }
@@ -192,6 +207,22 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
     }
     private fun AiCreateFragment.btnClicks()= with(binding) {
       btnVariations?.setOnClickListener {  }
+        promptCard?.setOnClickListener {
+            if(!etPrompt.hasFocus()){
+                etPrompt.requestFocus()
+                promptCard.background = GradientStrokeDrawable(
+                    radiusPx = root.dp(10),
+                    strokePx = root.dp(2),
+                    startColor = ContextCompat.getColor(root.context, R.color.colorprimary),
+                    endColor = ContextCompat.getColor(root.context, R.color.colorsecondary),
+                    angleDeg = 0f,  // 0 = left→right gradient
+                    fillColor  = Color.TRANSPARENT
+                )
+            }
+            else{
+                promptCard.background = ContextCompat.getDrawable(root.context, R.drawable.bg_loader_round)
+            }
+        }
       btnCanvas?.setOnClickListener {  }
     }
     override fun onDestroyView() {
