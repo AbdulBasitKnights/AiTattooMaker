@@ -18,6 +18,7 @@
             android:id="@+id/promptCard"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:minHeight="180dp"
             app:cardCornerRadius="16dp"
             android:layout_margin="5dp"
             android:background="@drawable/bg_loader_round"
@@ -26,78 +27,74 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:orientation="vertical"
-                app:layout_constraintTop_toTopOf="parent"
-                android:padding="16dp">
+                android:padding="12dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/titlePrompt"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-
-                    <TextView
-                        android:id="@+id/titlePrompt"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textColor="@color/white"
-                        android:text="@string/enter_prompt"
-                        android:textStyle="bold"
-                        android:textSize="14sp"/>
-                </LinearLayout>
+                    android:layout_weight="1"
+                    android:text="@string/enter_prompt"
+                    android:textColor="@color/white"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
 
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilPrompt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/type_your_tattoo"
-                    android:textColor="@color/white"
                     android:gravity="top|start"
-                    android:scrollbars="vertical"
-                    android:overScrollMode="always"
-                    app:boxBackgroundMode="none"
-                    android:inputType="textCapSentences|textMultiLine"
+                    app:layout_constraintTop_toBottomOf="@+id/titlePrompt"
+                    android:hint="@string/type_your_tattoo"
                     android:imeOptions="flagNoEnterAction"
+                    android:inputType="textCapSentences|textMultiLine"
+                    android:overScrollMode="always"
+                    android:scrollbars="vertical"
+                    android:textColor="@color/white"
                     android:textColorHint="@color/greyText"
-                    android:layout_marginTop="2dp">
+                    app:boxBackgroundMode="none">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etPrompt"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textCapSentences|textMultiLine"
-                        android:textColor="@color/white"
                         android:background="@android:color/transparent"
-                        android:textColorHint="@color/greyText"
+                        android:inputType="textCapSentences|textMultiLine"
                         android:maxLines="5"
-                        android:minLines="1"/>
+                        android:minLines="1"
+                        android:textColor="@color/white"
+                        android:textColorHint="@color/greyText" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView
                     android:id="@+id/btnSurpriseMe"
-                    android:background="@drawable/bg_round"
-                    android:backgroundTint="@color/grey"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingVertical="6dp"
-                    android:paddingHorizontal="10dp"
-                    android:layout_gravity="end"
-                    android:text="@string/surprise_me"
-                    android:drawablePadding="5dp"
                     android:layout_marginTop="10dp"
-                    android:layout_marginEnd="5dp"
+                    android:background="@drawable/bg_round"
+                    android:backgroundTint="@color/grey"
+                    android:drawablePadding="5dp"
                     android:elevation="2dp"
                     android:gravity="center"
-                    android:textSize="12sp"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="6dp"
+                    android:text="@string/surprise_me"
                     android:textColor="@color/white"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:textSize="12sp"
                     app:drawableStartCompat="@drawable/surprise"
                     app:drawableTint="@color/white" />
-            </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- Styles Card -->
