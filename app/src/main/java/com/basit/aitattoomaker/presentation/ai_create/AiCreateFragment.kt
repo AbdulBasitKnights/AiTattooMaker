@@ -35,6 +35,7 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentAiCreateBinding.bind(view)
         requireActivity()?.let {
+            btnClicks()
             setupRecycler()
             setupPromptField()
             setupImeAwareScrolling()
@@ -139,7 +140,7 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
         ViewCompat.setWindowInsetsAnimationCallback(
             root,
             object : WindowInsetsAnimationCompat.Callback(
-                WindowInsetsAnimationCompat.Callback.DISPATCH_MODE_CONTINUE_ON_SUBTREE
+                DISPATCH_MODE_CONTINUE_ON_SUBTREE
             ) {
                 private var lastImeVisible = false
 
@@ -189,9 +190,14 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
         val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
-
+    private fun AiCreateFragment.btnClicks()= with(binding) {
+      btnVariations?.setOnClickListener {  }
+      btnCanvas?.setOnClickListener {  }
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 }
+
+

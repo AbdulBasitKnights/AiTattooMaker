@@ -12,3 +12,5 @@ fun View.toBitmap(): Bitmap {
         draw(canvas)
         return bitmap
     }
+
+fun View.dp(value: Int): Float = value * resources.displayMetrics.density
