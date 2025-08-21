@@ -6,10 +6,12 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Bitmap.createBitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.graphics.RectF
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -27,6 +29,7 @@ import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.viewModels
@@ -36,11 +39,18 @@ import com.basit.aitattoomaker.data.repo.TattooRepositoryImpl
 import com.basit.aitattoomaker.databinding.FragmentCameraBinding
 import com.basit.aitattoomaker.presentation.ai_tools.adapter.TattooAdapter
 import com.basit.aitattoomaker.presentation.ai_tools.model.Tattoo
+import com.basit.aitattoomaker.presentation.camera.result.ResultBottomSheet
 import com.basit.aitattoomaker.presentation.utils.AppUtils
+import com.basit.aitattoomaker.presentation.utils.AppUtils.decodeAndFixOrientation
+import com.basit.aitattoomaker.presentation.utils.AppUtils.tattooID
 import com.basit.aitattoomaker.presentation.utils.CameraPermissionHelper
+import com.basit.aitattoomaker.presentation.utils.DialogUtils
+import com.basit.aitattoomaker.presentation.utils.DialogUtils.dialog
 import com.basit.library.stickerview.StickerFactory
+import com.basit.library.stickerview.StickerLayout
 import com.bumptech.glide.Glide
 import java.io.File
+import java.io.FileOutputStream
 import java.util.concurrent.Executors
 
 @ExperimentalGetImage
@@ -131,7 +141,6 @@ class CameraScreen : Fragment() {
                 // Get drawable from id
                 val drawable = ContextCompat.getDrawable(ctx, R.drawable.tattoo)?.mutate()
                 drawable?.alpha = 128  // set alpha
-
                 Glide.with(ctx)
                     .load(drawable)
                     .into(b.tattoo)
@@ -143,7 +152,13 @@ class CameraScreen : Fragment() {
     /** Click listeners */
     private fun setupClickListeners() {
 //        binding.btnGallery.setOnClickListener { openTattooGallery() }
-        binding?.btnGallery?.setOnClickListener { captureImage() }
+        binding?.btnGallery?.setOnClickListener {
+            mActivity?.let {
+                DialogUtils.show(it, "Processing...")
+                dialog?.show()
+            }
+            captureImage()
+        }
     }
 
     /** Tattoo gallery */
@@ -182,15 +197,13 @@ class CameraScreen : Fragment() {
                 }
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                    val bitmap = BitmapFactory.decodeFile(photoFile.absolutePath)
-                    val finalBitmap = binding?.overlayView?.getFinalBitmap(bitmap)
-
+                    val corrected = decodeAndFixOrientation(photoFile)
+                    val finalBitmap = corrected?.let { binding?.overlayView?.getFinalBitmap(it) }
                     requireActivity().runOnUiThread {
-                        finalBitmap?.let {
-                            showResultDialog(finalBitmap)
-                        }
+                        finalBitmap?.let { showResultDialog(it) }
                     }
                 }
+
             }
         )
     }
@@ -208,22 +221,45 @@ class CameraScreen : Fragment() {
     }
 
     /** Preview dialog */
+//    private fun showResultDialog(bitmap: Bitmap) {
+//        val dialog = Dialog(requireContext()).apply {
+//            setContentView(R.layout.dialog_result_preview)
+//            findViewById<ImageView>(R.id.imgResult).setImageBitmap(bitmap)
+//            StickerFactory.currentSticker =
+//                StickerFactory.createSticker(context = requireContext(), drawableId = tattooID, alpha = 128)
+//            findViewById<StickerLayout>(R.id.sl_sticker_layout).addOrUpdateSticker(StickerFactory.currentSticker)
+//            findViewById<Button>(R.id.btnSave).setOnClickListener {
+//                saveImageToGallery(bitmap)
+//                dismiss()
+//            }
+//            findViewById<Button>(R.id.btnRetake).setOnClickListener { dismiss() }
+//        }
+//        dialog.show()
+//    }
     private fun showResultDialog(bitmap: Bitmap) {
-        val dialog = Dialog(requireContext()).apply {
-            setContentView(R.layout.dialog_result_preview)
-            findViewById<ImageView>(R.id.imgResult).setImageBitmap(bitmap)
 
-            findViewById<Button>(R.id.btnSave).setOnClickListener {
-                saveImageToGallery(bitmap)
-                dismiss()
-            }
-            findViewById<Button>(R.id.btnRetake).setOnClickListener { dismiss() }
+        val uri = saveTempBitmap(bitmap) ?: run {
+            Toast.makeText(requireContext(), "Failed to prepare preview", Toast.LENGTH_SHORT).show()
+            return
         }
-        dialog.show()
+        ResultBottomSheet.newInstance(uri)
+            .show(childFragmentManager, "ResultBottomSheet")
+    }
+
+    private fun saveTempBitmap(bitmap: Bitmap): Uri? {
+        return try {
+            val file = File(requireContext().cacheDir, "preview_${System.currentTimeMillis()}.png")
+            FileOutputStream(file).use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+            FileProvider.getUriForFile(
+                requireContext(),
+                "${requireContext().packageName}.fileprovider",
+                file
+            )
+        } catch (_: Exception) { null }
     }
 
     /** Save to gallery */
-    private fun saveImageToGallery(bitmap: Bitmap) {
+    fun saveImageToGallery(bitmap: Bitmap) {
         val contentValues = ContentValues().apply {
             put(MediaStore.Images.Media.DISPLAY_NAME, "Tattoo_${System.currentTimeMillis()}.jpg")
             put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
