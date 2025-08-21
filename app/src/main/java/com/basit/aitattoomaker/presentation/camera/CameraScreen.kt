@@ -1,13 +1,10 @@
 package com.basit.aitattoomaker.presentation.camera
 
 import android.app.Activity
-import android.app.Dialog
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.Bitmap.createBitmap
-import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.graphics.RectF
@@ -19,8 +16,7 @@ import android.view.LayoutInflater
 import android.view.Surface
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
+import android.view.ViewTreeObserver
 import android.widget.Toast
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ExperimentalGetImage
@@ -34,6 +30,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSnapHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.basit.aitattoomaker.R
 import com.basit.aitattoomaker.data.repo.TattooRepositoryImpl
 import com.basit.aitattoomaker.databinding.FragmentCameraBinding
@@ -42,16 +40,14 @@ import com.basit.aitattoomaker.presentation.ai_tools.model.Tattoo
 import com.basit.aitattoomaker.presentation.camera.result.ResultBottomSheet
 import com.basit.aitattoomaker.presentation.utils.AppUtils
 import com.basit.aitattoomaker.presentation.utils.AppUtils.decodeAndFixOrientation
-import com.basit.aitattoomaker.presentation.utils.AppUtils.tattooID
 import com.basit.aitattoomaker.presentation.utils.CameraPermissionHelper
 import com.basit.aitattoomaker.presentation.utils.DialogUtils
 import com.basit.aitattoomaker.presentation.utils.DialogUtils.dialog
-import com.basit.library.stickerview.StickerFactory
-import com.basit.library.stickerview.StickerLayout
 import com.bumptech.glide.Glide
 import java.io.File
 import java.io.FileOutputStream
 import java.util.concurrent.Executors
+import kotlin.math.abs
 
 @ExperimentalGetImage
 class CameraScreen : Fragment() {
@@ -108,9 +104,78 @@ class CameraScreen : Fragment() {
         }
 
     }
-    private fun setupRecycler(){
-        binding?.apply {
 
+    private fun setupTattooCarousel(rv: RecyclerView, adapter: TattooAdapter) {
+        val lm = LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
+        rv.layoutManager = lm
+        rv.adapter = adapter
+        rv.setHasFixedSize(true)
+        rv.clipToPadding = false
+        rv.setPadding(dp(48), 0, dp(48), 0)  // side peek
+
+        // spacing between cards
+        rv.addItemDecoration(object : RecyclerView.ItemDecoration() {
+            override fun getItemOffsets(outRect: android.graphics.Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+                val space = dp(12)
+                outRect.right = space
+                if (parent.getChildAdapterPosition(view) == 0) outRect.left = space
+            }
+        })
+
+        val snap = LinearSnapHelper().also { it.attachToRecyclerView(rv) }
+
+        // scale/alpha transform while scrolling
+        rv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                val centerX = recyclerView.width / 2f
+                for (i in 0 until recyclerView.childCount) {
+                    val child = recyclerView.getChildAt(i) ?: continue
+                    val childCenterX = (child.left + child.right) / 2f
+                    val dist = kotlin.math.abs(centerX - childCenterX)
+                    val norm = (dist / centerX).coerceIn(0f, 1f)
+                    val scale = 0.88f + (1f - norm) * 0.17f // 0.88 → 1.05
+                    val alpha = 0.75f + (1f - norm) * 0.25f // 0.75 → 1.0
+                    child.scaleX = scale
+                    child.scaleY = scale
+                    child.alpha  = alpha
+                }
+            }
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    val view = snap.findSnapView(lm) ?: return
+                    val pos = lm.getPosition(view)
+                    if (pos != RecyclerView.NO_POSITION) {
+                        adapter.setSelected(pos) // 🔹 highlight centered item
+                    }
+                }
+            }
+        })
+
+        // start with item 0 centered (or any default index you prefer)
+        rv.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                rv.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                if (adapter.itemCount == 0) return
+                // Smooth scroll to center the first item
+                rv.post {
+                    val view = lm.findViewByPosition(0) ?: return@post
+                    // snap helper will handle centering on first idle
+                    rv.smoothScrollToPosition(0)
+                    adapter.setSelected(0)
+                }
+            }
+        })
+    }
+
+    private fun dp(v: Int) = (v * resources.displayMetrics.density).toInt()
+
+
+    private fun Int?.orZero() = this ?: 0
+
+
+    private fun setupRecycler(){
+       /* binding?.apply {
             adapter = TattooAdapter { tattoo ->
                 binding?.let { b ->
                     mActivity?.let { ctx ->
@@ -130,6 +195,28 @@ class CameraScreen : Fragment() {
             rvTattoo.setHasFixedSize(true)
             rvTattoo.adapter = adapter
             adapter.submitList(tattooItems)
+        }*/
+        binding?.apply {
+            adapter = TattooAdapter { tattoo ->
+                // user tapped an item — you can also snap to it:
+                val pos = adapter.currentList.indexOfFirst { it.name == tattoo.name }
+                if (pos >= 0) rvTattoo.smoothScrollToPosition(pos)
+                // do your click handling...
+                binding?.let { b ->
+                    mActivity?.let { ctx ->
+                        // Get drawable from id
+                        val drawable = ContextCompat.getDrawable(ctx, tattoo.tattooId)?.mutate()
+                        drawable?.alpha = 128  // set alpha
+
+                        Glide.with(ctx)
+                            .load(drawable)
+                            .into(b.tattoo)
+                    }
+
+                }
+            }
+            setupTattooCarousel(rvTattoo, adapter)
+            adapter.submitList(tattooItems) // your list
         }
 
     }
