@@ -111,9 +111,8 @@ class CameraScreen : Fragment() {
         rv.adapter = adapter
         rv.setHasFixedSize(true)
         rv.clipToPadding = false
-        rv.setPadding(dp(48), 0, dp(48), 0)  // side peek
+        rv.setPadding(dp(48), 0, dp(48), 0)
 
-        // spacing between cards
         rv.addItemDecoration(object : RecyclerView.ItemDecoration() {
             override fun getItemOffsets(outRect: android.graphics.Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
                 val space = dp(12)
@@ -122,9 +121,28 @@ class CameraScreen : Fragment() {
             }
         })
 
+        // Ensure scale pivots from center (once per attached view)
+        rv.addOnChildAttachStateChangeListener(object : RecyclerView.OnChildAttachStateChangeListener {
+            override fun onChildViewAttachedToWindow(view: View) {
+                view.pivotX = view.width / 2f
+                view.pivotY = view.height / 2f
+            }
+            override fun onChildViewDetachedFromWindow(view: View) = Unit
+        })
+
         val snap = LinearSnapHelper().also { it.attachToRecyclerView(rv) }
 
-        // scale/alpha transform while scrolling
+        val minScale = 0.75f
+        val maxScale = 1.00f
+        val minAlpha = 0.75f
+        val maxAlpha = 1.00f
+
+        fun lerp(a: Float, b: Float, t: Float) = a + (b - a) * t
+        fun smoothstep01(x: Float): Float {            // smooth 0..1 easing
+            val t = x.coerceIn(0f, 1f)
+            return t * t * (3 - 2 * t)                 // cubic smoothstep
+        }
+
         rv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 val centerX = recyclerView.width / 2f
@@ -132,9 +150,15 @@ class CameraScreen : Fragment() {
                     val child = recyclerView.getChildAt(i) ?: continue
                     val childCenterX = (child.left + child.right) / 2f
                     val dist = kotlin.math.abs(centerX - childCenterX)
-                    val norm = (dist / centerX).coerceIn(0f, 1f)
-                    val scale = 0.88f + (1f - norm) * 0.17f // 0.88 → 1.05
-                    val alpha = 0.75f + (1f - norm) * 0.25f // 0.75 → 1.0
+                    val norm = (dist / centerX).coerceIn(0f, 1f)     // 0 at center → 1 at edge
+                    val proximity = 1f - norm                        // 1 at center → 0 at edge
+
+                    // Ease the proximity for smoother grow/shrink
+                    val eased = smoothstep01(proximity)
+
+                    val scale = lerp(minScale, maxScale, eased)
+                    val alpha = lerp(minAlpha, maxAlpha, eased)
+
                     child.scaleX = scale
                     child.scaleY = scale
                     child.alpha  = alpha
@@ -146,21 +170,32 @@ class CameraScreen : Fragment() {
                     val view = snap.findSnapView(lm) ?: return
                     val pos = lm.getPosition(view)
                     if (pos != RecyclerView.NO_POSITION) {
-                        adapter.setSelected(pos) // 🔹 highlight centered item
+                        // Tell adapter who’s centered (for ring/selection etc.)
+                        adapter.setSelected(pos)
+
+                        // Tiny settle anim: centered → exact max, others → min
+                        for (i in 0 until recyclerView.childCount) {
+                            val child = recyclerView.getChildAt(i) ?: continue
+                            val targetScale = if (child == view) maxScale else minScale
+                            val targetAlpha = if (child == view) maxAlpha else minAlpha
+                            child.animate()
+                                .scaleX(targetScale)
+                                .scaleY(targetScale)
+                                .alpha(targetAlpha)
+                                .setDuration(120L)    // short & sweet
+                                .start()
+                        }
                     }
                 }
             }
         })
 
-        // start with item 0 centered (or any default index you prefer)
+        // Start centered on item 0 (or any index you want)
         rv.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 rv.viewTreeObserver.removeOnGlobalLayoutListener(this)
                 if (adapter.itemCount == 0) return
-                // Smooth scroll to center the first item
                 rv.post {
-                    val view = lm.findViewByPosition(0) ?: return@post
-                    // snap helper will handle centering on first idle
                     rv.smoothScrollToPosition(0)
                     adapter.setSelected(0)
                 }
@@ -169,6 +204,7 @@ class CameraScreen : Fragment() {
     }
 
     private fun dp(v: Int) = (v * resources.displayMetrics.density).toInt()
+
 
 
     private fun Int?.orZero() = this ?: 0
@@ -308,21 +344,6 @@ class CameraScreen : Fragment() {
     }
 
     /** Preview dialog */
-//    private fun showResultDialog(bitmap: Bitmap) {
-//        val dialog = Dialog(requireContext()).apply {
-//            setContentView(R.layout.dialog_result_preview)
-//            findViewById<ImageView>(R.id.imgResult).setImageBitmap(bitmap)
-//            StickerFactory.currentSticker =
-//                StickerFactory.createSticker(context = requireContext(), drawableId = tattooID, alpha = 128)
-//            findViewById<StickerLayout>(R.id.sl_sticker_layout).addOrUpdateSticker(StickerFactory.currentSticker)
-//            findViewById<Button>(R.id.btnSave).setOnClickListener {
-//                saveImageToGallery(bitmap)
-//                dismiss()
-//            }
-//            findViewById<Button>(R.id.btnRetake).setOnClickListener { dismiss() }
-//        }
-//        dialog.show()
-//    }
     private fun showResultDialog(bitmap: Bitmap) {
 
         val uri = saveTempBitmap(bitmap) ?: run {

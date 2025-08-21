@@ -8,11 +8,21 @@
     android:background="@drawable/bg_oval"
     android:layout_marginHorizontal="6dp"
     android:layout_marginVertical="2dp">
-
+    <View
+        android:id="@+id/focusRing"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/focus_ring_white"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="6dp"/>
     <ImageView
         android:id="@+id/ivTattoo"
         android:layout_width="75dp"
-        android:layout_height="70dp"
+        android:layout_height="75dp"
         android:adjustViewBounds="true"
         android:padding="15dp"
         app:layout_constraintEnd_toEndOf="parent"

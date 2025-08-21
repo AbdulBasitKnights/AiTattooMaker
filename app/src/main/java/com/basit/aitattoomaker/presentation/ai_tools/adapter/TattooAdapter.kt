@@ -1,18 +1,14 @@
 package com.basit.aitattoomaker.presentation.ai_tools.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.basit.aitattoomaker.R
-import com.basit.aitattoomaker.databinding.ItemTattooBinding
 import com.basit.aitattoomaker.databinding.ItemTattooRoundBinding
 import com.basit.aitattoomaker.presentation.ai_tools.model.Tattoo
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import kotlin.math.abs
 
 class TattooAdapter(
     private val onItemClick: (Tattoo) -> Unit
@@ -54,28 +50,16 @@ class TattooAdapter(
 
         fun bind(item: Tattoo, isSelected: Boolean) = with(binding) {
             tvTattooName.text = item.name
+            Glide.with(ivTattoo).load(item.tattooId).into(ivTattoo)
 
-            Glide.with(ivTattoo)
-                .load(item.tattooId) // drawable @Res
-                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                .into(ivTattoo)
-
-            // 🔹 base scale/alpha (will be further animated by RecyclerView transformer)
-            val targetScale = if (isSelected) 1.05f else 0.88f
-            val targetAlpha = if (isSelected) 1f else 0.75f
-            root.scaleX = targetScale
-            root.scaleY = targetScale
-            root.alpha  = targetAlpha
-
-            // 🔹 optional: selected background stroke (use your selector/drawable)
-            root.background = ContextCompat.getDrawable(
-                root.context,
-                if (isSelected) R.drawable.bg_oval /* gradient stroke */
-                else R.drawable.bg_oval
-            )
-
-            root.setOnClickListener { onItemClick(item) }
+            // base visual state; scale/alpha will also be adjusted by scroll listener
+            root.isSelected = isSelected
+             if (isSelected) {
+                 focusRing.visibility=View.VISIBLE
+                onItemClick(item)
+            } else {focusRing.visibility=View.GONE}
         }
+
     }
 
     companion object {
