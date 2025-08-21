@@ -23,7 +23,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.basit.aitattoomaker.R
 import com.basit.aitattoomaker.databinding.FragmentAiCreateBinding
-import com.basit.aitattoomaker.databinding.FragmentAitoolsBinding
 import com.basit.aitattoomaker.extension.dp
 import com.basit.aitattoomaker.extension.observeKeyboardLegacy
 import com.basit.aitattoomaker.presentation.ai_create.adapter.StyleAdapter
@@ -141,10 +140,10 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
             // Enable/disable Create button based on text presence
             etPrompt.addTextChangedListener { btnCreate.isEnabled = !it.isNullOrBlank()
                 if(!it.isNullOrBlank()){
-                    btnClear?.visibility= View.VISIBLE
+                    btnClear.visibility= View.VISIBLE
                 }
                 else{
-                    btnClear?.visibility= View.GONE
+                    btnClear.visibility= View.GONE
                 }
             }
 
@@ -258,12 +257,12 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
     }
     private fun btnClicks(){
         binding?.apply {
-            btnVariations?.setOnClickListener {  }
-            promptCard?.setOnClickListener {
+            btnVariations.setOnClickListener {  }
+            promptCard.setOnClickListener {
                 etPrompt.requestFocus()
                 etPrompt.showKeyboard()
             }
-            btnCanvas?.setOnClickListener {  }
+            btnCanvas.setOnClickListener {  }
         }
 
     }

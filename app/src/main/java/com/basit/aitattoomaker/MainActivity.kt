@@ -1,6 +1,7 @@
 package com.basit.aitattoomaker
 
 import android.os.Bundle
+import android.view.View
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
@@ -34,6 +35,10 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)*/
         navView.setupWithNavController(navController)
     }
-
-
+    fun hidebottombar() {
+        binding?.navView?.visibility = View.GONE
+    }
+    fun showbottombar() {
+        binding?.navView?.visibility = View.VISIBLE
+    }
 }

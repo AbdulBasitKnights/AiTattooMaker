@@ -19,7 +19,11 @@
         android:id="@+id/navigation_aicamera"
         android:name="com.basit.aitattoomaker.presentation.camera.CameraScreen"
         android:label="@string/title_aicreate"
-        tools:layout="@layout/fragment_camera" />
+        tools:layout="@layout/fragment_camera" >
+        <action
+            android:id="@+id/action_navigation_aicamera_to_navigation_aitools"
+            app:destination="@id/navigation_aitools" />
+    </fragment>
     <fragment
         android:id="@+id/navigation_aicreate"
         android:name="com.basit.aitattoomaker.presentation.ai_create.AiCreateFragment"

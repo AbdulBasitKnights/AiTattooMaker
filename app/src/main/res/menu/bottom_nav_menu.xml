@@ -7,7 +7,7 @@
         android:title="@string/title_aicreate" />
 
     <item
-        android:id="@+id/navigation_aitools"
+        android:id="@+id/navigation_aicamera"
         android:icon="@drawable/ai_tools_svg"
         android:title="@string/ai_try" />
 

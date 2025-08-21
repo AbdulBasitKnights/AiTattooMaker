@@ -42,6 +42,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import java.io.OutputStream
 import java.nio.FloatBuffer
+import androidx.core.graphics.createBitmap
 
 class AiToolsFragment : Fragment() {
 
@@ -226,7 +227,7 @@ class AiToolsFragment : Fragment() {
                     .scale(base.width, base.height, filter = true)
 
                 // 2) Build background with person cut out (DST_OUT)
-                val bgBitmap = Bitmap.createBitmap(base.width, base.height, Bitmap.Config.ARGB_8888)
+                val bgBitmap = createBitmap(base.width, base.height)
                 val canvas = Canvas(bgBitmap)
                 val paint = Paint(Paint.ANTI_ALIAS_FLAG)
                 val maskPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -296,11 +297,7 @@ class AiToolsFragment : Fragment() {
     private fun saveBitmapToGallery(bitmap: Bitmap, fileName: String): Boolean {
         val resolver = requireContext().contentResolver
         val imageCollection =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
-            } else {
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-            }
+            MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
 
         val cv = ContentValues().apply {
             put(MediaStore.Images.Media.DISPLAY_NAME, fileName)

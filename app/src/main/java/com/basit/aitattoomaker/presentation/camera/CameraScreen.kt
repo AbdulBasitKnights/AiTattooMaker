@@ -5,7 +5,6 @@ import android.app.Dialog
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
@@ -15,15 +14,14 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.Surface
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ExperimentalGetImage
-import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
@@ -32,23 +30,35 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.basit.aitattoomaker.R
 import com.basit.aitattoomaker.data.repo.TattooRepositoryImpl
 import com.basit.aitattoomaker.databinding.FragmentCameraBinding
+import com.basit.aitattoomaker.presentation.ai_tools.adapter.TattooAdapter
+import com.basit.aitattoomaker.presentation.ai_tools.model.Tattoo
+import com.basit.aitattoomaker.presentation.utils.AppUtils
 import com.basit.aitattoomaker.presentation.utils.CameraPermissionHelper
+import com.basit.library.stickerview.StickerFactory
+import com.bumptech.glide.Glide
 import java.io.File
 import java.util.concurrent.Executors
 
 @ExperimentalGetImage
 class CameraScreen : Fragment() {
-    private var _binding: FragmentCameraBinding? = null
-    private val binding get() = _binding!!
+    private var binding: FragmentCameraBinding? = null
     private lateinit var cameraProvider: ProcessCameraProvider
     private lateinit var imageCapture: ImageCapture
     private val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
     private val cameraExecutor by lazy { Executors.newSingleThreadExecutor() }
     private val viewModel: CameraViewModel by viewModels { CameraViewModelFactory( requireActivity().application, TattooRepositoryImpl(requireContext()) ) }
     private var defaultTattoo: Bitmap? = null
+    private val tattooItems = listOf(
+        Tattoo("Dragon", R.drawable.dragon),
+        Tattoo("Flower", R.drawable.flower),
+        Tattoo("Fire",   R.drawable.tattoo),
+        Tattoo("Heart",  R.drawable.heart)
+    )
+    private lateinit var adapter: TattooAdapter
     private var mActivity: FragmentActivity?=null
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -63,35 +73,77 @@ class CameraScreen : Fragment() {
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentCameraBinding.inflate(inflater, container, false)
-        return binding.root
+    ): View? {
+        binding = FragmentCameraBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        loadDefaultTattoo()
-        setupClickListeners()
-
-        if (CameraPermissionHelper.hasCameraPermission(requireContext())) {
-            startCamera()
-        } else {
-            requestCameraPermission()
+        mActivity?.let {
+            try {
+                AppUtils.getMain(it)?.hidebottombar()
+                setupRecycler()
+                loadDefaultTattoo()
+                setupClickListeners()
+                if (CameraPermissionHelper.hasCameraPermission(requireContext())) {
+                    startCamera()
+                } else {
+                    requestCameraPermission()
+                }
+            }
+            catch (e:Exception){
+                e.printStackTrace()
+            }
         }
-    }
 
+    }
+    private fun setupRecycler(){
+        binding?.apply {
+
+            adapter = TattooAdapter { tattoo ->
+                binding?.let { b ->
+                    mActivity?.let { ctx ->
+                        // Get drawable from id
+                        val drawable = ContextCompat.getDrawable(ctx, tattoo.tattooId)?.mutate()
+                        drawable?.alpha = 128  // set alpha
+
+                        Glide.with(ctx)
+                            .load(drawable)
+                            .into(b.tattoo)
+                    }
+
+                }
+
+            }
+            rvTattoo.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            rvTattoo.setHasFixedSize(true)
+            rvTattoo.adapter = adapter
+            adapter.submitList(tattooItems)
+        }
+
+    }
     /** Load tattoo */
     private fun loadDefaultTattoo() {
         // Replace with repo/viewmodel logic if needed
-        defaultTattoo = BitmapFactory.decodeResource(resources, R.drawable.tattoo)
-        defaultTattoo?.let { binding.overlayView.setTattoo(it) }
+        binding?.let { b ->
+            mActivity?.let { ctx ->
+                // Get drawable from id
+                val drawable = ContextCompat.getDrawable(ctx, R.drawable.tattoo)?.mutate()
+                drawable?.alpha = 128  // set alpha
+
+                Glide.with(ctx)
+                    .load(drawable)
+                    .into(b.tattoo)
+            }
+
+        }
     }
 
     /** Click listeners */
     private fun setupClickListeners() {
 //        binding.btnGallery.setOnClickListener { openTattooGallery() }
-        binding.btnGallery.setOnClickListener { captureImage() }
+        binding?.btnGallery?.setOnClickListener { captureImage() }
     }
 
     /** Tattoo gallery */
@@ -108,7 +160,7 @@ class CameraScreen : Fragment() {
         if (requestCode == PICK_TATTOO_REQUEST && resultCode == Activity.RESULT_OK) {
             data?.data?.let { uri ->
                 val bitmap = MediaStore.Images.Media.getBitmap(requireContext().contentResolver, uri)
-                binding.overlayView.setTattoo(bitmap)
+//                binding?.slStickerLayout?.addSticker(bitmap)
             }
         }
     }
@@ -131,10 +183,12 @@ class CameraScreen : Fragment() {
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                     val bitmap = BitmapFactory.decodeFile(photoFile.absolutePath)
-                    val finalBitmap = binding.overlayView.getFinalBitmap(bitmap)
+                    val finalBitmap = binding?.overlayView?.getFinalBitmap(bitmap)
 
                     requireActivity().runOnUiThread {
-                        showResultDialog(finalBitmap)
+                        finalBitmap?.let {
+                            showResultDialog(finalBitmap)
+                        }
                     }
                 }
             }
@@ -199,13 +253,13 @@ class CameraScreen : Fragment() {
         cameraProvider.unbindAll()
 
         val preview = Preview.Builder()
-            .setTargetRotation(binding.previewView.display.rotation)
+            .setTargetRotation(binding?.previewView?.display?.rotation?: Surface.ROTATION_90)
             .build().apply {
-                setSurfaceProvider(binding.previewView.surfaceProvider)
+                surfaceProvider = binding?.previewView?.surfaceProvider
             }
 
         imageCapture = ImageCapture.Builder()
-            .setTargetRotation(binding.previewView.display.rotation)
+            .setTargetRotation(binding?.previewView?.display?.rotation?: Surface.ROTATION_90)
             .build()
 
         cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture)
@@ -217,12 +271,12 @@ class CameraScreen : Fragment() {
 
     private fun observeViewModel() {
         viewModel.segmentationResult.observe(viewLifecycleOwner) { mask ->
-            binding.overlayView.updateSegmentation(mask)
+            binding?.overlayView?.updateSegmentation(mask)
         }
 
-        viewModel.selectedTattoo.observe(viewLifecycleOwner) { tattoo ->
-            tattoo?.let { binding.overlayView.setTattoo(it) }
-        }
+//        viewModel.selectedTattoo.observe(viewLifecycleOwner) { tattoo ->
+//            tattoo?.let { binding?.overlayView?.setTattoo(it) }
+//        }
 
 //        viewModel.errorState.observe(viewLifecycleOwner) { error ->
 //            error?.let { Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show() }
@@ -232,7 +286,6 @@ class CameraScreen : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         cameraExecutor.shutdown()
-        _binding = null
     }
 
     companion object {
