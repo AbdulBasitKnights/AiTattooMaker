@@ -1,6 +1,7 @@
 package com.basit.aitattoomaker.presentation.ai_tools
 
 import android.content.ContentValues
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
@@ -22,6 +23,7 @@ import androidx.core.graphics.scale
 import androidx.core.view.isVisible
 import androidx.core.view.drawToBitmap
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.basit.aitattoomaker.R
@@ -43,8 +45,7 @@ import java.nio.FloatBuffer
 
 class AiToolsFragment : Fragment() {
 
-    private var _binding: FragmentAitoolsBinding? = null
-    private val binding get() = _binding!!
+    private var binding: FragmentAitoolsBinding? = null
 
     private lateinit var adapter: TattooAdapter
     private var modelIndex = 0
@@ -67,71 +68,94 @@ class AiToolsFragment : Fragment() {
         Tattoo("Fire",   R.drawable.tattoo),
         Tattoo("Heart",  R.drawable.heart)
     )
+    private var mActivity: FragmentActivity?=null
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mActivity=requireActivity()
+    }
 
+    override fun onDetach() {
+        super.onDetach()
+        mActivity=null
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentAitoolsBinding.inflate(inflater, container, false)
-        return binding.root
+    ): View? {
+        binding = FragmentAitoolsBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
     override fun onViewCreated(v: View, s: Bundle?) {
         super.onViewCreated(v, s)
-        requireActivity()?.let {
-            setupRecycler()
-            setupClicks()
-            // Initial load
-            DialogUtils.show(requireActivity(), "Processing...")
-            dialog?.show()
-            cycleAndLoadModel() // loads model1 initially
+        mActivity?.let {
+            try {
+                setupRecycler()
+                setupClicks()
+                // Initial load
+                DialogUtils.show(it, "Processing...")
+                dialog?.show()
+                cycleAndLoadModel() // loads model1 initially
+            }
+            catch (e:Exception){
+                e.printStackTrace()
+            }
         }
 
     }
 
     // ---- UI setup ----
 
-    private fun setupRecycler() = with(binding) {
-        adapter = TattooAdapter { tattoo ->
-            // Add sticker with default alpha 128
-            StickerFactory.currentSticker =
-                StickerFactory.createSticker(context = requireContext(), drawableId = tattoo.tattooId, alpha = 128)
-            slStickerLayout.addSticker(StickerFactory.currentSticker)
+    private fun setupRecycler(){
+        binding?.apply {
+
+            adapter = TattooAdapter { tattoo ->
+                // Add sticker with default alpha 128
+                StickerFactory.currentSticker =
+                    StickerFactory.createSticker(context = requireContext(), drawableId = tattoo.tattooId, alpha = 128)
+                slStickerLayout.addSticker(StickerFactory.currentSticker)
+            }
+            rvTattoo.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            rvTattoo.setHasFixedSize(true)
+            rvTattoo.adapter = adapter
+            adapter.submitList(tattooItems)
         }
-        rvTattoo.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        rvTattoo.setHasFixedSize(true)
-        rvTattoo.adapter = adapter
-        adapter.submitList(tattooItems)
+
     }
 
-    private fun setupClicks() = with(binding) {
-        btnLoadDefault.setOnClickListener {
-            // Toggle list panel(s)
-            rvTattoo.isVisible = !rvTattoo.isVisible
-            opacityList.isVisible = false
+    private fun setupClicks(){
+        binding?.apply {
+            btnLoadDefault.setOnClickListener {
+                // Toggle list panel(s)
+                rvTattoo.isVisible = !rvTattoo.isVisible
+                opacityList.isVisible = false
+            }
+
+            btnPickSticker.setOnClickListener {
+                // pickStickerLauncher.launch("image/*")
+            }
+
+            btnAlpha.setOnClickListener {
+                opacityList.isVisible = !opacityList.isVisible
+                rvTattoo.isVisible = false
+            }
+
+            opacity64.setOnClickListener { slStickerLayout.updateSticker(64) }
+            opacity128.setOnClickListener { slStickerLayout.updateSticker(128) }
+            opacity192.setOnClickListener { slStickerLayout.updateSticker(192) }
+            opacity255.setOnClickListener { slStickerLayout.updateSticker(255) }
+
+            btnSave.setOnClickListener { saveToGallery() }
+
+            changePhoto.setOnClickListener {
+                dialog?.show()
+                cycleAndLoadModel()
+            }
         }
 
-        btnPickSticker.setOnClickListener {
-            // pickStickerLauncher.launch("image/*")
-        }
-
-        btnAlpha.setOnClickListener {
-            opacityList.isVisible = !opacityList.isVisible
-            rvTattoo.isVisible = false
-        }
-
-        opacity64.setOnClickListener { slStickerLayout.updateSticker(64) }
-        opacity128.setOnClickListener { slStickerLayout.updateSticker(128) }
-        opacity192.setOnClickListener { slStickerLayout.updateSticker(192) }
-        opacity255.setOnClickListener { slStickerLayout.updateSticker(255) }
-
-        btnSave.setOnClickListener { saveToGallery() }
-
-        changePhoto.setOnClickListener {
-            dialog?.show()
-            cycleAndLoadModel()
-        }
     }
 
     private fun cycleAndLoadModel() {
@@ -141,9 +165,9 @@ class AiToolsFragment : Fragment() {
     }
 
     private fun applyContainerRatio(photoW: Int, photoH: Int) {
-        val params = binding.photoContainer.layoutParams as ConstraintLayout.LayoutParams
+        val params = binding?.photoContainer?.layoutParams as ConstraintLayout.LayoutParams
         params.dimensionRatio = "H,$photoW:$photoH"
-        binding.photoContainer.layoutParams = params
+        binding?.photoContainer?.layoutParams = params
     }
 
     // ---- Image load + segmentation ----
@@ -172,10 +196,10 @@ class AiToolsFragment : Fragment() {
 
             applyContainerRatio(base.width, base.height)
 
-            binding.maskedStickerView.setImageAndMask(baseBitmap, maskBitmap)
-            binding.bgImage.setImageAndMask(bgBitmap, bgBitmap)
+            binding?.maskedStickerView?.setImageAndMask(baseBitmap, maskBitmap)
+            binding?.bgImage?.setImageAndMask(bgBitmap, bgBitmap)
 
-            DialogUtils.dialog?.dismiss()
+            dialog?.dismiss()
         }
     }
 
@@ -239,7 +263,7 @@ class AiToolsFragment : Fragment() {
             val bm = requireContext().contentResolver.openInputStream(uri)?.use(BitmapFactory::decodeStream)
             withContext(Dispatchers.Main) {
                 if (bm != null) {
-                    binding.maskedStickerView.setSticker(bm)
+                    binding?.maskedStickerView?.setSticker(bm)
                 } else {
                     Toast.makeText(requireContext(), "Sticker load failed", Toast.LENGTH_SHORT).show()
                 }
@@ -251,17 +275,21 @@ class AiToolsFragment : Fragment() {
 
     private fun saveToGallery() {
         // Ensure current edits applied visually
-        binding.slStickerLayout.clearFocusAll()
-
-        DialogUtils.show(requireActivity(), "Saving...")
+        binding?.slStickerLayout?.clearFocusAll()
+        mActivity?.let {
+            DialogUtils.show(it, "Saving...")
+        }
         dialog?.show()
-        val outBitmap = binding.photoContainer.drawToBitmap() // composed output
+        val outBitmap = binding?.photoContainer?.drawToBitmap() // composed output
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
-            val ok = saveBitmapToGallery(outBitmap, "tattoo_result_${System.currentTimeMillis()}.png")
-            withContext(Dispatchers.Main) {
-                dialog?.dismiss()
-                Toast.makeText(requireContext(), if (ok) "Saved to gallery" else "Save failed", Toast.LENGTH_SHORT).show()
+            outBitmap?.let {
+                val ok = saveBitmapToGallery(outBitmap, "tattoo_result_${System.currentTimeMillis()}.png")
+                withContext(Dispatchers.Main) {
+                    dialog?.dismiss()
+                    Toast.makeText(requireContext(), if (ok) "Saved to gallery" else "Save failed", Toast.LENGTH_SHORT).show()
+                }
             }
+
         }
     }
 
@@ -305,9 +333,8 @@ class AiToolsFragment : Fragment() {
     override fun onDestroyView() {
         // Clean stickers before dropping binding to avoid NPE
         try {
-            binding.slStickerLayout.removeAllSticker()
+            binding?.slStickerLayout?.removeAllSticker()
         } catch (_: Exception) {}
-        _binding = null
         super.onDestroyView()
     }
 }
