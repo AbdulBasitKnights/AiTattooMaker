@@ -67,6 +67,9 @@ dependencies {
     // Glide for image loading
     implementation(libs.glide)
     kapt (libs.compiler)
+    //ssp & sdp
+    implementation("com.intuit.ssp:ssp-android:1.1.0")
+    implementation("com.intuit.sdp:sdp-android:1.1.1")
     // Hilt
 //    implementation (libs.hilt.android)
 //    kapt (libs.hilt.compiler)

@@ -1,5 +1,6 @@
 package com.basit.aitattoomaker.presentation.camera
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ContentValues
 import android.content.Context
@@ -11,6 +12,7 @@ import android.graphics.RectF
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Surface
@@ -88,6 +90,8 @@ class CameraScreen : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mActivity?.let {
+//            val androidId = Settings.Secure.getString(it.contentResolver, Settings.Secure.ANDROID_ID)
+//            Log.e("checkUUID","AndroidID: $androidId")
             try {
                 AppUtils.getMain(it)?.hidebottombar()
                 setupRecycler()
