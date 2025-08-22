@@ -43,12 +43,13 @@ import kotlinx.coroutines.withContext
 import java.io.OutputStream
 import java.nio.FloatBuffer
 import androidx.core.graphics.createBitmap
+import com.basit.aitattoomaker.presentation.ai_tools.adapter.TattooAdapterOld
 
 class AiToolsFragment : Fragment() {
 
     private var binding: FragmentAitoolsBinding? = null
 
-    private lateinit var adapter: TattooAdapter
+    private lateinit var adapter: TattooAdapterOld
     private var modelIndex = 0
 
     // Single, reusable ML Kit options
@@ -113,10 +114,14 @@ class AiToolsFragment : Fragment() {
     private fun setupRecycler(){
         binding?.apply {
 
-            adapter = TattooAdapter { tattoo ->
+            adapter = TattooAdapterOld { tattoo ->
                 // Add sticker with default alpha 128
                 StickerFactory.currentSticker =
-                    StickerFactory.createSticker(context = requireContext(), drawableId = tattoo.tattooId, alpha = 128)
+                    StickerFactory.createSticker(
+                        context = requireContext(),
+                        drawableId = tattoo.tattooId,
+                        alpha = 128
+                    )
                 slStickerLayout.addSticker(StickerFactory.currentSticker)
             }
             rvTattoo.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
@@ -178,6 +183,7 @@ class AiToolsFragment : Fragment() {
             1 -> R.drawable.model1
             2 -> R.drawable.model2
             3 -> R.drawable.model3
+            4 -> R.drawable.tattoowithbg
             else -> R.drawable.model4
         }
 

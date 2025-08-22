@@ -29,6 +29,7 @@ import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -114,7 +115,7 @@ class CameraScreen : Fragment() {
         rv.setPadding(dp(48), 0, dp(48), 0)
 
         rv.addItemDecoration(object : RecyclerView.ItemDecoration() {
-            override fun getItemOffsets(outRect: android.graphics.Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+            override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
                 val space = dp(12)
                 outRect.right = space
                 if (parent.getChildAdapterPosition(view) == 0) outRect.left = space
@@ -274,14 +275,15 @@ class CameraScreen : Fragment() {
 
     /** Click listeners */
     private fun setupClickListeners() {
-//        binding.btnGallery.setOnClickListener { openTattooGallery() }
-        binding?.btnGallery?.setOnClickListener {
-            mActivity?.let {
-                DialogUtils.show(it, "Processing...")
-                dialog?.show()
-            }
-            captureImage()
-        }
+        binding?.btnGallery?.setOnClickListener { findNavController().navigate(
+            CameraScreenDirections.actionNavigationAicameraToNavigationAitools())}
+//        binding?.btnGallery?.setOnClickListener {
+//            mActivity?.let {
+//                DialogUtils.show(it, "Processing...")
+//                dialog?.show()
+//            }
+//            captureImage()
+//        }
     }
 
     /** Tattoo gallery */
