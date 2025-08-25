@@ -33,10 +33,14 @@ import com.basit.aitattoomaker.extension.setDrawableTint
 import com.basit.aitattoomaker.extension.setDrawableWithTint
 import com.basit.aitattoomaker.presentation.ai_create.adapter.StyleAdapter
 import com.basit.aitattoomaker.presentation.ai_create.dialog.AiCreationDialog
+import com.basit.aitattoomaker.presentation.ai_create.dialog.StyleBottomSheet
 import com.basit.aitattoomaker.presentation.ai_create.model.StyleItem
+import com.basit.aitattoomaker.presentation.camera.result.ResultBottomSheet
 import com.basit.aitattoomaker.presentation.utils.DialogUtils.creationDialog
 import com.basit.aitattoomaker.presentation.utils.DialogUtils.showCreationDialog
 import com.basit.aitattoomaker.presentation.utils.GradientStrokeDrawable
+import com.basit.aitattoomaker.presentation.utils.styleLiveData
+import com.basit.aitattoomaker.presentation.utils.style_list
 import com.basit.aitattoomaker.presentation.utils.tattooCreation
 
 class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
@@ -47,6 +51,7 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
         var selectedItemIdPositionCanvas: Int? = 1
     }
     private lateinit var adapter: StyleAdapter
+
 
     // dp helper
     private val Int.dp get() = (this * Resources.getSystem().displayMetrics.density).toInt()
@@ -123,20 +128,24 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
     private fun setupRecycler() {
         binding?.apply {
             adapter = StyleAdapter { selected ->
-                Toast.makeText(requireContext(), "Selected: ${selected.title}", Toast.LENGTH_SHORT).show()
+                style_list.forEach { it.isSelected = it.id == selected.id }
+                styleLiveData.postValue(style_list)
+//                Toast.makeText(requireContext(), "Selected: ${selected.title}", Toast.LENGTH_SHORT).show()
             }
             rvStyles.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
             rvStyles.adapter = adapter
-
+            styleLiveData?.observe(viewLifecycleOwner){
+                if(!it.isNullOrEmpty()){
+                    adapter.submitList(it)
+                    adapter.setInitialSelection(it)
+                }
+                else{
+                    adapter.submitList(style_list)
+                    adapter.setInitialSelection(style_list)
+                }
+            }
             // Dummy data
-            adapter.submitList(
-                listOf(
-                    StyleItem("1", "Fire", R.drawable.tattoo),
-                    StyleItem("2", "Dragon", R.drawable.dragon),
-                    StyleItem("3", "Flower", R.drawable.flower),
-                    StyleItem("4", "Heart", R.drawable.heart)
-                )
-            )
+
         }
 
     }
@@ -291,6 +300,23 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
                 etPrompt.showKeyboard()
             }
             btnCanvas.setOnClickListener { showCustomPopupCanvas(btnCanvas) }
+            seeAll.setOnClickListener {
+                val sheet = StyleBottomSheet.newInstance()
+                sheet.callback = object : StyleBottomSheet.Callback {
+                    override fun onDone(selected: StyleItem?) {
+                        selected?.let {
+                            // apply style or update UI
+                            setupRecycler()
+                        }
+                    }
+
+                    override fun onCancel() {
+//                        Toast.makeText(requireContext(), "Cancelled", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                sheet.show(parentFragmentManager, "StyleBottomSheet")
+
+            }
         }
 
     }

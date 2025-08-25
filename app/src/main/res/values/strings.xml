@@ -51,4 +51,6 @@
     <string name="are_you_sure_you_want_to_delete_this_generation">Are you sure you want to delete this\ngeneration.</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
+    <string name="style">Styles</string>
+    <string name="done">Done</string>
 </resources>

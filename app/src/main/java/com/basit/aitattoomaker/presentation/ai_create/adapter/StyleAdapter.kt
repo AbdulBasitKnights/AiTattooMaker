@@ -21,6 +21,15 @@ class StyleAdapter(
     // store which position is selected
     private var selectedPos = RecyclerView.NO_POSITION
 
+    init {
+        // optional: if you pass the list already, you could set selectedPos here
+    }
+
+    fun setInitialSelection(list: List<StyleItem>) {
+        selectedPos = list.indexOfFirst { it.isSelected }
+        if (selectedPos == -1) selectedPos = RecyclerView.NO_POSITION
+    }
+
     object DiffCallback : DiffUtil.ItemCallback<StyleItem>() {
         override fun areItemsTheSame(oldItem: StyleItem, newItem: StyleItem) = oldItem.id == newItem.id
         override fun areContentsTheSame(oldItem: StyleItem, newItem: StyleItem) = oldItem == newItem
@@ -29,18 +38,18 @@ class StyleAdapter(
     inner class StyleViewHolder(private val binding: ItemStyleBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: StyleItem, isSelected: Boolean) = with(binding) {
+        fun bind(item: StyleItem) = with(binding) {
             tvTattooName.text = item.title
             Glide.with(ivTattoo).load(item.url).into(ivTattoo)
 
             // highlight with gradient stroke if selected
-            if (isSelected) {
+            if (item.isSelected) {
                 root.background = GradientStrokeDrawable(
                     radiusPx = root.dp(10),
                     strokePx = root.dp(2),
                     startColor = ContextCompat.getColor(root.context, R.color.colorprimary),
                     endColor = ContextCompat.getColor(root.context, R.color.colorsecondary),
-                    angleDeg = 0f,  // 0 = left→right gradient
+                    angleDeg = 0f,
                     fillColor  = Color.TRANSPARENT
                 )
             } else {
@@ -69,8 +78,9 @@ class StyleAdapter(
     }
 
     override fun onBindViewHolder(holder: StyleViewHolder, position: Int) {
-        holder.bind(getItem(position), position == selectedPos)
+        holder.bind(getItem(position))
     }
 }
+
 
 
