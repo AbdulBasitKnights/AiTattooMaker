@@ -12,6 +12,25 @@ import com.basit.aitattoomaker.R
 import java.io.File
 
 object AppUtils {
+    val tattooPrompts = listOf(
+        "A majestic dragon wrapped around a samurai sword",
+        "Realistic lion roaring with fiery mane",
+        "Floral mandala with intricate patterns",
+        "Watercolor phoenix rising from ashes",
+        "Minimalist geometric wolf design",
+        "Japanese koi fish swimming upstream",
+        "Gothic skull with roses and thorns",
+        "Abstract cosmic galaxy with stars and planets",
+        "Steampunk mechanical heart with gears",
+        "Angel wings spreading across the back",
+        "Tribal tribal wolf howling at moon",
+        "Surreal clock melting over a tree branch",
+        "Lion head combined with crown",
+        "Tiger emerging from jungle leaves",
+        "Cute tiny tattoo of a cat silhouette",
+        "Mystical owl sitting on crescent moon",
+        "Biomechanical arm tattoo with robotic parts"
+    )
     @DrawableRes var tattooID:Int= R.drawable.tattoo
     fun getMain(activity: FragmentActivity?): MainActivity? {
         return activity as? MainActivity

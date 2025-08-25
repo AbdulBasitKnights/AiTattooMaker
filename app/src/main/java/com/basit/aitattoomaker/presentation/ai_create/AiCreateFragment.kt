@@ -36,6 +36,7 @@ import com.basit.aitattoomaker.presentation.ai_create.dialog.AiCreationDialog
 import com.basit.aitattoomaker.presentation.ai_create.dialog.StyleBottomSheet
 import com.basit.aitattoomaker.presentation.ai_create.model.StyleItem
 import com.basit.aitattoomaker.presentation.camera.result.ResultBottomSheet
+import com.basit.aitattoomaker.presentation.utils.AppUtils.tattooPrompts
 import com.basit.aitattoomaker.presentation.utils.DialogUtils.creationDialog
 import com.basit.aitattoomaker.presentation.utils.DialogUtils.showCreationDialog
 import com.basit.aitattoomaker.presentation.utils.GradientStrokeDrawable
@@ -298,6 +299,10 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
             promptCard.setOnClickListener {
                 etPrompt.requestFocus()
                 etPrompt.showKeyboard()
+            }
+            btnSurpriseMe?.setOnClickListener {
+                val randomPrompt = tattooPrompts.random()
+                etPrompt.setText(randomPrompt)
             }
             btnCanvas.setOnClickListener { showCustomPopupCanvas(btnCanvas) }
             seeAll.setOnClickListener {
