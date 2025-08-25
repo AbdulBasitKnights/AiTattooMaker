@@ -296,10 +296,14 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
             btnVariations.setOnClickListener {
                 showCustomPopupVariations(btnVariations)
             }
+            pro.setOnClickListener {
+                Toast.makeText(mActivity, "Pro Button", Toast.LENGTH_SHORT).show()
+            }
             promptCard.setOnClickListener {
                 etPrompt.requestFocus()
                 etPrompt.showKeyboard()
             }
+
             btnSurpriseMe?.setOnClickListener {
                 val randomPrompt = tattooPrompts.random()
                 etPrompt.setText(randomPrompt)
