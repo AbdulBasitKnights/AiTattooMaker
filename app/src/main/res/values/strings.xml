@@ -33,4 +33,22 @@
     <string name="everyday_you_have">Everyday You Have 3 Free Generations</string>
     <string name="generating">Generating</string>
     <string name="it_may_take_up_to">It may take up to a minute for you to receive an AI-generated Art</string>
+    <string name="upgrade_to_pro">Upgrade to Pro</string>
+    <string name="free_limit_reached">Free Limit Reached</string>
+    <string name="upgrade_now_or_try_again_tomorrow">Upgrade now or try again tomorrow.</string>
+    <string name="last_free_try">Last Free Try!</string>
+    <string name="you_ve_used_2_of_3">You’ve used 2 of 3 free attempts.\nUpgrade to Pro for unlimited generations.</string>
+    <string name="upgrade_now">Upgrade Now</string>
+    <string name="use_last_free_try">Use last Free Try</string>
+    <string name="saved_successfully">Saved Successfully</string>
+    <string name="your_tattoo_has_been_added_to_your_gallery">Your tattoo has been added to your gallery.</string>
+    <string name="not_now">Not Now</string>
+    <string name="discard">Discard</string>
+    <string name="discard_results">Discard Results?</string>
+    <string name="any_unsaved_changes_will">Any unsaved changes will be lost.\nAre you sure you want to proceed?</string>
+    <string name="generating_images">Generating images…</string>
+    <string name="delete_image">Delete Image?</string>
+    <string name="are_you_sure_you_want_to_delete_this_generation">Are you sure you want to delete this\ngeneration.</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
 </resources>

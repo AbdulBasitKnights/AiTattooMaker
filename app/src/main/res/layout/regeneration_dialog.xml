@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/fullscreenRoot"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_round"
+    android:paddingHorizontal="@dimen/_40sdp"
+    android:backgroundTint="@color/darkGrey">
+    <ImageView
+        android:id="@+id/loaderBG"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintWidth_percent="0.35"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintDimensionRatio="100:97"
+        app:layout_constraintTop_toBottomOf="@+id/cross"
+        android:contentDescription="@string/title_aicreate" />
+    <ImageView
+        android:id="@+id/cross"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintDimensionRatio="1:1"
+        android:layout_marginEnd="@dimen/_10sdp"
+        android:visibility="invisible"
+        android:background="@drawable/cross_svg"
+        android:layout_marginTop="@dimen/_10sdp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/title_aicreate" />
+    <TextView
+        android:id="@+id/headline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/generating_images"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textColor="@color/white"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:fontFamily="@font/poppins_regular_400"
+        app:layout_constraintTop_toBottomOf="@+id/loaderBG"
+        android:textSize="@dimen/_15ssp"/>
+    <TextView
+        android:id="@+id/details"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="27 Sec"
+        app:layout_constraintStart_toStartOf="parent"
+        android:paddingHorizontal="@dimen/_20sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textColor="@color/white"
+        android:fontFamily="@font/poppins_regular_400"
+        android:textAllCaps="false"
+        android:gravity="center"
+        android:ellipsize="end"
+        android:textSize="@dimen/_11ssp"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:layout_marginBottom="@dimen/_20sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/headline"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
