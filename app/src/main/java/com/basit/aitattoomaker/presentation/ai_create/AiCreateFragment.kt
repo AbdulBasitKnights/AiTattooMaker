@@ -27,6 +27,8 @@ import com.basit.aitattoomaker.R
 import com.basit.aitattoomaker.databinding.FragmentAiCreateBinding
 import com.basit.aitattoomaker.extension.dp
 import com.basit.aitattoomaker.extension.observeKeyboardLegacy
+import com.basit.aitattoomaker.extension.setDrawableTint
+import com.basit.aitattoomaker.extension.setDrawableWithTint
 import com.basit.aitattoomaker.presentation.ai_create.adapter.StyleAdapter
 import com.basit.aitattoomaker.presentation.ai_create.model.StyleItem
 import com.basit.aitattoomaker.presentation.utils.GradientStrokeDrawable
@@ -36,6 +38,7 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
     private var binding: FragmentAiCreateBinding? = null
     companion object {
         var selectedItemIdPosition: Int? = 1
+        var selectedItemIdPositionCanvas: Int? = 1
     }
     private lateinit var adapter: StyleAdapter
 
@@ -268,7 +271,7 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
                 etPrompt.requestFocus()
                 etPrompt.showKeyboard()
             }
-            btnCanvas.setOnClickListener {  }
+            btnCanvas.setOnClickListener { showCustomPopupCanvas(btnCanvas) }
         }
 
     }
@@ -281,137 +284,125 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
         // Inflate the custom layout for the popup
         val inflater = LayoutInflater.from(requireContext())
         val popupView = inflater.inflate(R.layout.popup_custom_layout, null)
-        // Create the PopupWindow
+
+        // Convert dp to px
+        fun dp(value: Int) = (value * requireContext().resources.displayMetrics.density).toInt()
+
+        // Create the PopupWindow with width matching the anchor view
         val popupWindow = PopupWindow(
             popupView,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
+            view.width, // match width of the anchor view
             ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        // Set the background drawable and other options
-        popupWindow.isOutsideTouchable = true
-        popupWindow.isFocusable = true
+        ).apply {
+            isOutsideTouchable = true
+            isFocusable = true
+            setBackgroundDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.bg_round)) // optional background
+        }
 
-        // Show the popup window at a specific location
-        popupWindow.showAsDropDown(view, 0, 0)
+        // Show the popup window below the anchor view with a little vertical margin
+        val margin = dp(8) // 8dp margin
+        popupWindow.showAsDropDown(view, 0, margin)
+
+        // Get the option views
         val img1 = popupView.findViewById<TextView>(R.id.image1)
         val img2 = popupView.findViewById<TextView>(R.id.image2)
         val img3 = popupView.findViewById<TextView>(R.id.image3)
         val img4 = popupView.findViewById<TextView>(R.id.image4)
 
+        // Highlight selected item
+        val highlight = { tv: TextView ->
+            tv.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorprimary))
+            tv.background = ContextCompat.getDrawable(requireContext(), R.drawable.bg_round)
+        }
         when (selectedItemIdPosition) {
-            0 -> {
-                img1.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorprimary))
-                img1.background=resources.getDrawable(R.drawable.bg_round)
-            }
-
-            1 -> {
-                img2.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorprimary))
-                img2.background=resources.getDrawable(R.drawable.bg_round)
-            }
-
-            2 -> {
-                img3.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorprimary))
-                img3.background=resources.getDrawable(R.drawable.bg_round)
-            }
-
-            3 -> {
-                img4.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorprimary))
-                img4.background=resources.getDrawable(R.drawable.bg_round)
-            }
-
-            else -> {}
+            0 -> highlight(img1)
+            1 -> highlight(img2)
+            2 -> highlight(img3)
+            3 -> highlight(img4)
         }
 
-        img1.setOnClickListener {
-            selectedItemIdPosition = 0
-            binding?.btnVariations?.let { btnVariations -> btnVariations.text=resources.getString(R.string._01_image) }
-            popupWindow.dismiss()
-        }
-        img2.setOnClickListener {
-            selectedItemIdPosition = 1
-            binding?.btnVariations?.let { btnVariations -> btnVariations.text=resources.getString(R.string._02_images) }
-            popupWindow.dismiss()
-        }
-        img3.setOnClickListener {
-            selectedItemIdPosition = 2
-            binding?.btnVariations?.let { btnVariations -> btnVariations.text=resources.getString(R.string._03_images) }
+        // Handle clicks
+        val updateSelection: (Int, String) -> Unit = { pos, text ->
+            selectedItemIdPosition = pos
+            binding?.btnVariations?.text = text
             popupWindow.dismiss()
         }
 
-        img4.setOnClickListener {
-            selectedItemIdPosition = 3
-            binding?.btnVariations?.let { btnVariations -> btnVariations.text=resources.getString(R.string._04_images) }
-            popupWindow.dismiss()
-        }
+        img1.setOnClickListener { updateSelection(0, getString(R.string._01_image)) }
+        img2.setOnClickListener { updateSelection(1, getString(R.string._02_images)) }
+        img3.setOnClickListener { updateSelection(2, getString(R.string._03_images)) }
+        img4.setOnClickListener { updateSelection(3, getString(R.string._04_images)) }
     }
 
-    private fun showCustomPopupCanvas(view: View) {
-        // Inflate the custom layout for the popup
+
+
+    private fun showCustomPopupCanvas(view: View, margin: Int = 8) { // margin in dp
         val inflater = LayoutInflater.from(requireContext())
-        val popupView = inflater.inflate(R.layout.popup_custom_layout, null)
-        // Create the PopupWindow
+        val popupView = inflater.inflate(R.layout.popup_custom_layout_canvas, null)
+
+        // Create PopupWindow matching width of anchor view
         val popupWindow = PopupWindow(
             popupView,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
+            view.width, // match width
             ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        // Set the background drawable and other options
-        popupWindow.isOutsideTouchable = true
-        popupWindow.isFocusable = true
-
-        // Show the popup window at a specific location
-        popupWindow.showAsDropDown(view, 0, 0)
-        val img1 = popupView.findViewById<TextView>(R.id.image1)
-        val img2 = popupView.findViewById<TextView>(R.id.image2)
-        val img3 = popupView.findViewById<TextView>(R.id.image3)
-        val img4 = popupView.findViewById<TextView>(R.id.image4)
-
-        when (selectedItemIdPosition) {
-            0 -> {
-                img1.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorprimary))
-                img1.background=resources.getDrawable(R.drawable.bg_round)
-            }
-
-            1 -> {
-                img2.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorprimary))
-                img2.background=resources.getDrawable(R.drawable.bg_round)
-            }
-
-            2 -> {
-                img3.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorprimary))
-                img3.background=resources.getDrawable(R.drawable.bg_round)
-            }
-
-            3 -> {
-                img4.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorprimary))
-                img4.background=resources.getDrawable(R.drawable.bg_round)
-            }
-
-            else -> {}
+        ).apply {
+            isOutsideTouchable = true
+            isFocusable = true
+            setBackgroundDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.bg_round))
+            elevation = mActivity?.dp(8)?.toFloat()?:8f // requires API 21+
         }
 
-        img1.setOnClickListener {
-            selectedItemIdPosition = 0
-            binding?.btnVariations?.let { btnVariations -> btnVariations.text=resources.getString(R.string._01_image) }
-            popupWindow.dismiss()
+        // Convert margin from dp to px
+        val marginPx = mActivity?.dp(margin)
+
+        // Show popup with margin from anchor view
+        marginPx?.let { marginPx->
+            popupWindow.showAsDropDown(view, 0, marginPx)
         }
-        img2.setOnClickListener {
-            selectedItemIdPosition = 1
-            binding?.btnVariations?.let { btnVariations -> btnVariations.text=resources.getString(R.string._02_images) }
-            popupWindow.dismiss()
+
+        // Option views
+        val square = popupView.findViewById<TextView>(R.id.square)
+        val portrait = popupView.findViewById<TextView>(R.id.portrait)
+        val landscape = popupView.findViewById<TextView>(R.id.landscape)
+
+        // Highlight selected item
+        val highlight = { tv: TextView ->
+            tv.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorprimary))
+            tv.background = ContextCompat.getDrawable(requireContext(), R.drawable.bg_round)
         }
-        img3.setOnClickListener {
-            selectedItemIdPosition = 2
-            binding?.btnVariations?.let { btnVariations -> btnVariations.text=resources.getString(R.string._03_images) }
+        val selectedColor = ContextCompat.getColor(requireContext(), R.color.colorprimary)
+        val defaultColor = ContextCompat.getColor(requireContext(), R.color.lightGrey)
+
+        // Tint all items
+        landscape.setDrawableTint(if (selectedItemIdPositionCanvas == 2) selectedColor else defaultColor)
+        portrait.setDrawableTint(if (selectedItemIdPositionCanvas == 1) selectedColor else defaultColor)
+        square.setDrawableTint(if (selectedItemIdPositionCanvas == 0) selectedColor else defaultColor)
+
+        when (selectedItemIdPositionCanvas) {
+            0 -> highlight(square)
+            1 -> highlight(portrait)
+            2 -> highlight(landscape)
+        }
+
+        // Handle clicks
+        val updateSelection: (Int, TextView, String) -> Unit = { pos, tv, text ->
+            selectedItemIdPositionCanvas = pos
+            binding?.btnCanvas?.text = text
+
+            highlight(tv)
             popupWindow.dismiss()
         }
 
-        img4.setOnClickListener {
-            selectedItemIdPosition = 3
-            binding?.btnVariations?.let { btnVariations -> btnVariations.text=resources.getString(R.string._04_images) }
-            popupWindow.dismiss()
+        square.setOnClickListener { updateSelection(0, square, getString(R.string._1_1))
+            binding?.btnCanvas?.setDrawableWithTint(R.drawable.square_svg, defaultColor)
         }
+        portrait.setOnClickListener { updateSelection(1, portrait, getString(R.string._4_5))
+            binding?.btnCanvas?.setDrawableWithTint(R.drawable.portrait_svg, defaultColor)}
+        landscape.setOnClickListener { updateSelection(2, landscape, getString(R.string._4_3))
+            binding?.btnCanvas?.setDrawableWithTint(R.drawable.landscape_svg, defaultColor)}
     }
+
+
 }
 
 

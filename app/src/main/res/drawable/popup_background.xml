@@ -9,5 +9,5 @@
         android:color="#FFFFFF" />
 
     <!-- Optionally set rounded corners -->
-    <corners android:radius="8dp" />
+    <corners android:radius="7dp" />
 </shape>

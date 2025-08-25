@@ -14,6 +14,8 @@ import android.view.animation.Animation
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.RadioButton
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.createBitmap
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -27,6 +29,23 @@ fun View.toBitmap(): Bitmap {
         draw(canvas)
         return bitmap
     }
+// Extension function to convert dp to pixels
+fun Context.dp(value: Int): Int = (value * resources.displayMetrics.density).toInt()
+fun TextView.setDrawableTint(color: Int) {
+    // Get all compound drawables (start, top, end, bottom)
+    val drawables = compoundDrawablesRelative
+    for (i in drawables.indices) {
+        drawables[i]?.setTint(color)
+    }
+    // Re-apply them
+    setCompoundDrawablesRelative(drawables[0], drawables[1], drawables[2], drawables[3])
+}
+fun TextView.setDrawableWithTint(drawableRes: Int, tintColor: Int) {
+    val drawable = ContextCompat.getDrawable(context, drawableRes)?.mutate()
+    drawable?.setTint(tintColor)
+    // Here we assume you want it at start, adjust as needed
+    setCompoundDrawablesRelativeWithIntrinsicBounds(drawable, null, null, null)
+}
 
 fun View.dp(value: Int): Float = value * resources.displayMetrics.density
 fun Activity.observeKeyboardLegacy(onChanged: (isVisible: Boolean) -> Unit) {
