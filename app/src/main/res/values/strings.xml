@@ -30,4 +30,7 @@
     <string name="_04_images">04  images</string>
     <string name="_1_1">1:1</string>
     <string name="_4_3">4:3</string>
+    <string name="everyday_you_have">Everyday You Have 3 Free Generations</string>
+    <string name="generating">Generating</string>
+    <string name="it_may_take_up_to">It may take up to a minute for you to receive an AI-generated Art</string>
 </resources>

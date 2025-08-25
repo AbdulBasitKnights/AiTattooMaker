@@ -44,6 +44,7 @@ import java.io.OutputStream
 import java.nio.FloatBuffer
 import androidx.core.graphics.createBitmap
 import com.basit.aitattoomaker.presentation.ai_tools.adapter.TattooAdapterOld
+import com.basit.aitattoomaker.presentation.utils.tattooCreation
 
 class AiToolsFragment : Fragment() {
 
@@ -95,6 +96,7 @@ class AiToolsFragment : Fragment() {
         super.onViewCreated(v, s)
         mActivity?.let {
             try {
+                tattooCreation.postValue(false)
                 setupRecycler()
                 setupClicks()
                 // Initial load

@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.res.Resources
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -30,8 +32,12 @@ import com.basit.aitattoomaker.extension.observeKeyboardLegacy
 import com.basit.aitattoomaker.extension.setDrawableTint
 import com.basit.aitattoomaker.extension.setDrawableWithTint
 import com.basit.aitattoomaker.presentation.ai_create.adapter.StyleAdapter
+import com.basit.aitattoomaker.presentation.ai_create.dialog.AiCreationDialog
 import com.basit.aitattoomaker.presentation.ai_create.model.StyleItem
+import com.basit.aitattoomaker.presentation.utils.DialogUtils.creationDialog
+import com.basit.aitattoomaker.presentation.utils.DialogUtils.showCreationDialog
 import com.basit.aitattoomaker.presentation.utils.GradientStrokeDrawable
+import com.basit.aitattoomaker.presentation.utils.tattooCreation
 
 class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
 
@@ -69,6 +75,7 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
         binding = FragmentAiCreateBinding.bind(view)
         mActivity?.let {
             btnClicks()
+            showCreationDialog(it)
             mActivity?.observeKeyboardLegacy { isVisible ->
                 if (isVisible) {
                     // Keyboard is shown
@@ -101,6 +108,14 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
             setupPromptField()
             setupImeAwareScrolling()
             setupOutsideTapToClearFocus()
+            tattooCreation?.observe(viewLifecycleOwner){
+                if(it==true){
+                    creationDialog?.dismiss()
+                    findNavController().navigate(
+                        AiCreateFragmentDirections.actionNavigationAicreateToNavigationAitools()
+                    )
+                }
+            }
         }
 
     }
@@ -155,9 +170,13 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
             }
 
             btnCreate.setOnClickListener {
-                findNavController().navigate(
-                    AiCreateFragmentDirections.actionNavigationAicreateToNavigationAitools()
-                )
+                    creationDialog?.show()
+                Handler(Looper.getMainLooper()).postDelayed({
+                    tattooCreation.postValue(true)
+                },7000)
+//                findNavController().navigate(
+//                    AiCreateFragmentDirections.actionNavigationAicreateToNavigationAitools()
+//                )
             }
             btnClear.setOnClickListener {
                 binding?.etPrompt?.text?.clear()

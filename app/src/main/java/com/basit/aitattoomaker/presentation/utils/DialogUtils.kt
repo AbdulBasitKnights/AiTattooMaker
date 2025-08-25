@@ -7,10 +7,12 @@ import android.graphics.drawable.ColorDrawable
 import android.view.Window
 import android.widget.TextView
 import com.basit.aitattoomaker.R
+import com.basit.aitattoomaker.presentation.ai_create.dialog.AiCreationDialog
 
 object DialogUtils {
 
     var dialog: Dialog? = null
+    var creationDialog: AiCreationDialog?=null
 
     fun show(context: Context, title: String = "Saving...") {
         if (dialog?.isShowing == true) return  // already showing
@@ -29,6 +31,19 @@ object DialogUtils {
         try {
             dialog?.dismiss()
             dialog = null
+        } catch (e: Exception) {
+           e.printStackTrace()
+        }
+    }
+    fun showCreationDialog(context: Context) {
+        creationDialog = AiCreationDialog(
+            context)
+    }
+
+    fun dismissCreationDialog() {
+        try {
+            creationDialog?.dismiss()
+            creationDialog = null
         } catch (e: Exception) {
            e.printStackTrace()
         }
