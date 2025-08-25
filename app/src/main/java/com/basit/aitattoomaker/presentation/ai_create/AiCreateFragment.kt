@@ -11,6 +11,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import android.widget.PopupWindow
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
@@ -32,7 +34,9 @@ import com.basit.aitattoomaker.presentation.utils.GradientStrokeDrawable
 class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
 
     private var binding: FragmentAiCreateBinding? = null
-
+    companion object {
+        var selectedItemIdPosition: Int? = 1
+    }
     private lateinit var adapter: StyleAdapter
 
     // dp helper
@@ -257,7 +261,9 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
     }
     private fun btnClicks(){
         binding?.apply {
-            btnVariations.setOnClickListener {  }
+            btnVariations.setOnClickListener {
+                showCustomPopupVariations(btnVariations)
+            }
             promptCard.setOnClickListener {
                 etPrompt.requestFocus()
                 etPrompt.showKeyboard()
@@ -270,6 +276,141 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
         requestFocus()
         val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
+    }
+    private fun showCustomPopupVariations(view: View) {
+        // Inflate the custom layout for the popup
+        val inflater = LayoutInflater.from(requireContext())
+        val popupView = inflater.inflate(R.layout.popup_custom_layout, null)
+        // Create the PopupWindow
+        val popupWindow = PopupWindow(
+            popupView,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        // Set the background drawable and other options
+        popupWindow.isOutsideTouchable = true
+        popupWindow.isFocusable = true
+
+        // Show the popup window at a specific location
+        popupWindow.showAsDropDown(view, 0, 0)
+        val img1 = popupView.findViewById<TextView>(R.id.image1)
+        val img2 = popupView.findViewById<TextView>(R.id.image2)
+        val img3 = popupView.findViewById<TextView>(R.id.image3)
+        val img4 = popupView.findViewById<TextView>(R.id.image4)
+
+        when (selectedItemIdPosition) {
+            0 -> {
+                img1.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorprimary))
+                img1.background=resources.getDrawable(R.drawable.bg_round)
+            }
+
+            1 -> {
+                img2.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorprimary))
+                img2.background=resources.getDrawable(R.drawable.bg_round)
+            }
+
+            2 -> {
+                img3.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorprimary))
+                img3.background=resources.getDrawable(R.drawable.bg_round)
+            }
+
+            3 -> {
+                img4.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorprimary))
+                img4.background=resources.getDrawable(R.drawable.bg_round)
+            }
+
+            else -> {}
+        }
+
+        img1.setOnClickListener {
+            selectedItemIdPosition = 0
+            binding?.btnVariations?.let { btnVariations -> btnVariations.text=resources.getString(R.string._01_image) }
+            popupWindow.dismiss()
+        }
+        img2.setOnClickListener {
+            selectedItemIdPosition = 1
+            binding?.btnVariations?.let { btnVariations -> btnVariations.text=resources.getString(R.string._02_images) }
+            popupWindow.dismiss()
+        }
+        img3.setOnClickListener {
+            selectedItemIdPosition = 2
+            binding?.btnVariations?.let { btnVariations -> btnVariations.text=resources.getString(R.string._03_images) }
+            popupWindow.dismiss()
+        }
+
+        img4.setOnClickListener {
+            selectedItemIdPosition = 3
+            binding?.btnVariations?.let { btnVariations -> btnVariations.text=resources.getString(R.string._04_images) }
+            popupWindow.dismiss()
+        }
+    }
+
+    private fun showCustomPopupCanvas(view: View) {
+        // Inflate the custom layout for the popup
+        val inflater = LayoutInflater.from(requireContext())
+        val popupView = inflater.inflate(R.layout.popup_custom_layout, null)
+        // Create the PopupWindow
+        val popupWindow = PopupWindow(
+            popupView,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        // Set the background drawable and other options
+        popupWindow.isOutsideTouchable = true
+        popupWindow.isFocusable = true
+
+        // Show the popup window at a specific location
+        popupWindow.showAsDropDown(view, 0, 0)
+        val img1 = popupView.findViewById<TextView>(R.id.image1)
+        val img2 = popupView.findViewById<TextView>(R.id.image2)
+        val img3 = popupView.findViewById<TextView>(R.id.image3)
+        val img4 = popupView.findViewById<TextView>(R.id.image4)
+
+        when (selectedItemIdPosition) {
+            0 -> {
+                img1.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorprimary))
+                img1.background=resources.getDrawable(R.drawable.bg_round)
+            }
+
+            1 -> {
+                img2.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorprimary))
+                img2.background=resources.getDrawable(R.drawable.bg_round)
+            }
+
+            2 -> {
+                img3.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorprimary))
+                img3.background=resources.getDrawable(R.drawable.bg_round)
+            }
+
+            3 -> {
+                img4.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorprimary))
+                img4.background=resources.getDrawable(R.drawable.bg_round)
+            }
+
+            else -> {}
+        }
+
+        img1.setOnClickListener {
+            selectedItemIdPosition = 0
+            binding?.btnVariations?.let { btnVariations -> btnVariations.text=resources.getString(R.string._01_image) }
+            popupWindow.dismiss()
+        }
+        img2.setOnClickListener {
+            selectedItemIdPosition = 1
+            binding?.btnVariations?.let { btnVariations -> btnVariations.text=resources.getString(R.string._02_images) }
+            popupWindow.dismiss()
+        }
+        img3.setOnClickListener {
+            selectedItemIdPosition = 2
+            binding?.btnVariations?.let { btnVariations -> btnVariations.text=resources.getString(R.string._03_images) }
+            popupWindow.dismiss()
+        }
+
+        img4.setOnClickListener {
+            selectedItemIdPosition = 3
+            binding?.btnVariations?.let { btnVariations -> btnVariations.text=resources.getString(R.string._04_images) }
+            popupWindow.dismiss()
+        }
     }
 }
 
