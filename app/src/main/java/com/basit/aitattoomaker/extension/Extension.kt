@@ -17,10 +17,12 @@ import android.widget.RadioButton
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.createBitmap
+import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import com.basit.aitattoomaker.R
 
 
 fun View.toBitmap(): Bitmap {
@@ -42,9 +44,10 @@ fun TextView.setDrawableTint(color: Int) {
 }
 fun TextView.setDrawableWithTint(drawableRes: Int, tintColor: Int) {
     val drawable = ContextCompat.getDrawable(context, drawableRes)?.mutate()
+    val drawableEnd = ContextCompat.getDrawable(context, R.drawable.arrow_down)?.mutate()
     drawable?.setTint(tintColor)
     // Here we assume you want it at start, adjust as needed
-    setCompoundDrawablesRelativeWithIntrinsicBounds(drawable, null, null, null)
+    setCompoundDrawablesRelativeWithIntrinsicBounds(drawable, null, drawableEnd, null)
 }
 
 fun View.dp(value: Int): Float = value * resources.displayMetrics.density
