@@ -28,8 +28,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.basit.aitattoomaker.R
 import com.basit.aitattoomaker.databinding.FragmentAitoolsBinding
-import com.basit.aitattoomaker.presentation.ai_tools.adapter.TattooAdapter
-import com.basit.aitattoomaker.presentation.ai_tools.model.Tattoo
+import com.basit.aitattoomaker.presentation.ai_tools.model.CameraTattoo
 import com.basit.aitattoomaker.presentation.utils.DialogUtils
 import com.basit.aitattoomaker.presentation.utils.DialogUtils.dialog
 import com.basit.library.stickerview.StickerFactory
@@ -65,11 +64,11 @@ class AiToolsFragment : Fragment() {
         ActivityResultContracts.GetContent()
     ) { uri: Uri? -> uri?.let { loadSticker(it) } }
 
-    private val tattooItems = listOf(
-        Tattoo("Dragon", R.drawable.dragon),
-        Tattoo("Flower", R.drawable.flower),
-        Tattoo("Fire",   R.drawable.tattoo),
-        Tattoo("Heart",  R.drawable.heart)
+    private val cameraTattooItems = listOf(
+        CameraTattoo("Dragon", R.drawable.dragon),
+        CameraTattoo("Flower", R.drawable.flower),
+        CameraTattoo("Fire",   R.drawable.tattoo),
+        CameraTattoo("Heart",  R.drawable.heart)
     )
     private var mActivity: FragmentActivity?=null
     // This property is only valid between onCreateView and
@@ -121,7 +120,7 @@ class AiToolsFragment : Fragment() {
                 StickerFactory.currentSticker =
                     StickerFactory.createSticker(
                         context = requireContext(),
-                        drawableId = tattoo.tattooId,
+                        drawableId = tattoo.id,
                         alpha = 128
                     )
                 slStickerLayout.addSticker(StickerFactory.currentSticker)
@@ -129,7 +128,7 @@ class AiToolsFragment : Fragment() {
             rvTattoo.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
             rvTattoo.setHasFixedSize(true)
             rvTattoo.adapter = adapter
-            adapter.submitList(tattooItems)
+            adapter.submitList(cameraTattooItems)
         }
 
     }

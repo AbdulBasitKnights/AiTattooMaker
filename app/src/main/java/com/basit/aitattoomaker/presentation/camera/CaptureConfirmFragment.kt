@@ -1,22 +1,17 @@
 package com.basit.aitattoomaker.presentation.camera
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Canvas
-import android.graphics.ImageFormat
 import android.graphics.Matrix
 import android.graphics.Rect
 import android.graphics.RectF
-import android.graphics.YuvImage
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Surface
@@ -39,26 +34,22 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.basit.aitattoomaker.R
 import com.basit.aitattoomaker.data.repo.TattooRepositoryImpl
 import com.basit.aitattoomaker.databinding.FragmentCameraBinding
-import com.basit.aitattoomaker.extension.toBitmapSafe
 import com.basit.aitattoomaker.presentation.ai_tools.adapter.TattooAdapter
-import com.basit.aitattoomaker.presentation.ai_tools.model.Tattoo
+import com.basit.aitattoomaker.presentation.ai_tools.model.CameraTattoo
 import com.basit.aitattoomaker.presentation.camera.result.ResultBottomSheet
 import com.basit.aitattoomaker.presentation.utils.AppUtils
-import com.basit.aitattoomaker.presentation.utils.AppUtils.decodeAndFixOrientation
 import com.basit.aitattoomaker.presentation.utils.CameraPermissionHelper
 import com.basit.aitattoomaker.presentation.utils.DialogUtils
 import com.basit.aitattoomaker.presentation.utils.DialogUtils.dialog
 import com.bumptech.glide.Glide
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.util.concurrent.Executors
@@ -77,11 +68,11 @@ class CaptureConfirmFragment : Fragment() {
     private val cameraExecutor by lazy { Executors.newSingleThreadExecutor() }
     private val viewModel: CameraViewModel by viewModels { CameraViewModelFactory( requireActivity().application, TattooRepositoryImpl(requireContext()) ) }
     private var defaultTattoo: Bitmap? = null
-    private val tattooItems = listOf(
-        Tattoo("Dragon", R.drawable.dragon),
-        Tattoo("Flower", R.drawable.flower),
-        Tattoo("Fire",   R.drawable.tattoo),
-        Tattoo("Heart",  R.drawable.heart)
+    private val cameraTattooItems = listOf(
+        CameraTattoo("Dragon", R.drawable.dragon),
+        CameraTattoo("Flower", R.drawable.flower),
+        CameraTattoo("Fire",   R.drawable.tattoo),
+        CameraTattoo("Heart",  R.drawable.heart)
     )
     private lateinit var adapter: TattooAdapter
     private var mActivity: FragmentActivity?=null
@@ -262,7 +253,7 @@ class CaptureConfirmFragment : Fragment() {
                 binding?.let { b ->
                     mActivity?.let { ctx ->
                         // Get drawable from id
-                        val drawable = ContextCompat.getDrawable(ctx, tattoo.tattooId)?.mutate()
+                        val drawable = ContextCompat.getDrawable(ctx, tattoo.id)?.mutate()
                         drawable?.alpha = 128  // set alpha
 
                         Glide.with(ctx)
@@ -273,7 +264,7 @@ class CaptureConfirmFragment : Fragment() {
                 }
             }
             setupTattooCarousel(rvTattoo, adapter)
-            adapter.submitList(tattooItems) // your list
+            adapter.submitList(cameraTattooItems) // your list
         }
 
     }

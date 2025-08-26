@@ -2,18 +2,17 @@ package com.basit.aitattoomaker.presentation.ai_tools.adapter
 
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.basit.aitattoomaker.databinding.ItemTattooRoundBinding
-import com.basit.aitattoomaker.presentation.ai_tools.model.Tattoo
+import com.basit.aitattoomaker.presentation.ai_tools.model.CameraTattoo
 import com.bumptech.glide.Glide
 
 class TattooAdapterOld(
-    private val onItemClick: (Tattoo) -> Unit
-) : ListAdapter<Tattoo, TattooAdapterOld.TattooVH>(DIFF) {
+    private val onItemClick: (CameraTattoo) -> Unit
+) : ListAdapter<CameraTattoo, TattooAdapterOld.TattooVH>(DIFF) {
 
     init { setHasStableIds(true) }
 
@@ -22,7 +21,7 @@ class TattooAdapterOld(
 
     override fun getItemId(position: Int): Long {
         val item = getItem(position)
-        return (31L * item.name.hashCode() + item.tattooId)
+        return (31L * item.name.hashCode() + item.id)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TattooVH {
@@ -46,12 +45,12 @@ class TattooAdapterOld(
 
     class TattooVH(
         private val binding: ItemTattooRoundBinding,
-        private val onItemClick: (Tattoo) -> Unit
+        private val onItemClick: (CameraTattoo) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: Tattoo, isSelected: Boolean) = with(binding) {
+        fun bind(item: CameraTattoo, isSelected: Boolean) = with(binding) {
             tvTattooName.text = item.name
-            Glide.with(ivTattoo).load(item.tattooId).into(ivTattoo)
+            Glide.with(ivTattoo).load(item.id).into(ivTattoo)
             root.setOnClickListener { onItemClick(item) }
             // base visual state; scale/alpha will also be adjusted by scroll listener
 //            root.isSelected = isSelected
@@ -64,9 +63,9 @@ class TattooAdapterOld(
     }
 
     companion object {
-        private val DIFF = object : DiffUtil.ItemCallback<Tattoo>() {
-            override fun areItemsTheSame(old: Tattoo, new: Tattoo) = old.name == new.name
-            override fun areContentsTheSame(old: Tattoo, new: Tattoo) = old == new
+        private val DIFF = object : DiffUtil.ItemCallback<CameraTattoo>() {
+            override fun areItemsTheSame(old: CameraTattoo, new: CameraTattoo) = old.name == new.name
+            override fun areContentsTheSame(old: CameraTattoo, new: CameraTattoo) = old == new
         }
     }
 }

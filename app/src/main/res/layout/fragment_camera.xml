@@ -63,7 +63,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:visibility="visible"
-        android:layout_marginTop="10dp"
+        android:layout_marginBottom="@dimen/_10sdp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
@@ -91,7 +91,7 @@
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginBottom="@dimen/_15sdp"
             android:textColor="@color/white"
-            android:textSize="@dimen/_9ssp"
+            android:textSize="@dimen/_11ssp"
             app:layout_constraintBottom_toTopOf="@+id/btnCapture"/>
         <TextView
             android:id="@+id/history"
@@ -104,12 +104,13 @@
             android:textColor="@color/lightGrey"
             app:layout_constraintTop_toTopOf="@+id/library"
             app:layout_constraintBottom_toBottomOf="@+id/library"
-            android:textSize="@dimen/_9ssp"/>
+            android:textSize="@dimen/_11ssp"/>
         <ImageView
             android:id="@+id/btnCapture"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
             android:src="@drawable/capture_svg"
+            android:padding="@dimen/_5sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />

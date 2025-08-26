@@ -12,7 +12,7 @@
         android:id="@+id/focusRing"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@drawable/focus_ring_white"
+        android:background="@drawable/stroke_square_white"
         android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -9,7 +9,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.basit.aitattoomaker.databinding.DialogTattooGalleryBinding
-import com.basit.aitattoomaker.presentation.camera.adapter.TattooAdapter
+import com.basit.aitattoomaker.presentation.camera.adapter.CameraTattooAdapter
 
 @ExperimentalGetImage
 class TattooGalleryDialog : DialogFragment() {
@@ -18,7 +18,7 @@ class TattooGalleryDialog : DialogFragment() {
 
     private val viewModel: CameraViewModel by viewModels()
 
-    private val adapter = TattooAdapter { tattoo ->
+    private val adapter = CameraTattooAdapter { tattoo ->
         viewModel.selectTattoo(tattoo)
         dismiss()
     }

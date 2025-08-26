@@ -22,6 +22,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.basit.aitattoomaker.data.repo.TattooRepository
 import com.basit.aitattoomaker.domain.Tattoo
+import com.basit.aitattoomaker.presentation.ai_tools.model.CameraTattoo
 import com.basit.aitattoomaker.presentation.utils.CameraPermissionHelper
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.segmentation.Segmentation
@@ -43,8 +44,8 @@ class CameraViewModel(
     private val _selectedTattoo = MutableLiveData<Bitmap?>()
     val selectedTattoo: LiveData<Bitmap?> = _selectedTattoo
 
-    private val _tattoos = MutableLiveData<List<Tattoo>>()
-    val tattoos: LiveData<List<Tattoo>> = _tattoos
+    private val _tattoos = MutableLiveData<List<CameraTattoo>>()
+    val tattoos: LiveData<List<CameraTattoo>> = _tattoos
 
     private val _loadingState = MutableLiveData<Boolean>()
     val loadingState: LiveData<Boolean> = _loadingState
@@ -268,7 +269,7 @@ class CameraViewModel(
     }
 
     // Tattoo selection and loading
-    fun selectTattoo(tattoo: Tattoo) {
+    fun selectTattoo(tattoo: CameraTattoo) {
         viewModelScope.launch {
             _loadingState.postValue(true)
             try {
@@ -298,7 +299,7 @@ class CameraViewModel(
         viewModelScope.launch {
             _loadingState.postValue(true)
             try {
-                _tattoos.postValue(tattooRepository.getTattoos())
+//                _tattoos.postValue(tattooRepository.getTattoos())
                 _errorState.postValue(null)
             } catch (e: Exception) {
                 _errorState.postValue("Failed to load tattoos: ${e.message}")
