@@ -118,7 +118,7 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
                 if(it==true){
                     creationDialog?.dismiss()
                     findNavController().navigate(
-                        AiCreateFragmentDirections.actionNavigationAicreateToNavigationAitools()
+                        AiCreateFragmentDirections.actionNavigationAicreateToResultScreen()
                     )
                 }
             }

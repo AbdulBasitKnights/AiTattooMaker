@@ -3,6 +3,7 @@ package com.basit.aitattoomaker.extension
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.app.Activity
+import android.app.Dialog
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -23,8 +24,92 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.basit.aitattoomaker.R
+import com.basit.aitattoomaker.databinding.DeleteDialogBinding
+import com.basit.aitattoomaker.databinding.DiscardDialogBinding
+import com.basit.aitattoomaker.databinding.FreeLimitDialogBinding
+import com.basit.aitattoomaker.databinding.RegenerationDialogBinding
 
+//Dialogs
+fun FragmentActivity.showDiscardDialog(
+    onDiscard: () -> Unit,
+    onNotNow: () -> Unit
+) {
+    val dialog = Dialog(this)
+    val binding = DiscardDialogBinding.inflate(layoutInflater)
+    dialog.setContentView(binding.root)
+    // Optional: make background transparent
+    dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+    // Handle clicks
+    binding.discard.setOnClickListener {
+        onDiscard()
+        dialog.dismiss()
+    }
+    binding.notNow.setOnClickListener {
+        onNotNow()
+        dialog.dismiss()
+    }
+    // Prevent outside touch dismiss if you want
+    dialog.setCancelable(false)
+    dialog.show()
+}
+fun FragmentActivity.showDeleteDialog(
+    onDelete: () -> Unit,
+    onCancel: () -> Unit
+) {
+    val dialog = Dialog(this)
+    val binding = DeleteDialogBinding.inflate(layoutInflater)
+    dialog.setContentView(binding.root)
+    // Optional: make background transparent
+    dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+    // Handle clicks
+    binding.delete.setOnClickListener {
+        onDelete()
+        dialog.dismiss()
+    }
+    binding.cancel.setOnClickListener {
+        onCancel()
+        dialog.dismiss()
+    }
+    // Prevent outside touch dismiss if you want
+    dialog.setCancelable(false)
+    dialog.show()
+}
 
+fun FragmentActivity.regGenLoaderDialog() {
+    val dialog = Dialog(this)
+    val binding = RegenerationDialogBinding.inflate(layoutInflater)
+    dialog.setContentView(binding.root)
+    // Optional: make background transparent
+    dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+    // Handle clicks
+
+    // Prevent outside touch dismiss if you want
+    dialog.setCancelable(false)
+    dialog.show()
+}
+
+fun FragmentActivity.freeLimitDialog(
+    onUpgrade: () -> Unit,
+    onCancel: () -> Unit
+) {
+    val dialog = Dialog(this)
+    val binding = FreeLimitDialogBinding.inflate(layoutInflater)
+    dialog.setContentView(binding.root)
+    // Optional: make background transparent
+    dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+    // Handle clicks
+    binding.upgrade.setOnClickListener {
+        onUpgrade()
+        dialog.dismiss()
+    }
+    binding.cross.setOnClickListener {
+        onCancel()
+        dialog.dismiss()
+    }
+    // Prevent outside touch dismiss if you want
+    dialog.setCancelable(false)
+    dialog.show()
+}
 fun View.toBitmap(): Bitmap {
         val bitmap = createBitmap(width, height)
         val canvas = Canvas(bitmap)
