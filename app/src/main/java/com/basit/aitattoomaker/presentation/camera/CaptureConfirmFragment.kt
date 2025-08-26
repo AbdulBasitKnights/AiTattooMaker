@@ -9,10 +9,10 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.ImageFormat
+import android.graphics.Matrix
 import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.YuvImage
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -56,8 +56,6 @@ import com.basit.aitattoomaker.presentation.utils.CameraPermissionHelper
 import com.basit.aitattoomaker.presentation.utils.DialogUtils
 import com.basit.aitattoomaker.presentation.utils.DialogUtils.dialog
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
@@ -67,7 +65,7 @@ import java.util.concurrent.Executors
 import kotlin.math.abs
 
 @ExperimentalGetImage
-class CameraScreen : Fragment() {
+class CaptureConfirmFragment : Fragment() {
     private var binding: FragmentCameraBinding? = null
     private var cameraProvider: ProcessCameraProvider? = null
     private var isFlashOn = false
@@ -111,9 +109,6 @@ class CameraScreen : Fragment() {
 //            val androidId = Settings.Secure.getString(it.contentResolver, Settings.Secure.ANDROID_ID)
 //            Log.e("checkUUID","AndroidID: $androidId")
             try {
-                binding?.apply {
-                    flash.setImageResource(if (isFlashOn) R.drawable.flash_on else R.drawable.flash_off)
-                }
                 AppUtils.getMain(it)?.hidebottombar()
                 setupRecycler()
                 loadDefaultTattoo()
@@ -175,7 +170,7 @@ class CameraScreen : Fragment() {
                 for (i in 0 until recyclerView.childCount) {
                     val child = recyclerView.getChildAt(i) ?: continue
                     val childCenterX = (child.left + child.right) / 2f
-                    val dist = kotlin.math.abs(centerX - childCenterX)
+                    val dist = abs(centerX - childCenterX)
                     val norm = (dist / centerX).coerceIn(0f, 1f)     // 0 at center → 1 at edge
                     val proximity = 1f - norm                        // 1 at center → 0 at edge
 
@@ -307,14 +302,6 @@ class CameraScreen : Fragment() {
             flash.setOnClickListener {
                 toggleFlash()
             }
-            cross?.setOnClickListener {
-                try {
-                    findNavController().popBackStack()
-                }
-                catch (e:Exception){
-                    e.printStackTrace()
-                }
-            }
         }
         binding?.btnCapture?.setOnClickListener {
             mActivity?.let {
@@ -341,17 +328,19 @@ class CameraScreen : Fragment() {
         cameraControl?.enableTorch(isFlashOn)
         // Change ImageView drawable
         binding?.apply {
-            flash.setImageResource(if (isFlashOn) R.drawable.flash_on else R.drawable.flash_off)
+            Glide.with(flash)
+                .load( if (isFlashOn) R.drawable.flash_on else R.drawable.flash_off)
+                .into(flash)
         }
     }
     /** Tattoo gallery */
-    private fun openTattooGallery() {
-        val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
-            type = "image/*"
-            putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/png", "image/jpeg"))
-        }
-        startActivityForResult(intent, PICK_TATTOO_REQUEST)
-    }
+//    private fun openTattooGallery() {
+//        val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
+//            Intent.setType = "image/*"
+//            putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/png", "image/jpeg"))
+//        }
+//        startActivityForResult(intent, PICK_TATTOO_REQUEST)
+//    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -432,7 +421,7 @@ class CameraScreen : Fragment() {
     private fun rotateBitmapIfNeeded(bitmap: Bitmap, rotationDegrees: Int): Bitmap {
         if (rotationDegrees == 0) return bitmap
 
-        val matrix = android.graphics.Matrix()
+        val matrix = Matrix()
         matrix.postRotate(rotationDegrees.toFloat())
         return Bitmap.createBitmap(
             bitmap,

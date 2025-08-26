@@ -6,38 +6,23 @@
     android:background="@color/darkGrey"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.camera.view.PreviewView
-        android:id="@+id/previewView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/bottom"/>
-
-    <com.basit.aitattoomaker.presentation.camera.overlay.TattooOverlayView
-        android:id="@+id/overlayView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintStart_toStartOf="@+id/previewView"
-        app:layout_constraintEnd_toEndOf="@+id/previewView"
-        app:layout_constraintTop_toTopOf="@+id/previewView"
-        app:layout_constraintBottom_toBottomOf="@+id/previewView"/>
 
     <ImageView
         android:id="@+id/cross"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_10sdp"
-        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_20sdp"
         android:background="@drawable/cross_svg"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
     <ImageView
         android:id="@+id/flash"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintEnd_toStartOf="@+id/info"
         android:layout_marginEnd="@dimen/_10sdp"
-        android:src="@drawable/flash_off"
+        android:background="@drawable/flash_off"
         app:layout_constraintTop_toTopOf="@+id/cross"
         app:layout_constraintBottom_toBottomOf="@+id/cross"/>
     <ImageView
@@ -57,19 +42,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_tattoo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:visibility="visible"
-        android:layout_marginTop="10dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toTopOf="@+id/bottom"
-        tools:itemCount="4"
-        tools:listitem="@layout/item_tattoo_square" />
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/bottom"
         android:layout_width="match_parent"

@@ -36,6 +36,7 @@ import com.basit.aitattoomaker.presentation.ai_create.dialog.AiCreationDialog
 import com.basit.aitattoomaker.presentation.ai_create.dialog.StyleBottomSheet
 import com.basit.aitattoomaker.presentation.ai_create.model.StyleItem
 import com.basit.aitattoomaker.presentation.camera.result.ResultBottomSheet
+import com.basit.aitattoomaker.presentation.utils.AppUtils
 import com.basit.aitattoomaker.presentation.utils.AppUtils.tattooPrompts
 import com.basit.aitattoomaker.presentation.utils.DialogUtils.creationDialog
 import com.basit.aitattoomaker.presentation.utils.DialogUtils.showCreationDialog
@@ -197,6 +198,9 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
     override fun onResume() {
         super.onResume()
         try {
+            mActivity?.let {
+                AppUtils.getMain(it)?.showbottombar()
+            }
             mActivity?.window?.setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN
             )

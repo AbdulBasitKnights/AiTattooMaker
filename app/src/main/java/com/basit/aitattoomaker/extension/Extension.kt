@@ -6,16 +6,27 @@ import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.*
+import androidx.camera.core.ImageProxy
+import java.io.ByteArrayOutputStream
 import android.graphics.Canvas
+import android.graphics.ImageFormat
 import android.graphics.Rect
+import android.graphics.YuvImage
+import android.os.Build
 import android.view.KeyEvent
 import android.view.View
+import android.view.WindowInsets
+import android.view.WindowInsetsController
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.RadioButton
 import android.widget.TextView
+import androidx.annotation.OptIn
+import androidx.camera.core.ExperimentalGetImage
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.drawable.toDrawable
@@ -134,7 +145,67 @@ fun TextView.setDrawableWithTint(drawableRes: Int, tintColor: Int) {
     // Here we assume you want it at start, adjust as needed
     setCompoundDrawablesRelativeWithIntrinsicBounds(drawable, null, drawableEnd, null)
 }
+fun FragmentActivity.hideSystemBars() {
+    try {
+        window.decorView.post {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                window.setDecorFitsSystemWindows(false) // extend layout into system bar areas
+                window.statusBarColor = Color.BLACK     // color top bar area
+                window.navigationBarColor = Color.BLACK // color bottom bar area
+                window.insetsController?.let {
+                    it.hide(WindowInsets.Type.statusBars() or WindowInsets.Type.navigationBars())
+                    it.systemBarsBehavior =
+                        WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                }
+            } else {
+                @Suppress("DEPRECATION")
+                window.decorView.systemUiVisibility = (
+                        View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                                or View.SYSTEM_UI_FLAG_FULLSCREEN
+                                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                                or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        )
+            }
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+}
+@OptIn(ExperimentalGetImage::class)
+fun ImageProxy.toBitmapSafe(): Bitmap? {
+    val image = this.image ?: return null
+    if (image.format != ImageFormat.YUV_420_888) return null
 
+    val yBuffer = image.planes[0].buffer
+    val uBuffer = image.planes[1].buffer
+    val vBuffer = image.planes[2].buffer
+
+    val ySize = yBuffer.remaining()
+    val uSize = uBuffer.remaining()
+    val vSize = vBuffer.remaining()
+
+    // NV21 buffer
+    val nv21 = ByteArray(ySize + uSize + vSize)
+
+    // Y plane
+    yBuffer.get(nv21, 0, ySize)
+
+    // Interleave V and U
+    var uvIndex = ySize
+    while (uBuffer.hasRemaining() && vBuffer.hasRemaining()) {
+        nv21[uvIndex++] = vBuffer.get()
+        nv21[uvIndex++] = uBuffer.get()
+    }
+
+    // Convert to JPEG
+    val yuvImage = YuvImage(nv21, ImageFormat.NV21, width, height, null)
+    val out = ByteArrayOutputStream()
+    yuvImage.compressToJpeg(Rect(0, 0, width, height), 90, out)
+    val imageBytes = out.toByteArray()
+    return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+}
 fun View.dp(value: Int): Float = value * resources.displayMetrics.density
 fun Activity.observeKeyboardLegacy(onChanged: (isVisible: Boolean) -> Unit) {
     val rootView = window.decorView.findViewById<View>(android.R.id.content)
