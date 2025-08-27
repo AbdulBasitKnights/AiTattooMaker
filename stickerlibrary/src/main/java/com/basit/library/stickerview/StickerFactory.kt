@@ -5,8 +5,11 @@ import android.graphics.BitmapFactory
 import android.graphics.PorterDuff
 import androidx.annotation.ColorInt
 import androidx.annotation.IntRange
+import androidx.lifecycle.MutableLiveData
+
 object StickerFactory {
     var currentSticker: Sticker?=null
+    var isStickerFocused = MutableLiveData<Boolean?>()
     fun createSticker(
         context: Context,
         drawableId: Int,

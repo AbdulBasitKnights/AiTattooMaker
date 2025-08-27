@@ -185,7 +185,19 @@
             android:textColor="@color/white" />
 
     </LinearLayout>
-
+    <ImageView
+        android:id="@+id/removeSticker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="@dimen/_15sdp"
+        android:paddingVertical="5dp"
+        android:paddingHorizontal="5dp"
+        android:gravity="center"
+        android:visibility="invisible"
+        android:src="@drawable/delete_svg"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
     <ImageView
         android:id="@+id/changePhoto"
         android:layout_width="wrap_content"

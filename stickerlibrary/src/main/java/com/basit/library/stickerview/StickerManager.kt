@@ -1,6 +1,8 @@
 package com.basit.library.stickerview
 
 import android.graphics.Matrix
+import com.basit.library.stickerview.StickerFactory.currentSticker
+import com.basit.library.stickerview.StickerFactory.isStickerFocused
 import kotlin.concurrent.Volatile
 
 /**
@@ -53,10 +55,13 @@ class StickerManager {
             val sticker = stickerList[i]
             if (sticker == focusSticker) {
                 sticker.isFocus = true
+                isStickerFocused.postValue(true)
             } else {
                 sticker.isFocus = false
+//                isStickerFocused.postValue(false)
             }
         }
+
     }
 
     /**
@@ -66,6 +71,7 @@ class StickerManager {
         for (i in stickerList.indices) {
             val sticker = stickerList[i]
             sticker.isFocus = false
+            isStickerFocused.postValue(false)
         }
     }
 

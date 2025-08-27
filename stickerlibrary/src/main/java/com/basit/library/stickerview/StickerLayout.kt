@@ -3,12 +3,15 @@ package com.basit.library.stickerview
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.DashPathEffect
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
 import com.basit.library.stickerview.StickerFactory.currentSticker
+import com.basit.library.stickerview.StickerFactory.isStickerFocused
+import com.basit.library.stickerview.StickerManager.Companion.getInstance
 
 /**
  * M Abdul Basit
@@ -51,15 +54,22 @@ class StickerLayout : View, View.OnTouchListener {
     var paint: Paint?
         get() {
             if (mPaint == null) {
-                mPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-                mPaint?.color = Color.BLACK
-                mPaint?.strokeWidth = 2f
+                mPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                    color = Color.WHITE
+                    strokeWidth = 2f
+                    style = Paint.Style.STROKE
+                    strokeCap = Paint.Cap.ROUND
+                    strokeJoin = Paint.Join.ROUND
+                    // Dash pattern: [dashLength, spaceLength]
+                    pathEffect = DashPathEffect(floatArrayOf(20f, 10f), 0f)
+                }
             }
             return mPaint
         }
-        set(mPaint) {
-            this.mPaint = mPaint
+        set(value) {
+            mPaint = value
         }
+
 
 
     /**
@@ -129,7 +139,8 @@ class StickerLayout : View, View.OnTouchListener {
 
     }
     fun clearFocusAll() {
-        StickerManager.getInstance().clearAllFocus()
+        getInstance().clearAllFocus()
+        isStickerFocused.postValue(false)
         invalidate()
     }
 
@@ -140,7 +151,8 @@ class StickerLayout : View, View.OnTouchListener {
      */
     fun removeSticker(sticker: Sticker) {
         if (sticker.isFocus) {
-            StickerManager.getInstance().removeSticker(sticker)
+            getInstance().removeSticker(sticker)
+            currentSticker=null
             invalidate()
         }
     }
@@ -149,58 +161,69 @@ class StickerLayout : View, View.OnTouchListener {
      * Remove All Stickers
      */
     fun removeAllSticker() {
-        StickerManager.getInstance().removeAllSticker()
+        getInstance().removeAllSticker()
+        currentSticker=null
         invalidate()
     }
 
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        val stickerList = StickerManager.getInstance().stickerList
-        var focusSticker: Sticker? = null
-        for (i in stickerList.indices) {
-            val sticker = stickerList[i]
+        val stickerList = getInstance().stickerList
+        var focused: Sticker? = null
+
+        for (sticker in stickerList) {
             if (sticker.isFocus) {
-                focusSticker = sticker
+                focused = sticker
             } else {
-                sticker.onDraw(canvas, this.paint)
+                sticker.onDraw(canvas, paint) // normal paint
             }
         }
-        if (focusSticker != null) {
-            focusSticker.onDraw(canvas, this.paint)
+
+        // For focused sticker → dashed + rounded paint
+        focused?.let {
+            currentSticker?.onDraw(canvas, paint)
         }
     }
+
 
     override fun onTouch(v: View?, event: MotionEvent): Boolean {
         when (event.action and MotionEvent.ACTION_MASK) {
             MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_DOWN -> {
                 // Determines whether the delete button is pressed
-                mStick = StickerManager.getInstance().getDelButton(event.x, event.y)
-                if (mStick != null) {
-                    removeSticker(mStick!!)
-                    mStick = null
-                }
+                isStickerFocused.postValue(true)
+                currentSticker = getInstance().getDelButton(event.x, event.y)
+//                if (currentSticker != null) {
+//                    removeSticker(currentSticker!!)
+//                    currentSticker = null
+//                }
                 // Indicates whether a single finger is touching the sticker
-                mStick = StickerManager.getInstance().getSticker(event.x, event.y)
-                if (mStick == null) {
+                currentSticker = getInstance().getSticker(event.x, event.y)
+                if (currentSticker == null) {
                     if (event.pointerCount == 2) {
                         // Handles two-finger touch: the first finger does not touch the sticker, but the second finger does touch the sticker
-                        mStick =
-                            StickerManager.getInstance().getSticker(event.getX(1), event.getY(1))
+                        currentSticker =
+                            getInstance().getSticker(event.getX(1), event.getY(1))
                     }
                 }
-                if (mStick != null) {
-                    currentSticker=mStick
-                    StickerManager.getInstance().setFocusSticker(mStick)
+
+                if (currentSticker != null) {
+                    getInstance().setFocusSticker(currentSticker)
+                }
+                else{
+                    currentSticker?.let {
+                        getInstance().setFocusSticker(it)
+                    }
                 }
             }
 
-            else -> {}
+            else -> {
+            }
         }
-        if (mStick != null) {
-            mStick?.onTouch(event)
+        if (currentSticker != null) {
+            currentSticker?.onTouch(event)
         } else {
-            StickerManager.getInstance().clearAllFocus()
+            getInstance().clearAllFocus()
         }
         invalidate()
         return true

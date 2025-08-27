@@ -190,12 +190,12 @@ abstract class BaseSticker(
                 )
             }
             // Draw delete button
-            canvas?.drawBitmap(
-                mDelBitmap,
-                mDstPoints[0] - mDelBitmap.width / 2 - PADDING,
-                mDstPoints[1] - mDelBitmap.height / 2 - PADDING,
-                null // ❌ don't use same paint
-            )
+//            canvas?.drawBitmap(
+//                mDelBitmap,
+//                mDstPoints[0] - mDelBitmap.width / 2 - PADDING,
+//                mDstPoints[1] - mDelBitmap.height / 2 - PADDING,
+//                null // ❌ don't use same paint
+//            )
         }
     }
 

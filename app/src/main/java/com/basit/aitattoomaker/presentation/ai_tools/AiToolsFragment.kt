@@ -43,6 +43,8 @@ import kotlinx.coroutines.withContext
 import java.io.OutputStream
 import java.nio.FloatBuffer
 import androidx.core.graphics.createBitmap
+import com.basit.aitattoomaker.extension.hide
+import com.basit.aitattoomaker.extension.show
 import com.basit.aitattoomaker.extension.uriToBitmap
 import com.basit.aitattoomaker.presentation.ai_tools.adapter.TattooAdapterOld
 import com.basit.aitattoomaker.presentation.camera.adapter.CameraTattooAdapter
@@ -104,6 +106,7 @@ class AiToolsFragment : Fragment() {
     override fun onViewCreated(v: View, s: Bundle?) {
         super.onViewCreated(v, s)
         mActivity?.let {
+
             try {
                 tattooCreation.postValue(false)
                 setupRecycler()
@@ -152,6 +155,20 @@ class AiToolsFragment : Fragment() {
 
     private fun setupClicks(){
         binding?.apply {
+            StickerFactory?.isStickerFocused?.observe(viewLifecycleOwner){
+                if(it==true){
+                    removeSticker.show()
+                }
+                else{
+                    removeSticker.hide()
+                }
+            }
+            removeSticker.setOnClickListener {
+                StickerFactory?.currentSticker?.let {
+                    binding?.slStickerLayout?.removeSticker(it)
+                    binding?.slStickerLayout?.clearFocusAll()
+                }
+            }
             btnLoadDefault.setOnClickListener {
                 // Toggle list panel(s)
                 rvTattoo.isVisible = !rvTattoo.isVisible
