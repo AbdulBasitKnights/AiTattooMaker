@@ -14,7 +14,9 @@ import android.graphics.Canvas
 import android.graphics.ImageFormat
 import android.graphics.Rect
 import android.graphics.YuvImage
+import android.net.Uri
 import android.os.Build
+import android.provider.MediaStore
 import android.view.KeyEvent
 import android.view.View
 import android.view.WindowInsets
@@ -145,6 +147,23 @@ fun TextView.setDrawableWithTint(drawableRes: Int, tintColor: Int) {
     // Here we assume you want it at start, adjust as needed
     setCompoundDrawablesRelativeWithIntrinsicBounds(drawable, null, drawableEnd, null)
 }
+fun Context.uriToBitmap(uri: Uri?): Bitmap? {
+    return try {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            uri?.let {
+                val source = ImageDecoder.createSource(contentResolver, uri)
+                ImageDecoder.decodeBitmap(source)
+            }
+        } else {
+            @Suppress("DEPRECATION")
+            MediaStore.Images.Media.getBitmap(contentResolver, uri)
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
+}
+
 fun FragmentActivity.hideSystemBars() {
     try {
         window.decorView.post {

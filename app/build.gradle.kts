@@ -62,6 +62,7 @@ dependencies {
     implementation(libs.androidx.camera.view)
     // ML Kit Selfie Segmentation
     implementation(libs.segmentation.selfie)
+    implementation(libs.play.services.mlkit.subject.segmentation)
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
     // Glide for image loading

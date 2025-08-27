@@ -40,6 +40,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.basit.aitattoomaker.R
 import com.basit.aitattoomaker.data.repo.TattooRepositoryImpl
 import com.basit.aitattoomaker.databinding.FragmentCameraBinding
+import com.basit.aitattoomaker.extension.toBitmapSafe
 import com.basit.aitattoomaker.presentation.ai_create.dialog.StyleBottomSheet
 import com.basit.aitattoomaker.presentation.ai_create.model.StyleItem
 import com.basit.aitattoomaker.presentation.ai_tools.adapter.TattooAdapter
@@ -51,9 +52,11 @@ import com.basit.aitattoomaker.presentation.utils.AppUtils
 import com.basit.aitattoomaker.presentation.utils.CameraPermissionHelper
 import com.basit.aitattoomaker.presentation.utils.DialogUtils
 import com.basit.aitattoomaker.presentation.utils.DialogUtils.dialog
+import com.basit.aitattoomaker.presentation.utils.capturedBitmap
 import com.bumptech.glide.Glide
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.util.concurrent.Executors
@@ -68,7 +71,9 @@ class CameraScreen : Fragment() {
     private  var cameraControl: CameraControl?=null
     private  var cameraInfo: CameraInfo?=null
     private var imageCapture: ImageCapture? = null
-    private val cameraExecutor by lazy { Executors.newSingleThreadExecutor() }
+    private val cameraExecutor by lazy {
+        Executors.newSingleThreadExecutor()
+    }
     private val viewModel: CameraViewModel by viewModels { CameraViewModelFactory( requireActivity().application, TattooRepositoryImpl(requireContext()) ) }
     private var defaultTattoo: Bitmap? = null
     private val library_tattoolists = listOf(
@@ -344,6 +349,27 @@ class CameraScreen : Fragment() {
     /** Capture image */
     private fun captureImage() {
         imageCapture?.takePicture(
+            ContextCompat.getMainExecutor(requireContext()), // callback on main
+            object : ImageCapture.OnImageCapturedCallback() {
+                override fun onCaptureSuccess(image: ImageProxy) {
+                    viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+                        val bitmap = image.toBitmap()
+                        val rotated = rotateBitmapIfNeeded(bitmap, image.imageInfo.rotationDegrees)
+                        withContext(Dispatchers.Main) {
+                            val finalBitmap = rotated?.let { binding?.overlayView?.getFinalBitmap(it) }
+                            finalBitmap?.let { showResultDialog(it) }
+                        }
+                        image.close()
+                    }
+                }
+
+                override fun onError(exc: ImageCaptureException) {
+                    exc.printStackTrace()
+                }
+            }
+        )
+
+     /*   imageCapture?.takePicture(
             ContextCompat.getMainExecutor(requireContext()), // or background executor
             object : ImageCapture.OnImageCapturedCallback() {
                 override fun onCaptureSuccess(imageProxy: ImageProxy) {
@@ -370,7 +396,7 @@ class CameraScreen : Fragment() {
                     Log.e(TAG, "Capture failed: ${exception.message}", exception)
                 }
             }
-        )
+        )*/
     }
 
 
@@ -388,12 +414,15 @@ class CameraScreen : Fragment() {
 
     /** Preview dialog */
     private fun showResultDialog(bitmap: Bitmap) {
-        val uri = saveTempBitmap(bitmap) ?: run {
-            Toast.makeText(requireContext(), "Failed to prepare preview", Toast.LENGTH_SHORT).show()
-            return
+//        capturedUri = saveTempBitmap(bitmap) ?: run {
+//            Toast.makeText(requireContext(), "Failed to prepare preview", Toast.LENGTH_SHORT).show()
+//            return
+//        }
+        capturedBitmap=bitmap
+        dialog?.dismiss()
+        bitmap?.let { bitmap ->
+            findNavController().navigate(CameraScreenDirections.actionNavigationAicameraToNavigationAitools())
         }
-        ResultBottomSheet.newInstance(uri)
-            .show(childFragmentManager, "ResultBottomSheet")
     }
 
     private fun saveTempBitmap(bitmap: Bitmap): Uri? {

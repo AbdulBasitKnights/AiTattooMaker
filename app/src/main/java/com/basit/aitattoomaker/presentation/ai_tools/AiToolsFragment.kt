@@ -13,6 +13,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -42,8 +43,12 @@ import kotlinx.coroutines.withContext
 import java.io.OutputStream
 import java.nio.FloatBuffer
 import androidx.core.graphics.createBitmap
+import com.basit.aitattoomaker.extension.uriToBitmap
 import com.basit.aitattoomaker.presentation.ai_tools.adapter.TattooAdapterOld
+import com.basit.aitattoomaker.presentation.utils.capturedBitmap
 import com.basit.aitattoomaker.presentation.utils.tattooCreation
+import com.google.mlkit.vision.segmentation.subject.SubjectSegmentation
+import com.google.mlkit.vision.segmentation.subject.SubjectSegmenterOptions
 
 class AiToolsFragment : Fragment() {
 
@@ -51,13 +56,16 @@ class AiToolsFragment : Fragment() {
 
     private lateinit var adapter: TattooAdapterOld
     private var modelIndex = 0
-
     // Single, reusable ML Kit options
     private val selfieOptions by lazy {
         SelfieSegmenterOptions.Builder()
             .setDetectorMode(SelfieSegmenterOptions.SINGLE_IMAGE_MODE)
             .build()
     }
+    private val subjectOptions = SubjectSegmenterOptions.Builder()
+        .enableForegroundConfidenceMask() // FloatBuffer mask
+        .enableForegroundBitmap()         // subject bitmap
+        .build()
 
     // If you want custom sticker pick (kept wired but not triggered)
     private val pickStickerLauncher = registerForActivityResult(
@@ -101,7 +109,7 @@ class AiToolsFragment : Fragment() {
                 // Initial load
                 DialogUtils.show(it, "Processing...")
                 dialog?.show()
-                cycleAndLoadModel() // loads model1 initially
+                cycleAndLoadModel(first = true) // loads model1 initially
             }
             catch (e:Exception){
                 e.printStackTrace()
@@ -159,16 +167,22 @@ class AiToolsFragment : Fragment() {
 
             changePhoto.setOnClickListener {
                 dialog?.show()
-                cycleAndLoadModel()
+                cycleAndLoadModel(false)
             }
         }
 
     }
 
-    private fun cycleAndLoadModel() {
+    private fun cycleAndLoadModel(first:Boolean=true) {
         // 4 demo models cycling [1..4]
-        modelIndex = (modelIndex % 4) + 1
-        loadDefaultPhotoAndMask(modelIndex)
+        if(first){
+            loadDefaultPhotoAndMask(modelIndex,true)
+        }
+        else{
+            modelIndex = (modelIndex % 4) + 1
+            loadDefaultPhotoAndMask(modelIndex,false)
+        }
+
     }
 
     private fun applyContainerRatio(photoW: Int, photoH: Int) {
@@ -179,7 +193,7 @@ class AiToolsFragment : Fragment() {
 
     // ---- Image load + segmentation ----
 
-    private fun loadDefaultPhotoAndMask(model: Int) {
+    private fun loadDefaultPhotoAndMask(model: Int, first: Boolean = true) {
         val resId = when (model) {
             1 -> R.drawable.model1
             2 -> R.drawable.model2
@@ -188,67 +202,142 @@ class AiToolsFragment : Fragment() {
             else -> R.drawable.model4
         }
 
-        val base = BitmapFactory.decodeResource(resources, resId)
+        val base = if (first) capturedBitmap else BitmapFactory.decodeResource(resources, resId)
         if (base == null) {
             Toast.makeText(requireContext(), "Failed to load default photo", Toast.LENGTH_SHORT).show()
             dialog?.dismiss()
             return
         }
 
-        runSegmentation(base) { baseBitmap, maskBitmap, bgBitmap ->
+        // run suspending segmentation safely
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+            val (baseBitmap, maskBitmap, bgBitmap) = runSmartSegmentation(base)
+
             if (baseBitmap == null || maskBitmap == null || bgBitmap == null) {
                 Toast.makeText(requireContext(), "Segmentation failed", Toast.LENGTH_SHORT).show()
                 dialog?.dismiss()
-                return@runSegmentation
+                return@launch
             }
 
             applyContainerRatio(base.width, base.height)
 
+            // ✅ Sticker view gets original image + mask
             binding?.maskedStickerView?.setImageAndMask(baseBitmap, maskBitmap)
+
+            // ✅ Background view gets cutout background only
             binding?.bgImage?.setImageAndMask(bgBitmap, bgBitmap)
 
             dialog?.dismiss()
         }
     }
 
-    private fun runSegmentation(
-        base: Bitmap,
-        onDone: (base: Bitmap?, mask: Bitmap?, bg: Bitmap?) -> Unit
-    ) {
-        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
-            try {
-                val segmenter = Segmentation.getClient(selfieOptions)
-                val result = withContext(Dispatchers.Main) {
-                    segmenter.process(InputImage.fromBitmap(base, 0)).await()
+
+
+    private suspend fun runSmartSegmentation(base: Bitmap): Triple<Bitmap?, Bitmap?, Bitmap?> {
+        return try {
+            val subjectSegmenter = SubjectSegmentation.getClient(
+                SubjectSegmenterOptions.Builder()
+                    .enableForegroundConfidenceMask() // ✅ correct place
+                    .enableForegroundBitmap()
+                    .build()
+            )
+
+            val result = subjectSegmenter.process(InputImage.fromBitmap(base, 0)).await()
+            val subject = result.subjects.firstOrNull()
+
+            if (subject?.confidenceMask != null) {
+                var mask = floatsToMaskBitmap(subject.confidenceMask!!, subject.width, subject.height)
+                    .scale(base.width, base.height, true)
+
+                // 🔹 Compare mask coverage vs base area
+                val maskPixels = IntArray(mask.width * mask.height)
+                mask.getPixels(maskPixels, 0, mask.width, 0, 0, mask.width, mask.height)
+
+                val nonZero = maskPixels.count { Color.alpha(it) > 10 } // pixels with visible alpha
+                val total = maskPixels.size
+                val coveragePercent = (nonZero.toFloat() / total.toFloat()) * 100f
+
+                Log.d(
+                    "Segmentation",
+                    "Mask coverage = ${"%.2f".format(coveragePercent)}% of base (${nonZero} / ${total} pixels)"
+                )
+
+                // Optional: if mask coverage is too low, fallback to base as mask
+                if (coveragePercent < 10f) {
+                    Log.w("Segmentation", "⚠️ Mask too small (<10%), using base as mask")
+                    mask = base.copy(Bitmap.Config.ARGB_8888, true)
                 }
 
-                val maskBuffer = result.buffer
-                val maskW = result.width
-                val maskH = result.height
-
-                maskBuffer.rewind()
-                val floatBuffer = maskBuffer.asFloatBuffer()
-
-                // 1) Build mask bitmap from probabilities, scale to base size
-                val maskBitmap = floatsToMaskBitmap(floatBuffer, maskW, maskH)
-                    .scale(base.width, base.height, filter = true)
-
-                // 2) Build background with person cut out (DST_OUT)
-                val bgBitmap = createBitmap(base.width, base.height)
-                val canvas = Canvas(bgBitmap)
-                val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-                val maskPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                    xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_OUT)
+                // 🔹 Build background cut-out
+                val bg = Bitmap.createBitmap(base.width, base.height, Bitmap.Config.ARGB_8888).apply {
+                    Canvas(this).apply {
+                        drawBitmap(base, 0f, 0f, Paint(Paint.ANTI_ALIAS_FLAG))
+                        drawBitmap(mask, 0f, 0f, Paint().apply {
+                            xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_OUT)
+                        })
+                    }
                 }
-                canvas.drawBitmap(base, 0f, 0f, paint)
-                canvas.drawBitmap(maskBitmap, 0f, 0f, maskPaint)
 
-                withContext(Dispatchers.Main) { onDone(base, maskBitmap, bgBitmap) }
-            } catch (_: Exception) {
-                withContext(Dispatchers.Main) { onDone(null, null, null) }
+                Triple(base, mask, bg)
+            } else {
+                Log.w("MLKit", "⚠️ Subject segmentation failed, falling back to Selfie")
+                runSelfieSegmentation(base)
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            runSelfieSegmentation(base)
         }
     }
+
+
+    private suspend fun runSelfieSegmentation(base: Bitmap): Triple<Bitmap?, Bitmap?, Bitmap?> {
+        val selfieOptions = SelfieSegmenterOptions.Builder()
+            .setDetectorMode(SelfieSegmenterOptions.SINGLE_IMAGE_MODE)
+            .build()
+
+        val segmenter = Segmentation.getClient(selfieOptions)
+        val result = segmenter.process(InputImage.fromBitmap(base, 0)).await()
+
+        val floatBuffer = result.buffer.asFloatBuffer()
+        var mask = floatsToMaskBitmap(floatBuffer, result.width, result.height)
+            .scale(base.width, base.height, true)
+
+        // 🔹 Compare mask coverage vs base area
+        val maskPixels = IntArray(mask.width * mask.height)
+        mask.getPixels(maskPixels, 0, mask.width, 0, 0, mask.width, mask.height)
+
+        val nonZero = maskPixels.count { Color.alpha(it) > 10 }
+        val total = maskPixels.size
+        val coveragePercent = (nonZero.toFloat() / total.toFloat()) * 100f
+
+        Log.d(
+            "SelfieSegmentation",
+            "Mask coverage = ${"%.2f".format(coveragePercent)}% of base ($nonZero / $total pixels)"
+        )
+
+        // Optional: if mask coverage is too low (<10%), fallback to base
+        if (coveragePercent < 10f) {
+            Log.w("SelfieSegmentation", "⚠️ Mask too small (<10%), using base as mask")
+            mask = base.copy(Bitmap.Config.ARGB_8888, true)
+        }
+
+        // 🔹 Build background cut-out
+        val bg = Bitmap.createBitmap(base.width, base.height, Bitmap.Config.ARGB_8888).apply {
+            Canvas(this).apply {
+                drawBitmap(base, 0f, 0f, Paint(Paint.ANTI_ALIAS_FLAG))
+                drawBitmap(mask, 0f, 0f, Paint().apply {
+                    xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_OUT)
+                })
+            }
+        }
+
+        return Triple(base, mask, bg)
+    }
+
+
+
+
+
 
     /**
      * Convert ML Kit segmentation FloatBuffer → ARGB mask (white for person, alpha = confidence)
@@ -258,13 +347,15 @@ class AiToolsFragment : Fragment() {
         for (y in 0 until maskH) {
             for (x in 0 until maskW) {
                 val idx = y * maskW + x
-                val confidence = buffer.get(idx) // 0..1
+                val confidence = buffer.get(idx) // [0..1]
                 val alpha = (confidence * 255).toInt().coerceIn(0, 255)
-                pixels[idx] = Color.argb(alpha, 255, 255, 255)
+                // PURE alpha mask: subject opaque, background transparent
+                pixels[idx] = Color.argb(alpha, 0, 0, 0)
             }
         }
         return Bitmap.createBitmap(pixels, maskW, maskH, Bitmap.Config.ARGB_8888)
     }
+
 
     private fun loadSticker(uri: Uri) {
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
