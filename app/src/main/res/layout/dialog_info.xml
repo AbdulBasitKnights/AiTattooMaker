@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:backgroundTint="@color/darkGrey"
+    android:background="@drawable/bg_round">
+    <ImageView
+        android:id="@+id/cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:background="@drawable/cross_svg"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="@dimen/_5sdp"
+        app:layout_constraintBottom_toBottomOf="@+id/title"
+        app:layout_constraintTop_toTopOf="@+id/title"/>
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/preview_info"
+        android:textColor="@color/white"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:fontFamily="@font/poppins_semibold_600"
+        app:layout_constraintStart_toStartOf="parent"
+        android:textSize="@dimen/_13ssp"
+        app:layout_constraintTop_toTopOf="parent"/>
+    <!-- Step 1 Card -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/step1Card"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_round"
+        android:backgroundTint="@color/grey"
+        android:padding="12dp"
+        android:layout_marginTop="@dimen/_20sdp"
+        app:layout_constraintTop_toBottomOf="@+id/title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:id="@+id/step1Image"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:src="@drawable/step1info"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <TextView
+            android:id="@+id/step1Title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Step 1"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:paddingStart="@dimen/_10sdp"
+            android:textSize="16sp"
+            app:layout_constraintStart_toEndOf="@id/step1Image"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <TextView
+            android:id="@+id/step1Desc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Aim your camera at a flat surface (floor, wall, or skin)."
+            android:textColor="@color/lightGrey"
+            android:textSize="14sp"
+            android:paddingStart="@dimen/_10sdp"
+            android:layout_marginTop="4dp"
+            app:layout_constraintStart_toStartOf="@id/step1Title"
+            app:layout_constraintTop_toBottomOf="@id/step1Title"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Step 2 Card -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/step2Card"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_round"
+        android:backgroundTint="@color/grey"
+        android:padding="12dp"
+        android:layout_marginTop="@dimen/_12sdp"
+        app:layout_constraintTop_toBottomOf="@id/step1Card"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:id="@+id/step2Image"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:src="@drawable/step2info"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <TextView
+            android:id="@+id/step2Title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Step 2"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:paddingStart="@dimen/_10sdp"
+            app:layout_constraintStart_toEndOf="@id/step2Image"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <TextView
+            android:id="@+id/step2Desc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Tap to place your tattoo/artwork in live camera."
+            android:textColor="@color/lightGrey"
+            android:textSize="14sp"
+            android:layout_marginTop="4dp"
+            android:paddingStart="@dimen/_10sdp"
+            app:layout_constraintStart_toStartOf="@id/step2Title"
+            app:layout_constraintTop_toBottomOf="@id/step2Title"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Step 3 Card -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/step3Card"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_round"
+        android:padding="12dp"
+        android:backgroundTint="@color/grey"
+        android:layout_marginTop="@dimen/_12sdp"
+        app:layout_constraintTop_toBottomOf="@id/step2Card"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:id="@+id/step3Image"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:src="@drawable/step3info"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <TextView
+            android:id="@+id/step3Title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Step 3"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:paddingStart="@dimen/_10sdp"
+            android:textSize="16sp"
+            app:layout_constraintStart_toEndOf="@id/step3Image"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <TextView
+            android:id="@+id/step3Desc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/_10sdp"
+            android:text="Take a photo, then fine-tune with edits to get the perfect look."
+            android:textColor="@color/lightGrey"
+            android:textSize="14sp"
+            android:layout_marginTop="4dp"
+            app:layout_constraintStart_toStartOf="@id/step3Title"
+            app:layout_constraintTop_toBottomOf="@id/step3Title"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/step3Card"/>
+    <TextView
+        android:id="@+id/done"
+        android:layout_width="0dp"
+        app:layout_constraintWidth_percent="0.9"
+        android:layout_height="wrap_content"
+        android:text="@string/got_it"
+        android:textSize="@dimen/_12ssp"
+        android:gravity="center"
+        android:paddingVertical="@dimen/_10sdp"
+        android:background="@drawable/bg_round"
+        android:backgroundTint="@color/colorprimary"
+        android:textColor="@color/white"
+        android:fontFamily="@font/poppins_medium_500"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="@dimen/_5sdp"
+        android:layout_marginBottom="@dimen/_15sdp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

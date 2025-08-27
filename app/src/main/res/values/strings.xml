@@ -58,4 +58,6 @@
     <string name="try_on">Try On</string>
     <string name="result_screen">Result Screen</string>
     <string name="library">Library</string>
+    <string name="got_it">Got it</string>
+    <string name="preview_info">Preview Info</string>
 </resources>

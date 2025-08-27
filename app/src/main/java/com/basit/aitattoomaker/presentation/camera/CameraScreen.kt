@@ -40,9 +40,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.basit.aitattoomaker.R
 import com.basit.aitattoomaker.data.repo.TattooRepositoryImpl
 import com.basit.aitattoomaker.databinding.FragmentCameraBinding
+import com.basit.aitattoomaker.presentation.ai_create.dialog.StyleBottomSheet
+import com.basit.aitattoomaker.presentation.ai_create.model.StyleItem
 import com.basit.aitattoomaker.presentation.ai_tools.adapter.TattooAdapter
 import com.basit.aitattoomaker.presentation.ai_tools.model.CameraTattoo
 import com.basit.aitattoomaker.presentation.camera.adapter.CameraTattooAdapter
+import com.basit.aitattoomaker.presentation.camera.dialog.InfoBottomSheet
 import com.basit.aitattoomaker.presentation.camera.result.ResultBottomSheet
 import com.basit.aitattoomaker.presentation.utils.AppUtils
 import com.basit.aitattoomaker.presentation.utils.CameraPermissionHelper
@@ -275,6 +278,20 @@ class CameraScreen : Fragment() {
                 library.setTextColor(resources.getColor(R.color.lightGrey))
                 history.setTextColor(resources.getColor(R.color.white))
                 adapter.submitList(history_tattoolists)
+            }
+            info.setOnClickListener {
+                try {
+                    val sheet = InfoBottomSheet.newInstance()
+                    sheet.callback = object : InfoBottomSheet.Callback {
+                        override fun onCancel() {
+//                        Toast.makeText(requireContext(), "Cancelled", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    sheet.show(parentFragmentManager, "InfoBottomSheet")
+                }
+                catch (e:Exception){
+                    e.printStackTrace()
+                }
             }
         }
         binding?.btnCapture?.setOnClickListener {
