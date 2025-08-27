@@ -18,6 +18,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.graphics.scale
@@ -60,16 +61,6 @@ class AiToolsFragment : Fragment() {
 
     private lateinit var adapter: CameraTattooAdapter
     private var modelIndex = 0
-    // Single, reusable ML Kit options
-    private val selfieOptions by lazy {
-        SelfieSegmenterOptions.Builder()
-            .setDetectorMode(SelfieSegmenterOptions.SINGLE_IMAGE_MODE)
-            .build()
-    }
-    private val subjectOptions = SubjectSegmenterOptions.Builder()
-        .enableForegroundConfidenceMask() // FloatBuffer mask
-        .enableForegroundBitmap()         // subject bitmap
-        .build()
     private val library_tattoolists = listOf(
         CameraTattoo("Dragon", R.drawable.dragon, imageUrl = "file:///android_asset/tattoos/dragon.png"),
         CameraTattoo("Flower", R.drawable.flower, imageUrl = "file:///android_asset/tattoos/flower.png"),
@@ -78,9 +69,14 @@ class AiToolsFragment : Fragment() {
         CameraTattoo("Sparrow",  R.drawable.sparrow, imageUrl = "file:///android_asset/tattoos/sparrow.png")
     )
     // If you want custom sticker pick (kept wired but not triggered)
-    private val pickStickerLauncher = registerForActivityResult(
-        ActivityResultContracts.GetContent()
-    ) { uri: Uri? -> uri?.let { loadSticker(it) } }
+    private val pickMedia =
+        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            if (uri != null) {
+
+            } else {
+                Log.d("PhotoPicker", "No media selected")
+            }
+        }
 
     private var mActivity: FragmentActivity?=null
     // This property is only valid between onCreateView and
@@ -184,6 +180,7 @@ class AiToolsFragment : Fragment() {
                 rvTattoo.isVisible = false
             }
 
+
             opacity64.setOnClickListener { slStickerLayout.updateSticker(64) }
             opacity128.setOnClickListener { slStickerLayout.updateSticker(128) }
             opacity192.setOnClickListener { slStickerLayout.updateSticker(192) }
@@ -197,6 +194,9 @@ class AiToolsFragment : Fragment() {
             }
         }
 
+    }
+    fun openPicker() {
+        pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
 
     private fun cycleAndLoadModel(first:Boolean=true) {
@@ -317,49 +317,53 @@ class AiToolsFragment : Fragment() {
 
 
     private suspend fun runSelfieSegmentation(base: Bitmap): Triple<Bitmap?, Bitmap?, Bitmap?> {
-        val selfieOptions = SelfieSegmenterOptions.Builder()
-            .setDetectorMode(SelfieSegmenterOptions.SINGLE_IMAGE_MODE)
-            .build()
+        try {
+            val selfieOptions = SelfieSegmenterOptions.Builder()
+                .setDetectorMode(SelfieSegmenterOptions.SINGLE_IMAGE_MODE)
+                .build()
 
-        val segmenter = Segmentation.getClient(selfieOptions)
-        val result = segmenter.process(InputImage.fromBitmap(base, 0)).await()
+            val segmenter = Segmentation.getClient(selfieOptions)
+            val result = segmenter.process(InputImage.fromBitmap(base, 0)).await()
 
-        val floatBuffer = result.buffer.asFloatBuffer()
-        var mask = floatsToMaskBitmap(floatBuffer, result.width, result.height)
-            .scale(base.width, base.height, true)
+            val floatBuffer = result.buffer.asFloatBuffer()
+            var mask = floatsToMaskBitmap(floatBuffer, result.width, result.height)
+                .scale(base.width, base.height, true)
 
-        // 🔹 Compare mask coverage vs base area
-        val maskPixels = IntArray(mask.width * mask.height)
-        mask.getPixels(maskPixels, 0, mask.width, 0, 0, mask.width, mask.height)
+            // 🔹 Compare mask coverage vs base area
+            val maskPixels = IntArray(mask.width * mask.height)
+            mask.getPixels(maskPixels, 0, mask.width, 0, 0, mask.width, mask.height)
 
-        val nonZero = maskPixels.count { Color.alpha(it) > 10 }
-        val total = maskPixels.size
-        val coveragePercent = (nonZero.toFloat() / total.toFloat()) * 100f
+            val nonZero = maskPixels.count { Color.alpha(it) > 10 }
+            val total = maskPixels.size
+            val coveragePercent = (nonZero.toFloat() / total.toFloat()) * 100f
 
-        Log.d(
-            "SelfieSegmentation",
-            "Mask coverage = ${"%.2f".format(coveragePercent)}% of base ($nonZero / $total pixels)"
-        )
+            Log.d(
+                "SelfieSegmentation",
+                "Mask coverage = ${"%.2f".format(coveragePercent)}% of base ($nonZero / $total pixels)"
+            )
 
-        // Optional: if mask coverage is too low (<10%), fallback to base
-        if (coveragePercent < 10f) {
-            Toast.makeText(mActivity, "Please Recapture the Image, subject are is too small", Toast.LENGTH_SHORT).show()
+            // Optional: if mask coverage is too low (<10%), fallback to base
+            if (coveragePercent < 10f) {
+                Toast.makeText(mActivity, "Please Recapture the Image, subject are is too small", Toast.LENGTH_SHORT).show()
 
-            Log.w("SelfieSegmentation", "⚠️ Mask too small (<10%), using base as mask")
-            mask = base.copy(Bitmap.Config.ARGB_8888, true)
-        }
-
-        // 🔹 Build background cut-out
-        val bg = Bitmap.createBitmap(base.width, base.height, Bitmap.Config.ARGB_8888).apply {
-            Canvas(this).apply {
-                drawBitmap(base, 0f, 0f, Paint(Paint.ANTI_ALIAS_FLAG))
-                drawBitmap(mask, 0f, 0f, Paint().apply {
-                    xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_OUT)
-                })
+                Log.w("SelfieSegmentation", "⚠️ Mask too small (<10%), using base as mask")
+                mask = base.copy(Bitmap.Config.ARGB_8888, true)
             }
-        }
 
-        return Triple(base, mask, bg)
+            // 🔹 Build background cut-out
+            val bg = createBitmap(base.width, base.height).apply {
+                Canvas(this).apply {
+                    drawBitmap(base, 0f, 0f, Paint(Paint.ANTI_ALIAS_FLAG))
+                    drawBitmap(mask, 0f, 0f, Paint().apply {
+                        xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_OUT)
+                    })
+                }
+            }
+
+            return Triple(base, mask, bg)
+        } catch (e: Exception) {
+            return Triple(null,null,null)
+        }
     }
 
 

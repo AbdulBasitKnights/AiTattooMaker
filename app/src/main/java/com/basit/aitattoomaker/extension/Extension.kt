@@ -151,18 +151,24 @@ fun Context.uriToBitmap(uri: Uri?): Bitmap? {
     return try {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             uri?.let {
-                val source = ImageDecoder.createSource(contentResolver, uri)
-                ImageDecoder.decodeBitmap(source)
+                val source = ImageDecoder.createSource(contentResolver, it)
+                ImageDecoder.decodeBitmap(source) { decoder, _, _ ->
+                    decoder.allocator = ImageDecoder.ALLOCATOR_SOFTWARE // ✅ force software
+                    decoder.isMutableRequired = true                     // ✅ make mutable
+                    decoder.setTargetColorSpace(ColorSpace.get(ColorSpace.Named.SRGB))
+                }
             }
         } else {
             @Suppress("DEPRECATION")
             MediaStore.Images.Media.getBitmap(contentResolver, uri)
+                ?.copy(Bitmap.Config.ARGB_8888, true) // ✅ ensure software + mutable
         }
     } catch (e: Exception) {
         e.printStackTrace()
         null
     }
 }
+
 
 fun FragmentActivity.hideSystemBars() {
     try {
@@ -306,6 +312,13 @@ fun View.toggleFade(duration: Long = 150) {
     }
 }
 
+fun Bitmap.toSafeSoftwareBitmap(): Bitmap {
+    return if (config == Bitmap.Config.HARDWARE || !isMutable) {
+        this.copy(Bitmap.Config.ARGB_8888, true)
+    } else {
+        this
+    }
+}
 
 fun View.show() {
     visibility = View.VISIBLE

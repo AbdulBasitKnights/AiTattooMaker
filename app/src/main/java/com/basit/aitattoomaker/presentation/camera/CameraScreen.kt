@@ -18,6 +18,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.widget.Toast
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraControl
 import androidx.camera.core.CameraInfo
 import androidx.camera.core.CameraSelector
@@ -41,6 +43,8 @@ import com.basit.aitattoomaker.R
 import com.basit.aitattoomaker.data.repo.TattooRepositoryImpl
 import com.basit.aitattoomaker.databinding.FragmentCameraBinding
 import com.basit.aitattoomaker.extension.toBitmapSafe
+import com.basit.aitattoomaker.extension.toSafeSoftwareBitmap
+import com.basit.aitattoomaker.extension.uriToBitmap
 import com.basit.aitattoomaker.presentation.ai_create.dialog.StyleBottomSheet
 import com.basit.aitattoomaker.presentation.ai_create.model.StyleItem
 import com.basit.aitattoomaker.presentation.ai_tools.adapter.TattooAdapter
@@ -75,8 +79,18 @@ class CameraScreen : Fragment() {
     private val cameraExecutor by lazy {
         Executors.newSingleThreadExecutor()
     }
-    private val viewModel: CameraViewModel by viewModels { CameraViewModelFactory( requireActivity().application, TattooRepositoryImpl(requireContext()) ) }
-    private var defaultTattoo: Bitmap? = null
+    private val pickMedia =
+        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            if (uri != null) {
+                mActivity?.uriToBitmap(uri)?.let {
+                    showResultDialog(it)
+                }
+            } else {
+                Log.d("PhotoPicker", "No media selected")
+            }
+        }
+//    private val viewModel: CameraViewModel by viewModels { CameraViewModelFactory( requireActivity().application, TattooRepositoryImpl(requireContext()) ) }
+//    private var defaultTattoo: Bitmap? = null
     private val library_tattoolists = listOf(
         CameraTattoo("Dragon", R.drawable.dragon, imageUrl = "file:///android_asset/tattoos/dragon.png"),
         CameraTattoo("Flower", R.drawable.flower, imageUrl = "file:///android_asset/tattoos/flower.png"),
@@ -205,6 +219,9 @@ class CameraScreen : Fragment() {
                 history.setTextColor(resources.getColor(R.color.white))
                 adapter.submitList(history_tattoolists)
             }
+            gallery.setOnClickListener {
+                openPicker()
+            }
             info.setOnClickListener {
                 try {
                     val sheet = InfoBottomSheet.newInstance()
@@ -227,6 +244,9 @@ class CameraScreen : Fragment() {
             }
             captureImage()
         }
+    }
+    fun openPicker() {
+        pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
     /** Toggle Flash */
     private fun toggleFlash() {
