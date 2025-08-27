@@ -15,6 +15,7 @@ import com.basit.aitattoomaker.R
 import com.basit.aitattoomaker.databinding.DialogResultPreviewBinding
 import com.basit.aitattoomaker.presentation.camera.CameraScreen
 import com.basit.aitattoomaker.presentation.utils.AppUtils
+import com.basit.aitattoomaker.presentation.utils.AppUtils.tattooPath
 import com.basit.aitattoomaker.presentation.utils.DialogUtils
 import com.basit.library.stickerview.StickerFactory
 
@@ -60,12 +61,14 @@ class ResultBottomSheet : com.google.android.material.bottomsheet.BottomSheetDia
         }
 
         // Add/update sticker
-        StickerFactory.currentSticker = StickerFactory.createSticker(
+        StickerFactory.currentSticker = StickerFactory.createStickerFromAsset(
             context = requireContext(),
-            drawableId = AppUtils.tattooID,
+            assetPath = tattooPath,  // can be "library/dragon.png" OR "file:///android_asset/library/dragon.png"
             alpha = 128
         )
-        binding.slStickerLayout.addOrUpdateSticker(StickerFactory.currentSticker)
+        StickerFactory.currentSticker?.let {
+            binding?.slStickerLayout?.addSticker(it)
+        }
 
         binding.btnRetake.setOnClickListener { dismiss() }
         binding.btnSave.setOnClickListener {

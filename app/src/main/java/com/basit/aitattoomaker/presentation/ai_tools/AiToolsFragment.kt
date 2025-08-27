@@ -49,6 +49,7 @@ import com.basit.aitattoomaker.extension.show
 import com.basit.aitattoomaker.extension.uriToBitmap
 import com.basit.aitattoomaker.presentation.ai_tools.adapter.TattooAdapterOld
 import com.basit.aitattoomaker.presentation.camera.adapter.CameraTattooAdapter
+import com.basit.aitattoomaker.presentation.utils.AppUtils.tattooPath
 import com.basit.aitattoomaker.presentation.utils.capturedBitmap
 import com.basit.aitattoomaker.presentation.utils.selectedTattoo
 import com.basit.aitattoomaker.presentation.utils.tattooCreation
@@ -62,11 +63,20 @@ class AiToolsFragment : Fragment() {
     private lateinit var adapter: CameraTattooAdapter
     private var modelIndex = 0
     private val library_tattoolists = listOf(
-        CameraTattoo("Dragon", R.drawable.dragon, imageUrl = "file:///android_asset/tattoos/dragon.png"),
-        CameraTattoo("Flower", R.drawable.flower, imageUrl = "file:///android_asset/tattoos/flower.png"),
-        CameraTattoo("Fire",   R.drawable.tattoo, imageUrl = "file:///android_asset/tattoos/tattoo.png"),
-        CameraTattoo("Heart",  R.drawable.heart, imageUrl = "file:///android_asset/tattoos/heart.png"),
-        CameraTattoo("Sparrow",  R.drawable.sparrow, imageUrl = "file:///android_asset/tattoos/sparrow.png")
+        CameraTattoo("Dragon", R.drawable.dragon, imageUrl = "file:///android_asset/library/dragon.png"),
+        CameraTattoo("Wolf", R.drawable.flower, imageUrl = "file:///android_asset/library/1.png"),
+        CameraTattoo("Dragon",   R.drawable.tattoo, imageUrl = "file:///android_asset/library/2.png"),
+        CameraTattoo("Flower",  R.drawable.heart, imageUrl = "file:///android_asset/library/3.png"),
+        CameraTattoo("Fire",  R.drawable.sparrow, imageUrl = "file:///android_asset/library/4.png"),
+        CameraTattoo("Skull Fire", R.drawable.dragon, imageUrl = "file:///android_asset/library/5.png"),
+        CameraTattoo("Wolf", R.drawable.flower, imageUrl = "file:///android_asset/library/6.png"),
+        CameraTattoo("Sparrow",   R.drawable.tattoo, imageUrl = "file:///android_asset/library/7.png"),
+        CameraTattoo("Skull Flower",  R.drawable.heart, imageUrl = "file:///android_asset/library/8.png"),
+        CameraTattoo("Dragon Fire",  R.drawable.sparrow, imageUrl = "file:///android_asset/library/9.png"),
+        CameraTattoo("Dragon",  R.drawable.sparrow, imageUrl = "file:///android_asset/library/10.png"),
+        CameraTattoo("Skull Snake",  R.drawable.sparrow, imageUrl = "file:///android_asset/library/11.png"),
+        CameraTattoo("Flower",  R.drawable.sparrow, imageUrl = "file:///android_asset/library/12.png"),
+        CameraTattoo("Tree",  R.drawable.sparrow, imageUrl = "file:///android_asset/library/13.png")
     )
     // If you want custom sticker pick (kept wired but not triggered)
     private val pickMedia =
@@ -107,13 +117,14 @@ class AiToolsFragment : Fragment() {
                 tattooCreation.postValue(false)
                 setupRecycler()
                 setupClicks()
-                StickerFactory.currentSticker =
-                    StickerFactory.createSticker(
-                        context = requireContext(),
-                        drawableId = selectedTattoo?:R.drawable.tattoo,
-                        alpha = 128
-                    )
-                binding?.slStickerLayout?.addSticker(StickerFactory.currentSticker)
+                StickerFactory.currentSticker = StickerFactory.createStickerFromAsset(
+                    context = requireContext(),
+                    assetPath = tattooPath,  // can be "library/dragon.png" OR "file:///android_asset/library/dragon.png"
+                    alpha = 128
+                )
+                StickerFactory.currentSticker?.let {
+                    binding?.slStickerLayout?.addSticker(it)
+                }
                 // Initial load
                 DialogUtils.show(it, "Processing...")
                 dialog?.show()
@@ -133,13 +144,14 @@ class AiToolsFragment : Fragment() {
 
             adapter = CameraTattooAdapter { tattoo ->
                 // Add sticker with default alpha 128
-                StickerFactory.currentSticker =
-                    StickerFactory.createSticker(
-                        context = requireContext(),
-                        drawableId = tattoo.id,
-                        alpha = 128
-                    )
-                slStickerLayout.addSticker(StickerFactory.currentSticker)
+                StickerFactory.currentSticker = StickerFactory.createStickerFromAsset(
+                    context = requireContext(),
+                    assetPath = tattoo.imageUrl,  // can be "library/dragon.png" OR "file:///android_asset/library/dragon.png"
+                    alpha = 128
+                )
+                StickerFactory.currentSticker?.let {
+                    binding?.slStickerLayout?.addSticker(it)
+                }
             }
             rvTattoo.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
             rvTattoo.setHasFixedSize(true)
