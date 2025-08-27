@@ -31,6 +31,7 @@ import com.google.mlkit.vision.segmentation.selfie.SelfieSegmenterOptions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import androidx.core.graphics.createBitmap
 
 @ExperimentalGetImage
 class CameraViewModel(
@@ -217,11 +218,7 @@ class CameraViewModel(
     }
 
     private fun processSegmentationMask(segmentationMask: SegmentationMask): Bitmap {
-        val maskBitmap = Bitmap.createBitmap(
-            segmentationMask.width,
-            segmentationMask.height,
-            Bitmap.Config.ARGB_8888
-        )
+        val maskBitmap = createBitmap(segmentationMask.width, segmentationMask.height)
 
         val buffer = segmentationMask.buffer
         val pixels = IntArray(segmentationMask.width * segmentationMask.height)

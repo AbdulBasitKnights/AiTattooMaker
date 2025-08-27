@@ -45,7 +45,9 @@ import java.nio.FloatBuffer
 import androidx.core.graphics.createBitmap
 import com.basit.aitattoomaker.extension.uriToBitmap
 import com.basit.aitattoomaker.presentation.ai_tools.adapter.TattooAdapterOld
+import com.basit.aitattoomaker.presentation.camera.adapter.CameraTattooAdapter
 import com.basit.aitattoomaker.presentation.utils.capturedBitmap
+import com.basit.aitattoomaker.presentation.utils.selectedTattoo
 import com.basit.aitattoomaker.presentation.utils.tattooCreation
 import com.google.mlkit.vision.segmentation.subject.SubjectSegmentation
 import com.google.mlkit.vision.segmentation.subject.SubjectSegmenterOptions
@@ -54,7 +56,7 @@ class AiToolsFragment : Fragment() {
 
     private var binding: FragmentAitoolsBinding? = null
 
-    private lateinit var adapter: TattooAdapterOld
+    private lateinit var adapter: CameraTattooAdapter
     private var modelIndex = 0
     // Single, reusable ML Kit options
     private val selfieOptions by lazy {
@@ -66,18 +68,18 @@ class AiToolsFragment : Fragment() {
         .enableForegroundConfidenceMask() // FloatBuffer mask
         .enableForegroundBitmap()         // subject bitmap
         .build()
-
+    private val library_tattoolists = listOf(
+        CameraTattoo("Dragon", R.drawable.dragon, imageUrl = "file:///android_asset/tattoos/dragon.png"),
+        CameraTattoo("Flower", R.drawable.flower, imageUrl = "file:///android_asset/tattoos/flower.png"),
+        CameraTattoo("Fire",   R.drawable.tattoo, imageUrl = "file:///android_asset/tattoos/tattoo.png"),
+        CameraTattoo("Heart",  R.drawable.heart, imageUrl = "file:///android_asset/tattoos/heart.png"),
+        CameraTattoo("Sparrow",  R.drawable.sparrow, imageUrl = "file:///android_asset/tattoos/sparrow.png")
+    )
     // If you want custom sticker pick (kept wired but not triggered)
     private val pickStickerLauncher = registerForActivityResult(
         ActivityResultContracts.GetContent()
     ) { uri: Uri? -> uri?.let { loadSticker(it) } }
 
-    private val cameraTattooItems = listOf(
-        CameraTattoo("Dragon", R.drawable.dragon),
-        CameraTattoo("Flower", R.drawable.flower),
-        CameraTattoo("Fire",   R.drawable.tattoo),
-        CameraTattoo("Heart",  R.drawable.heart)
-    )
     private var mActivity: FragmentActivity?=null
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -106,6 +108,13 @@ class AiToolsFragment : Fragment() {
                 tattooCreation.postValue(false)
                 setupRecycler()
                 setupClicks()
+                StickerFactory.currentSticker =
+                    StickerFactory.createSticker(
+                        context = requireContext(),
+                        drawableId = selectedTattoo?:R.drawable.tattoo,
+                        alpha = 128
+                    )
+                binding?.slStickerLayout?.addSticker(StickerFactory.currentSticker)
                 // Initial load
                 DialogUtils.show(it, "Processing...")
                 dialog?.show()
@@ -123,7 +132,7 @@ class AiToolsFragment : Fragment() {
     private fun setupRecycler(){
         binding?.apply {
 
-            adapter = TattooAdapterOld { tattoo ->
+            adapter = CameraTattooAdapter { tattoo ->
                 // Add sticker with default alpha 128
                 StickerFactory.currentSticker =
                     StickerFactory.createSticker(
@@ -136,7 +145,7 @@ class AiToolsFragment : Fragment() {
             rvTattoo.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
             rvTattoo.setHasFixedSize(true)
             rvTattoo.adapter = adapter
-            adapter.submitList(cameraTattooItems)
+            adapter.submitList(library_tattoolists)
         }
 
     }
@@ -232,7 +241,6 @@ class AiToolsFragment : Fragment() {
     }
 
 
-
     private suspend fun runSmartSegmentation(base: Bitmap): Triple<Bitmap?, Bitmap?, Bitmap?> {
         return try {
             val subjectSegmenter = SubjectSegmentation.getClient(
@@ -265,6 +273,7 @@ class AiToolsFragment : Fragment() {
                 // Optional: if mask coverage is too low, fallback to base as mask
                 if (coveragePercent < 10f) {
                     Log.w("Segmentation", "⚠️ Mask too small (<10%), using base as mask")
+                    Toast.makeText(mActivity, "Please Recapture the Image, subject are is too small", Toast.LENGTH_SHORT).show()
                     mask = base.copy(Bitmap.Config.ARGB_8888, true)
                 }
 
@@ -280,7 +289,7 @@ class AiToolsFragment : Fragment() {
 
                 Triple(base, mask, bg)
             } else {
-                Log.w("MLKit", "⚠️ Subject segmentation failed, falling back to Selfie")
+                Log.e("Segmentation", "⚠️ Subject segmentation failed, falling back to Selfie")
                 runSelfieSegmentation(base)
             }
         } catch (e: Exception) {
@@ -317,6 +326,8 @@ class AiToolsFragment : Fragment() {
 
         // Optional: if mask coverage is too low (<10%), fallback to base
         if (coveragePercent < 10f) {
+            Toast.makeText(mActivity, "Please Recapture the Image, subject are is too small", Toast.LENGTH_SHORT).show()
+
             Log.w("SelfieSegmentation", "⚠️ Mask too small (<10%), using base as mask")
             mask = base.copy(Bitmap.Config.ARGB_8888, true)
         }
@@ -333,10 +344,6 @@ class AiToolsFragment : Fragment() {
 
         return Triple(base, mask, bg)
     }
-
-
-
-
 
 
     /**

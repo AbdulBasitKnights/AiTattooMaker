@@ -141,10 +141,6 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
                     adapter.submitList(it)
                     adapter.setInitialSelection(it)
                 }
-                else{
-                    adapter.submitList(style_list)
-                    adapter.setInitialSelection(style_list)
-                }
             }
             // Dummy data
 

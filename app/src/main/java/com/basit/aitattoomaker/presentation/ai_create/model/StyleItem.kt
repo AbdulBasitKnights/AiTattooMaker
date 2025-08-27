@@ -12,5 +12,6 @@ data class StyleItem(
     var title: String,
     @DrawableRes var url: Int,   // drawable resource, OR you could make this a URL String if loading with Glide
     var isPro:Boolean=false,
-    var isSelected: Boolean = false
+    var isSelected: Boolean = false,
+    var imageUrl: String? = ""
 ): Parcelable

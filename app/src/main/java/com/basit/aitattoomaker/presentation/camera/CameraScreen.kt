@@ -53,6 +53,7 @@ import com.basit.aitattoomaker.presentation.utils.CameraPermissionHelper
 import com.basit.aitattoomaker.presentation.utils.DialogUtils
 import com.basit.aitattoomaker.presentation.utils.DialogUtils.dialog
 import com.basit.aitattoomaker.presentation.utils.capturedBitmap
+import com.basit.aitattoomaker.presentation.utils.selectedTattoo
 import com.bumptech.glide.Glide
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -77,16 +78,18 @@ class CameraScreen : Fragment() {
     private val viewModel: CameraViewModel by viewModels { CameraViewModelFactory( requireActivity().application, TattooRepositoryImpl(requireContext()) ) }
     private var defaultTattoo: Bitmap? = null
     private val library_tattoolists = listOf(
-        CameraTattoo("Dragon", R.drawable.dragon),
-        CameraTattoo("Flower", R.drawable.flower),
-        CameraTattoo("Fire",   R.drawable.tattoo),
-        CameraTattoo("Heart",  R.drawable.heart)
+        CameraTattoo("Dragon", R.drawable.dragon, imageUrl = "file:///android_asset/tattoos/dragon.png"),
+        CameraTattoo("Flower", R.drawable.flower, imageUrl = "file:///android_asset/tattoos/flower.png"),
+        CameraTattoo("Fire",   R.drawable.tattoo, imageUrl = "file:///android_asset/tattoos/tattoo.png"),
+        CameraTattoo("Heart",  R.drawable.heart, imageUrl = "file:///android_asset/tattoos/heart.png"),
+        CameraTattoo("Sparrow",  R.drawable.sparrow, imageUrl = "file:///android_asset/tattoos/sparrow.png")
     )
     private val history_tattoolists = listOf(
-        CameraTattoo("Fire",   R.drawable.tattoo),
-        CameraTattoo("Heart",  R.drawable.heart),
-        CameraTattoo("Dragon", R.drawable.dragon),
-        CameraTattoo("Flower", R.drawable.flower)
+        CameraTattoo("Sparrow",  R.drawable.sparrow, imageUrl = "file:///android_asset/tattoos/sparrow.png"),
+        CameraTattoo("Fire",   R.drawable.tattoo, imageUrl = "file:///android_asset/tattoos/tattoo.png"),
+        CameraTattoo("Heart",  R.drawable.heart, imageUrl = "file:///android_asset/tattoos/heart.png"),
+        CameraTattoo("Dragon", R.drawable.dragon, imageUrl = "file:///android_asset/tattoos/dragon.png"),
+        CameraTattoo("Flower", R.drawable.flower, imageUrl = "file:///android_asset/tattoos/flower.png")
     )
     private lateinit var adapter: CameraTattooAdapter
     private var mActivity: FragmentActivity?=null
@@ -134,94 +137,12 @@ class CameraScreen : Fragment() {
 
     }
 
-    private fun setupTattooCarousel(rv: RecyclerView, adapter: TattooAdapter) {
-        val lm = LinearLayoutManager(requireContext(), RecyclerView.HORIZONTAL, false)
-        rv.layoutManager = lm
-        rv.adapter = adapter
-        rv.setHasFixedSize(true)
-        rv.clipToPadding = false
-        rv.setPadding(dp(48), 0, dp(48), 0)
-
-        rv.addItemDecoration(object : RecyclerView.ItemDecoration() {
-            override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
-                val space = dp(12)
-                outRect.right = space
-                if (parent.getChildAdapterPosition(view) == 0) outRect.left = space
-            }
-        })
-
-        // Ensure scale pivots from center (once per attached view)
-        rv.addOnChildAttachStateChangeListener(object : RecyclerView.OnChildAttachStateChangeListener {
-            override fun onChildViewAttachedToWindow(view: View) {
-                view.pivotX = view.width / 2f
-                view.pivotY = view.height / 2f
-            }
-            override fun onChildViewDetachedFromWindow(view: View) = Unit
-        })
-
-        val snap = LinearSnapHelper().also { it.attachToRecyclerView(rv) }
-
-        val minScale = 0.75f
-        val maxScale = 1.00f
-        val minAlpha = 0.75f
-        val maxAlpha = 1.00f
-
-        fun lerp(a: Float, b: Float, t: Float) = a + (b - a) * t
-        fun smoothstep01(x: Float): Float {            // smooth 0..1 easing
-            val t = x.coerceIn(0f, 1f)
-            return t * t * (3 - 2 * t)                 // cubic smoothstep
-        }
-
-        rv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                val centerX = recyclerView.width / 2f
-                for (i in 0 until recyclerView.childCount) {
-                    val child = recyclerView.getChildAt(i) ?: continue
-                    val childCenterX = (child.left + child.right) / 2f
-                    val dist = kotlin.math.abs(centerX - childCenterX)
-                    val norm = (dist / centerX).coerceIn(0f, 1f)     // 0 at center → 1 at edge
-                    val proximity = 1f - norm                        // 1 at center → 0 at edge
-
-                    // Ease the proximity for smoother grow/shrink
-                    val eased = smoothstep01(proximity)
-
-                    val scale = lerp(minScale, maxScale, eased)
-                    val alpha = lerp(minAlpha, maxAlpha, eased)
-
-                    child.scaleX = scale
-                    child.scaleY = scale
-                    child.alpha  = alpha
-                }
-            }
-
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-            }
-        })
-
-        // Start centered on item 0 (or any index you want)
-        rv.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                rv.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                if (adapter.itemCount == 0) return
-                rv.post {
-                    rv.smoothScrollToPosition(0)
-                    adapter.setSelected(0)
-                }
-            }
-        })
-    }
-
-    private fun dp(v: Int) = (v * resources.displayMetrics.density).toInt()
-
-
-
-    private fun Int?.orZero() = this ?: 0
-
 
     private fun setupRecycler(){
         binding?.apply {
             adapter = CameraTattooAdapter { tattoo ->
                 // do your click handling...
+                selectedTattoo=tattoo.id
                 binding?.let { b ->
                     mActivity?.let { ctx ->
                         // Get drawable from id
@@ -305,16 +226,7 @@ class CameraScreen : Fragment() {
                 dialog?.show()
             }
             captureImage()
-//            findNavController().navigate(
-//            CameraScreenDirections.actionNavigationAicameraToNavigationAitools())
         }
-//        binding?.btnGallery?.setOnClickListener {
-//            mActivity?.let {
-//                DialogUtils.show(it, "Processing...")
-//                dialog?.show()
-//            }
-//            captureImage()
-//        }
     }
     /** Toggle Flash */
     private fun toggleFlash() {
@@ -368,48 +280,6 @@ class CameraScreen : Fragment() {
                 }
             }
         )
-
-     /*   imageCapture?.takePicture(
-            ContextCompat.getMainExecutor(requireContext()), // or background executor
-            object : ImageCapture.OnImageCapturedCallback() {
-                override fun onCaptureSuccess(imageProxy: ImageProxy) {
-                    val bitmap = imageProxy.toBitmap() // extension function converts ImageProxy -> Bitmap
-                    imageProxy.close()
-                    bitmap?.let {
-                        val rotated = rotateBitmapIfNeeded(bitmap, imageProxy.imageInfo.rotationDegrees)
-                        cameraExecutor.execute {
-                            val finalBitmap = rotated?.let { binding?.overlayView?.getFinalBitmap(it) }
-                            if(isAdded){
-                                try {
-                                    viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-                                        finalBitmap?.let { showResultDialog(it) }
-                                    }
-                                } catch (e: Exception) {
-                                   e.printStackTrace()
-                                }
-                            }
-                        }
-                    }
-                }
-
-                override fun onError(exception: ImageCaptureException) {
-                    Log.e(TAG, "Capture failed: ${exception.message}", exception)
-                }
-            }
-        )*/
-    }
-
-
-    /** Merge tattoo with captured photo */
-    private fun mergeTattoo(base: Bitmap, tattoo: Bitmap?, position: RectF?): Bitmap {
-        val result = base.copy(Bitmap.Config.ARGB_8888, true)
-        val canvas = Canvas(result)
-        tattoo?.let {
-            val src = Rect(0, 0, it.width, it.height)
-            val dst = RectF(position ?: RectF(100f, 100f, 300f, 300f))
-            canvas.drawBitmap(it, src, dst, null)
-        }
-        return result
     }
 
     /** Preview dialog */
@@ -478,22 +348,6 @@ class CameraScreen : Fragment() {
             bindCameraUseCases()
         }, ContextCompat.getMainExecutor(requireContext()))
     }
-
-//    private fun bindCameraUseCases() {
-//        cameraProvider.unbindAll()
-//
-//        val preview = Preview.Builder()
-//            .setTargetRotation(binding?.previewView?.display?.rotation?: Surface.ROTATION_90)
-//            .build().apply {
-//                surfaceProvider = binding?.previewView?.surfaceProvider
-//            }
-//
-//        imageCapture = ImageCapture.Builder()
-//            .setTargetRotation(binding?.previewView?.display?.rotation?: Surface.ROTATION_90)
-//            .build()
-//
-//        cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture)
-//    }
     private fun bindCameraUseCases(flip: Boolean = false) {
         // Flip camera if requested
         if (flip) {
@@ -540,19 +394,11 @@ class CameraScreen : Fragment() {
         CameraPermissionHelper.requestCameraPermission(requireActivity())
     }
 
-    private fun observeViewModel() {
+ /*   private fun observeViewModel() {
         viewModel.segmentationResult.observe(viewLifecycleOwner) { mask ->
             binding?.overlayView?.updateSegmentation(mask)
         }
-
-//        viewModel.selectedTattoo.observe(viewLifecycleOwner) { tattoo ->
-//            tattoo?.let { binding?.overlayView?.setTattoo(it) }
-//        }
-
-//        viewModel.errorState.observe(viewLifecycleOwner) { error ->
-//            error?.let { Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show() }
-//        }
-    }
+    }*/
 
     override fun onDestroyView() {
         super.onDestroyView()

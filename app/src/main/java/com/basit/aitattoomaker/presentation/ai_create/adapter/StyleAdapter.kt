@@ -40,7 +40,7 @@ class StyleAdapter(
 
         fun bind(item: StyleItem) = with(binding) {
             tvTattooName.text = item.title
-            Glide.with(ivTattoo).load(item.url).into(ivTattoo)
+            Glide.with(ivTattoo).load(item.imageUrl).into(ivTattoo)
 
             // highlight with gradient stroke if selected
             if (item.isSelected) {

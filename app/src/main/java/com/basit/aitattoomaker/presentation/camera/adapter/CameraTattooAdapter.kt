@@ -5,10 +5,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.basit.aitattoomaker.R
 import com.basit.aitattoomaker.databinding.ItemTattooSquareBinding
 import com.basit.aitattoomaker.presentation.ai_tools.model.CameraTattoo
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 
 class CameraTattooAdapter(
     private val onClick: (CameraTattoo) -> Unit
@@ -17,7 +17,9 @@ class CameraTattooAdapter(
     class TattooViewHolder(private val binding: ItemTattooSquareBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(cameraTattoo: CameraTattoo, onClick: (CameraTattoo) -> Unit) {
             Glide.with(binding.root)
-                .load(cameraTattoo.id)
+                .load(cameraTattoo.imageUrl)
+                .diskCacheStrategy(DiskCacheStrategy.ALL) // Or RESOURCE, DATA based on use case
+                .skipMemoryCache(true)
                 .into(binding.ivTattoo)
             binding.root.setOnClickListener { onClick(cameraTattoo) }
         }
