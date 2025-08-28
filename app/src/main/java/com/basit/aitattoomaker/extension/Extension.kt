@@ -36,11 +36,15 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.lifecycleScope
 import com.basit.aitattoomaker.R
 import com.basit.aitattoomaker.databinding.DeleteDialogBinding
 import com.basit.aitattoomaker.databinding.DiscardDialogBinding
+import com.basit.aitattoomaker.databinding.DownloadedDialogBinding
 import com.basit.aitattoomaker.databinding.FreeLimitDialogBinding
 import com.basit.aitattoomaker.databinding.RegenerationDialogBinding
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 //Dialogs
 fun FragmentActivity.showDiscardDialog(
@@ -64,6 +68,21 @@ fun FragmentActivity.showDiscardDialog(
     // Prevent outside touch dismiss if you want
     dialog.setCancelable(false)
     dialog.show()
+}
+fun FragmentActivity.showDownloadDialog() {
+    val dialog = Dialog(this)
+    val binding = DownloadedDialogBinding.inflate(layoutInflater)
+    dialog.setContentView(binding.root)
+    // Optional: make background transparent
+    dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+    // Handle clicks
+    // Prevent outside touch dismiss if you want
+    dialog.setCancelable(false)
+    dialog.show()
+    lifecycleScope.launch {
+        delay(1000)
+        dialog.dismiss()
+    }
 }
 fun FragmentActivity.showDeleteDialog(
     onDelete: () -> Unit,

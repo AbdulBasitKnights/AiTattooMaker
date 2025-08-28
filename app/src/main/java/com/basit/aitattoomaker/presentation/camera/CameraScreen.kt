@@ -1,5 +1,6 @@
 package com.basit.aitattoomaker.presentation.camera
 
+import android.Manifest
 import android.app.Activity
 import android.content.ContentValues
 import android.content.Context
@@ -79,6 +80,14 @@ class CameraScreen : Fragment() {
     private var imageCapture: ImageCapture? = null
     private val cameraExecutor by lazy {
         Executors.newSingleThreadExecutor()
+    }
+    private val cameraPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+        if (isGranted) {
+            // Permission granted, perform your task here
+            startCamera()
+        } else {
+            // Permission denied, handle appropriately (e.g., show a message)
+        }
     }
     private val pickMedia =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
@@ -436,7 +445,7 @@ private val library_tattoolists = listOf(
     binding?.flash?.visibility = if (isFrontCamera) View.INVISIBLE else View.VISIBLE
     }
     private fun requestCameraPermission() {
-        CameraPermissionHelper.requestCameraPermission(requireActivity())
+        cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
     }
 
  /*   private fun observeViewModel() {

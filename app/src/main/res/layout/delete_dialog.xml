@@ -4,7 +4,7 @@
     android:id="@+id/fullscreenRoot"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_round"
+    android:background="@drawable/bg_round_dialog"
     android:paddingHorizontal="@dimen/_10sdp"
     android:backgroundTint="@color/darkGrey">
 

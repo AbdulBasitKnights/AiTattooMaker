@@ -119,10 +119,12 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             app:layout_constraintStart_toStartOf="parent"
-            android:src="@drawable/tattoo"
+            android:src="@drawable/gallery_svg"
+            android:padding="@dimen/_6sdp"
             app:layout_constraintTop_toTopOf="@+id/btnCapture"
             app:layout_constraintBottom_toBottomOf="@+id/btnCapture"
-            android:background="@drawable/stroke_square_white"/>
+            android:background="@drawable/bg_round"
+            android:backgroundTint="#33FFFFFF"/>
         <ImageView
             android:id="@+id/flip_camera"
             android:layout_width="45dp"

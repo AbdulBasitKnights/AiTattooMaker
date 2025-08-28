@@ -19,6 +19,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -45,9 +46,12 @@ import kotlinx.coroutines.withContext
 import java.io.OutputStream
 import java.nio.FloatBuffer
 import androidx.core.graphics.createBitmap
+import androidx.navigation.fragment.findNavController
 import com.basit.aitattoomaker.extension.hide
 import com.basit.aitattoomaker.extension.setDrawableTint
 import com.basit.aitattoomaker.extension.show
+import com.basit.aitattoomaker.extension.showDiscardDialog
+import com.basit.aitattoomaker.extension.showDownloadDialog
 import com.basit.aitattoomaker.extension.uriToBitmap
 import com.basit.aitattoomaker.presentation.ai_create.AiCreateFragment.Companion.selectedItemIdPositionCanvas
 import com.basit.aitattoomaker.presentation.ai_tools.adapter.TattooAdapterOld
@@ -175,49 +179,78 @@ class AiToolsFragment : Fragment() {
                     binding?.slStickerLayout?.addSticker(it)
                 }
             }
-            rvTattoo.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-            rvTattoo.setHasFixedSize(true)
             rvTattoo.adapter = adapter
-            lifecycleScope.launch(Dispatchers.Main) {
-                adapter.submitList(library_tattoolists.toList())
-            }
+            adapter.submitList(library_tattoolists.toList())
         }
 
     }
 
     private fun setupClicks(){
         binding?.apply {
+            mActivity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner) {
+                mActivity?.showDiscardDialog(
+                    onDiscard = {
+                        // User clicked discard, handle accordingly
+                        findNavController().popBackStack() // example: go back
+                    },
+                    onNotNow = {
+                        // User clicked not now, just dismiss dialog
+                    }
+                )
+            }
             tabLibrary.setOnClickListener {
                 tabLibrary.setTextColor(resources.getColor(R.color.colorprimary))
                 tabHistory.setTextColor(resources.getColor(R.color.disable))
-                lifecycleScope.launch(Dispatchers.Main) {
-                    adapter.submitList(library_tattoolists.toList())
-                }
+                rvTattoo.invalidate()
+                adapter.submitList(library_tattoolists.toList())
                 tabLibrary.setDrawableTint(resources.getColor(R.color.colorprimary))
                 tabHistory.setDrawableTint(resources.getColor(R.color.disable))
             }
             tabHistory.setOnClickListener {
                 tabLibrary.setTextColor(resources.getColor(R.color.disable))
                 tabHistory.setTextColor(resources.getColor(R.color.colorprimary))
-                lifecycleScope.launch(Dispatchers.Main) {
-                    adapter.submitList(history_tattoolists.toList())
-                }
+                rvTattoo.invalidate()
+                adapter.submitList(history_tattoolists.toList())
                 tabHistory.setDrawableTint(resources.getColor(R.color.colorprimary))
                 tabLibrary.setDrawableTint(resources.getColor(R.color.disable))
+            }
+            binding?.cancelOpacity?.setOnClickListener {
+                slStickerLayout.updateSticker(128)
+                binding?.slStickerLayout?.clearFocusAll()
+            }
+            binding?.doneOpacity?.setOnClickListener {
+                binding?.slStickerLayout?.clearFocusAll()
+            }
+            binding?.cross?.setOnClickListener {
+                try {
+                    mActivity?.showDiscardDialog(
+                        onDiscard = {
+                            // User clicked discard, handle accordingly
+                            findNavController().popBackStack() // example: go back
+                        },
+                        onNotNow = {
+                            // User clicked not now, just dismiss dialog
+                        }
+                    )
+                }
+                catch (e:Exception){
+                    e.printStackTrace()
+                }
             }
             opacitySeekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                     if (fromUser) {
-                        val steps = listOf(0, 25,50, 75,100)
+                        val steps = listOf(0,20,40,60,80,100)
                         val nearest = steps.minByOrNull { kotlin.math.abs(it - progress) } ?: 0
                         seekBar?.progress = nearest
+                        binding?.seekbarValue?.text=nearest.toString()
                         when (nearest){
-                            0 -> slStickerLayout.updateSticker(0)
-                            25 -> slStickerLayout.updateSticker(64)
-                            50 -> slStickerLayout.updateSticker(128)
-                            75 -> slStickerLayout.updateSticker(192)
-                            100 -> slStickerLayout.updateSticker(225)
-                            else -> slStickerLayout.updateSticker(225)
+                            0 -> slStickerLayout.updateSticker(20)
+                            20 -> slStickerLayout.updateSticker(64)
+                            40 -> slStickerLayout.updateSticker(128)
+                            60 -> slStickerLayout.updateSticker(162)
+                            80 -> slStickerLayout.updateSticker(195)
+                            else -> slStickerLayout.updateSticker(215)
                         }
                     }
                 }
@@ -239,6 +272,7 @@ class AiToolsFragment : Fragment() {
                     opacityLayout.visibility=View.INVISIBLE
                     bottom.show()
                     save.visibility= View.VISIBLE
+                    rvTattoo.invalidate()
                 }
             }
             removeSticker.setOnClickListener {
@@ -316,6 +350,7 @@ class AiToolsFragment : Fragment() {
             binding?.bgImage?.setImageAndMask(bgBitmap, bgBitmap)
 
             dialog?.dismiss()
+            binding?.root?.show()
         }
     }
 
@@ -475,7 +510,13 @@ class AiToolsFragment : Fragment() {
                 val ok = saveBitmapToGallery(outBitmap, "tattoo_result_${System.currentTimeMillis()}.png")
                 withContext(Dispatchers.Main) {
                     dialog?.dismiss()
-                    Toast.makeText(requireContext(), if (ok) "Saved to gallery" else "Save failed", Toast.LENGTH_SHORT).show()
+                    if(ok){
+                        mActivity?.showDownloadDialog()
+                    }
+                    else{
+                        Toast.makeText(requireContext(), if (ok) "Saved to gallery" else "Save failed", Toast.LENGTH_SHORT).show()
+                    }
+
                 }
             }
 
