@@ -212,10 +212,8 @@ private val library_tattoolists = listOf(
         binding?.let { b ->
             mActivity?.let { ctx ->
                 // Get drawable from id
-                val drawable = ContextCompat.getDrawable(ctx, R.drawable.tattoo)?.mutate()
-                drawable?.alpha = 128  // set alpha
                 Glide.with(ctx)
-                    .load(drawable)
+                    .load(library_tattoolists[0].imageUrl)
                     .into(b.tattoo)
             }
 
@@ -273,7 +271,7 @@ private val library_tattoolists = listOf(
         }
         binding?.btnCapture?.setOnClickListener {
             mActivity?.let {
-                DialogUtils.show(it, "Processing...")
+                DialogUtils.show(it, "Capturing...")
                 dialog?.show()
             }
             captureImage()

@@ -9,6 +9,7 @@ import android.view.ScaleGestureDetector
 import android.view.View
 import android.view.ViewConfiguration
 import kotlin.math.*
+import androidx.core.graphics.scale
 
 class MaskedStickerView @JvmOverloads constructor(
 	context: Context,
@@ -88,7 +89,7 @@ class MaskedStickerView @JvmOverloads constructor(
 
 		baseBitmap = image
 		maskBitmap = if (mask.width == image.width && mask.height == image.height) mask
-		else Bitmap.createScaledBitmap(mask, image.width, image.height, true).apply {
+		else mask.scale(image.width, image.height).apply {
 			Log.d("BITMAP", "Scaled mask config: $config")
 		}
 		invalidate()

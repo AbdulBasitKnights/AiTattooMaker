@@ -9,7 +9,6 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
@@ -23,51 +22,47 @@ import androidx.activity.addCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.graphics.createBitmap
 import androidx.core.graphics.scale
-import androidx.core.view.isVisible
 import androidx.core.view.drawToBitmap
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.navigation.fragment.findNavController
 import com.basit.aitattoomaker.R
 import com.basit.aitattoomaker.databinding.FragmentAitoolsBinding
+import com.basit.aitattoomaker.extension.setDrawableTint
+import com.basit.aitattoomaker.extension.show
+import com.basit.aitattoomaker.extension.showDiscardDialog
+import com.basit.aitattoomaker.extension.showDownloadDialog
+import com.basit.aitattoomaker.extension.uriToBitmap
 import com.basit.aitattoomaker.presentation.ai_tools.model.CameraTattoo
+import com.basit.aitattoomaker.presentation.camera.adapter.CameraTattooAdapter
+import com.basit.aitattoomaker.presentation.utils.AppUtils.tattooPath
 import com.basit.aitattoomaker.presentation.utils.DialogUtils
 import com.basit.aitattoomaker.presentation.utils.DialogUtils.dialog
+import com.basit.aitattoomaker.presentation.utils.capturedBitmap
+import com.basit.aitattoomaker.presentation.utils.tattooCreation
+import com.basit.library.stickerview.Sticker
 import com.basit.library.stickerview.StickerFactory
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.segmentation.Segmentation
 import com.google.mlkit.vision.segmentation.selfie.SelfieSegmenterOptions
+import com.google.mlkit.vision.segmentation.subject.SubjectSegmentation
+import com.google.mlkit.vision.segmentation.subject.SubjectSegmenterOptions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import java.io.OutputStream
 import java.nio.FloatBuffer
-import androidx.core.graphics.createBitmap
-import androidx.navigation.fragment.findNavController
-import com.basit.aitattoomaker.extension.hide
-import com.basit.aitattoomaker.extension.setDrawableTint
-import com.basit.aitattoomaker.extension.show
-import com.basit.aitattoomaker.extension.showDiscardDialog
-import com.basit.aitattoomaker.extension.showDownloadDialog
-import com.basit.aitattoomaker.extension.uriToBitmap
-import com.basit.aitattoomaker.presentation.ai_create.AiCreateFragment.Companion.selectedItemIdPositionCanvas
-import com.basit.aitattoomaker.presentation.ai_tools.adapter.TattooAdapterOld
-import com.basit.aitattoomaker.presentation.camera.adapter.CameraTattooAdapter
-import com.basit.aitattoomaker.presentation.utils.AppUtils.tattooPath
-import com.basit.aitattoomaker.presentation.utils.capturedBitmap
-import com.basit.aitattoomaker.presentation.utils.selectedTattoo
-import com.basit.aitattoomaker.presentation.utils.tattooCreation
-import com.google.mlkit.vision.segmentation.subject.SubjectSegmentation
-import com.google.mlkit.vision.segmentation.subject.SubjectSegmenterOptions
 
 class AiToolsFragment : Fragment() {
 
     private var binding: FragmentAitoolsBinding? = null
 
     private lateinit var adapter: CameraTattooAdapter
+    private var maskedBitmap: Bitmap?=null
     private var modelIndex = 0
     private val library_tattoolists = listOf(
         CameraTattoo("Dragon", 1, imageUrl = "file:///android_asset/library/dragon.png"),
@@ -143,14 +138,6 @@ class AiToolsFragment : Fragment() {
                 tattooCreation.postValue(false)
                 setupRecycler()
                 setupClicks()
-                StickerFactory.currentSticker = StickerFactory.createStickerFromAsset(
-                    context = requireContext(),
-                    assetPath = tattooPath,  // can be "library/dragon.png" OR "file:///android_asset/library/dragon.png"
-                    alpha = 128
-                )
-                StickerFactory.currentSticker?.let {
-                    binding?.slStickerLayout?.addSticker(it)
-                }
                 // Initial load
                 DialogUtils.show(it, "Processing...")
                 dialog?.show()
@@ -161,6 +148,12 @@ class AiToolsFragment : Fragment() {
             }
         }
 
+    }
+
+    fun addStickerToLayout(sticker: Sticker?) {
+        sticker?.let {
+            binding?.slStickerLayout?.addSticker(it)
+        }
     }
 
     // ---- UI setup ----
@@ -175,8 +168,10 @@ class AiToolsFragment : Fragment() {
                     assetPath = tattoo.imageUrl,  // can be "library/dragon.png" OR "file:///android_asset/library/dragon.png"
                     alpha = 128
                 )
-                StickerFactory.currentSticker?.let {
-                    binding?.slStickerLayout?.addSticker(it)
+                StickerFactory.currentSticker?.let {sticker->
+                    maskedBitmap?.let {
+                        addStickerToLayout(sticker)
+                    }
                 }
             }
             rvTattoo.adapter = adapter
@@ -316,6 +311,11 @@ class AiToolsFragment : Fragment() {
     // ---- Image load + segmentation ----
 
     private fun loadDefaultPhotoAndMask(model: Int, first: Boolean = true) {
+        StickerFactory.currentSticker = StickerFactory.createStickerFromAsset(
+            context = requireContext(),
+            assetPath = tattooPath,  // can be "library/dragon.png" OR "file:///android_asset/library/dragon.png"
+            alpha = 128
+        )
         val resId = when (model) {
             1 -> R.drawable.model1
             2 -> R.drawable.model2
@@ -335,7 +335,7 @@ class AiToolsFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
             val (baseBitmap, maskBitmap, bgBitmap) = runSmartSegmentation(base)
 
-            if (baseBitmap == null || maskBitmap == null || bgBitmap == null) {
+            if (baseBitmap == null || maskBitmap == null) {
                 Toast.makeText(requireContext(), "Segmentation failed", Toast.LENGTH_SHORT).show()
                 dialog?.dismiss()
                 return@launch
@@ -347,13 +347,17 @@ class AiToolsFragment : Fragment() {
             binding?.maskedStickerView?.setImageAndMask(baseBitmap, maskBitmap)
 
             // ✅ Background view gets cutout background only
-            binding?.bgImage?.setImageAndMask(bgBitmap, bgBitmap)
-
+            bgBitmap?.let {
+                binding?.bgImage?.setImageAndMask(bgBitmap, bgBitmap)
+            }
+            maskedBitmap=maskBitmap
             dialog?.dismiss()
             binding?.root?.show()
+            StickerFactory.currentSticker?.let {sticker->
+                    addStickerToLayout(sticker)
+            }
         }
     }
-
 
     private suspend fun runSmartSegmentation(base: Bitmap): Triple<Bitmap?, Bitmap?, Bitmap?> {
         return try {
@@ -462,8 +466,6 @@ class AiToolsFragment : Fragment() {
             return Triple(null,null,null)
         }
     }
-
-
     /**
      * Convert ML Kit segmentation FloatBuffer → ARGB mask (white for person, alpha = confidence)
      */
@@ -482,18 +484,18 @@ class AiToolsFragment : Fragment() {
     }
 
 
-    private fun loadSticker(uri: Uri) {
-        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
-            val bm = requireContext().contentResolver.openInputStream(uri)?.use(BitmapFactory::decodeStream)
-            withContext(Dispatchers.Main) {
-                if (bm != null) {
-                    binding?.maskedStickerView?.setSticker(bm)
-                } else {
-                    Toast.makeText(requireContext(), "Sticker load failed", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-    }
+//    private fun loadSticker(uri: Uri) {
+//        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+//            val bm = requireContext().contentResolver.openInputStream(uri)?.use(BitmapFactory::decodeStream)
+//            withContext(Dispatchers.Main) {
+//                if (bm != null) {
+//                    binding?.maskedStickerView?.setSticker(bm)
+//                } else {
+//                    Toast.makeText(requireContext(), "Sticker load failed", Toast.LENGTH_SHORT).show()
+//                }
+//            }
+//        }
+//    }
 
     // ---- Save composited result ----
 
