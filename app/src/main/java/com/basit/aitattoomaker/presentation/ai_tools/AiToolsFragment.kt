@@ -105,6 +105,7 @@ class AiToolsFragment : Fragment() {
                     cycleAndLoadModel(true)
                 }
             } else {
+                dialog?.dismiss()
                 Log.d("PhotoPicker", "No media selected")
             }
         }

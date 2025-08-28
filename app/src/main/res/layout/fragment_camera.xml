@@ -116,11 +116,11 @@
             app:layout_constraintEnd_toEndOf="parent" />
         <ImageView
             android:id="@+id/gallery"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             app:layout_constraintStart_toStartOf="parent"
             android:src="@drawable/gallery_svg"
-            android:padding="@dimen/_6sdp"
+            android:padding="@dimen/_8sdp"
             app:layout_constraintTop_toTopOf="@+id/btnCapture"
             app:layout_constraintBottom_toBottomOf="@+id/btnCapture"
             android:background="@drawable/bg_round"
