@@ -17,6 +17,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SeekBar
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -45,8 +46,10 @@ import java.io.OutputStream
 import java.nio.FloatBuffer
 import androidx.core.graphics.createBitmap
 import com.basit.aitattoomaker.extension.hide
+import com.basit.aitattoomaker.extension.setDrawableTint
 import com.basit.aitattoomaker.extension.show
 import com.basit.aitattoomaker.extension.uriToBitmap
+import com.basit.aitattoomaker.presentation.ai_create.AiCreateFragment.Companion.selectedItemIdPositionCanvas
 import com.basit.aitattoomaker.presentation.ai_tools.adapter.TattooAdapterOld
 import com.basit.aitattoomaker.presentation.camera.adapter.CameraTattooAdapter
 import com.basit.aitattoomaker.presentation.utils.AppUtils.tattooPath
@@ -63,26 +66,45 @@ class AiToolsFragment : Fragment() {
     private lateinit var adapter: CameraTattooAdapter
     private var modelIndex = 0
     private val library_tattoolists = listOf(
-        CameraTattoo("Dragon", R.drawable.dragon, imageUrl = "file:///android_asset/library/dragon.png"),
-        CameraTattoo("Wolf", R.drawable.flower, imageUrl = "file:///android_asset/library/1.png"),
-        CameraTattoo("Dragon",   R.drawable.tattoo, imageUrl = "file:///android_asset/library/2.png"),
-        CameraTattoo("Flower",  R.drawable.heart, imageUrl = "file:///android_asset/library/3.png"),
-        CameraTattoo("Fire",  R.drawable.sparrow, imageUrl = "file:///android_asset/library/4.png"),
-        CameraTattoo("Skull Fire", R.drawable.dragon, imageUrl = "file:///android_asset/library/5.png"),
-        CameraTattoo("Wolf", R.drawable.flower, imageUrl = "file:///android_asset/library/6.png"),
-        CameraTattoo("Sparrow",   R.drawable.tattoo, imageUrl = "file:///android_asset/library/7.png"),
-        CameraTattoo("Skull Flower",  R.drawable.heart, imageUrl = "file:///android_asset/library/8.png"),
-        CameraTattoo("Dragon Fire",  R.drawable.sparrow, imageUrl = "file:///android_asset/library/9.png"),
-        CameraTattoo("Dragon",  R.drawable.sparrow, imageUrl = "file:///android_asset/library/10.png"),
-        CameraTattoo("Skull Snake",  R.drawable.sparrow, imageUrl = "file:///android_asset/library/11.png"),
-        CameraTattoo("Flower",  R.drawable.sparrow, imageUrl = "file:///android_asset/library/12.png"),
-        CameraTattoo("Tree",  R.drawable.sparrow, imageUrl = "file:///android_asset/library/13.png")
+        CameraTattoo("Dragon", 1, imageUrl = "file:///android_asset/library/dragon.png"),
+        CameraTattoo("Wolf", 2, imageUrl = "file:///android_asset/library/1.png"),
+        CameraTattoo("Dragon",   3, imageUrl = "file:///android_asset/library/2.png"),
+        CameraTattoo("Flower",  4, imageUrl = "file:///android_asset/library/3.png"),
+        CameraTattoo("Fire",  5, imageUrl = "file:///android_asset/library/4.png"),
+        CameraTattoo("Skull Fire", 6, imageUrl = "file:///android_asset/library/5.png"),
+        CameraTattoo("Wolf", 7, imageUrl = "file:///android_asset/library/6.png"),
+        CameraTattoo("Sparrow",   8, imageUrl = "file:///android_asset/library/7.png"),
+        CameraTattoo("Skull Flower",  9, imageUrl = "file:///android_asset/library/8.png"),
+        CameraTattoo("Dragon Fire",  10, imageUrl = "file:///android_asset/library/9.png"),
+        CameraTattoo("Dragon",  11, imageUrl = "file:///android_asset/library/10.png"),
+        CameraTattoo("Skull Snake",  12, imageUrl = "file:///android_asset/library/11.png"),
+        CameraTattoo("Flower",  13, imageUrl = "file:///android_asset/library/12.png"),
+        CameraTattoo("Tree",  14, imageUrl = "file:///android_asset/library/13.png")
+    )
+    private val history_tattoolists = listOf(
+        CameraTattoo("Sparrow",   1, imageUrl = "file:///android_asset/library/7.png"),
+        CameraTattoo("Skull Flower",  2, imageUrl = "file:///android_asset/library/8.png"),
+        CameraTattoo("Dragon Fire",  3, imageUrl = "file:///android_asset/library/9.png"),
+        CameraTattoo("Dragon",  4, imageUrl = "file:///android_asset/library/10.png"),
+        CameraTattoo("Skull Snake",  5, imageUrl = "file:///android_asset/library/11.png"),
+        CameraTattoo("Flower",  6, imageUrl = "file:///android_asset/library/12.png"),
+        CameraTattoo("Tree",  7, imageUrl = "file:///android_asset/library/13.png"),
+        CameraTattoo("Dragon", 8, imageUrl = "file:///android_asset/library/dragon.png"),
+        CameraTattoo("Wolf", 9, imageUrl = "file:///android_asset/library/1.png"),
+        CameraTattoo("Dragon",   10, imageUrl = "file:///android_asset/library/2.png"),
+        CameraTattoo("Flower",  11, imageUrl = "file:///android_asset/library/3.png"),
+        CameraTattoo("Fire",  12, imageUrl = "file:///android_asset/library/4.png"),
+        CameraTattoo("Skull Fire", 13, imageUrl = "file:///android_asset/library/5.png"),
+        CameraTattoo("Wolf", 14, imageUrl = "file:///android_asset/library/6.png")
     )
     // If you want custom sticker pick (kept wired but not triggered)
     private val pickMedia =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             if (uri != null) {
-
+                mActivity?.uriToBitmap(uri)?.let {
+                    capturedBitmap=it
+                    cycleAndLoadModel(true)
+                }
             } else {
                 Log.d("PhotoPicker", "No media selected")
             }
@@ -156,19 +178,67 @@ class AiToolsFragment : Fragment() {
             rvTattoo.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
             rvTattoo.setHasFixedSize(true)
             rvTattoo.adapter = adapter
-            adapter.submitList(library_tattoolists)
+            lifecycleScope.launch(Dispatchers.Main) {
+                adapter.submitList(library_tattoolists.toList())
+            }
         }
 
     }
 
     private fun setupClicks(){
         binding?.apply {
+            tabLibrary.setOnClickListener {
+                tabLibrary.setTextColor(resources.getColor(R.color.colorprimary))
+                tabHistory.setTextColor(resources.getColor(R.color.disable))
+                lifecycleScope.launch(Dispatchers.Main) {
+                    adapter.submitList(library_tattoolists.toList())
+                }
+                tabLibrary.setDrawableTint(resources.getColor(R.color.colorprimary))
+                tabHistory.setDrawableTint(resources.getColor(R.color.disable))
+            }
+            tabHistory.setOnClickListener {
+                tabLibrary.setTextColor(resources.getColor(R.color.disable))
+                tabHistory.setTextColor(resources.getColor(R.color.colorprimary))
+                lifecycleScope.launch(Dispatchers.Main) {
+                    adapter.submitList(history_tattoolists.toList())
+                }
+                tabHistory.setDrawableTint(resources.getColor(R.color.colorprimary))
+                tabLibrary.setDrawableTint(resources.getColor(R.color.disable))
+            }
+            opacitySeekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                    if (fromUser) {
+                        val steps = listOf(0, 25,50, 75,100)
+                        val nearest = steps.minByOrNull { kotlin.math.abs(it - progress) } ?: 0
+                        seekBar?.progress = nearest
+                        when (nearest){
+                            0 -> slStickerLayout.updateSticker(0)
+                            25 -> slStickerLayout.updateSticker(64)
+                            50 -> slStickerLayout.updateSticker(128)
+                            75 -> slStickerLayout.updateSticker(192)
+                            100 -> slStickerLayout.updateSticker(225)
+                            else -> slStickerLayout.updateSticker(225)
+                        }
+                    }
+                }
+
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+            })
+
             StickerFactory?.isStickerFocused?.observe(viewLifecycleOwner){
                 if(it==true){
                     removeSticker.show()
+                    opacityLayout.show()
+                    bottom.visibility = View.INVISIBLE
+                    save.visibility= View.INVISIBLE
                 }
                 else{
-                    removeSticker.hide()
+                    instructionOverlay.visibility= View.INVISIBLE
+                    removeSticker.visibility=View.INVISIBLE
+                    opacityLayout.visibility=View.INVISIBLE
+                    bottom.show()
+                    save.visibility= View.VISIBLE
                 }
             }
             removeSticker.setOnClickListener {
@@ -177,32 +247,12 @@ class AiToolsFragment : Fragment() {
                     binding?.slStickerLayout?.clearFocusAll()
                 }
             }
-            btnLoadDefault.setOnClickListener {
-                // Toggle list panel(s)
-                rvTattoo.isVisible = !rvTattoo.isVisible
-                opacityList.isVisible = false
-            }
 
-            btnPickSticker.setOnClickListener {
-                // pickStickerLauncher.launch("image/*")
-            }
+            save.setOnClickListener { saveToGallery() }
 
-            btnAlpha.setOnClickListener {
-                opacityList.isVisible = !opacityList.isVisible
-                rvTattoo.isVisible = false
-            }
-
-
-            opacity64.setOnClickListener { slStickerLayout.updateSticker(64) }
-            opacity128.setOnClickListener { slStickerLayout.updateSticker(128) }
-            opacity192.setOnClickListener { slStickerLayout.updateSticker(192) }
-            opacity255.setOnClickListener { slStickerLayout.updateSticker(255) }
-
-            btnSave.setOnClickListener { saveToGallery() }
-
-            changePhoto.setOnClickListener {
+            gallery.setOnClickListener {
                 dialog?.show()
-                cycleAndLoadModel(false)
+                openPicker()
             }
         }
 

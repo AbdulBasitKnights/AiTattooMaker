@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="75dp"
+    android:layout_width="60dp"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_round"
     android:layout_marginHorizontal="6dp"
@@ -21,10 +21,10 @@
         android:padding="6dp"/>
     <ImageView
         android:id="@+id/ivTattoo"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:adjustViewBounds="true"
-        android:padding="15dp"
+        android:padding="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

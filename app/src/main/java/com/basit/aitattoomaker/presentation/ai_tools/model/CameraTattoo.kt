@@ -9,7 +9,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class CameraTattoo(
     val name: String,
-    @DrawableRes val id:Int,
+    val id:Int,
     val imageUrl: String="",
     val thumbnailUrl: String="",
     val category: String="",

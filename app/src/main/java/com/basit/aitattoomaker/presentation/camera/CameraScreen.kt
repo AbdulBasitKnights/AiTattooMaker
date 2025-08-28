@@ -93,36 +93,36 @@ class CameraScreen : Fragment() {
 //    private val viewModel: CameraViewModel by viewModels { CameraViewModelFactory( requireActivity().application, TattooRepositoryImpl(requireContext()) ) }
 //    private var defaultTattoo: Bitmap? = null
 private val library_tattoolists = listOf(
-    CameraTattoo("Dragon", R.drawable.dragon, imageUrl = "file:///android_asset/library/dragon.png"),
-    CameraTattoo("Wolf", R.drawable.flower, imageUrl = "file:///android_asset/library/1.png"),
-    CameraTattoo("Dragon",   R.drawable.tattoo, imageUrl = "file:///android_asset/library/2.png"),
-    CameraTattoo("Flower",  R.drawable.heart, imageUrl = "file:///android_asset/library/3.png"),
-    CameraTattoo("Fire",  R.drawable.sparrow, imageUrl = "file:///android_asset/library/4.png"),
-    CameraTattoo("Skull Fire", R.drawable.dragon, imageUrl = "file:///android_asset/library/5.png"),
-    CameraTattoo("Wolf", R.drawable.flower, imageUrl = "file:///android_asset/library/6.png"),
-    CameraTattoo("Sparrow",   R.drawable.tattoo, imageUrl = "file:///android_asset/library/7.png"),
-    CameraTattoo("Skull Flower",  R.drawable.heart, imageUrl = "file:///android_asset/library/8.png"),
-    CameraTattoo("Dragon Fire",  R.drawable.sparrow, imageUrl = "file:///android_asset/library/9.png"),
-    CameraTattoo("Dragon",  R.drawable.sparrow, imageUrl = "file:///android_asset/library/10.png"),
-    CameraTattoo("Skull Snake",  R.drawable.sparrow, imageUrl = "file:///android_asset/library/11.png"),
-    CameraTattoo("Flower",  R.drawable.sparrow, imageUrl = "file:///android_asset/library/12.png"),
-    CameraTattoo("Tree",  R.drawable.sparrow, imageUrl = "file:///android_asset/library/13.png")
+    CameraTattoo("Dragon", 1, imageUrl = "file:///android_asset/library/dragon.png"),
+    CameraTattoo("Wolf", 2, imageUrl = "file:///android_asset/library/1.png"),
+    CameraTattoo("Dragon",   3, imageUrl = "file:///android_asset/library/2.png"),
+    CameraTattoo("Flower",  4, imageUrl = "file:///android_asset/library/3.png"),
+    CameraTattoo("Fire",  5, imageUrl = "file:///android_asset/library/4.png"),
+    CameraTattoo("Skull Fire", 6, imageUrl = "file:///android_asset/library/5.png"),
+    CameraTattoo("Wolf", 7, imageUrl = "file:///android_asset/library/6.png"),
+    CameraTattoo("Sparrow",   8, imageUrl = "file:///android_asset/library/7.png"),
+    CameraTattoo("Skull Flower",  9, imageUrl = "file:///android_asset/library/8.png"),
+    CameraTattoo("Dragon Fire",  10, imageUrl = "file:///android_asset/library/9.png"),
+    CameraTattoo("Dragon",  11, imageUrl = "file:///android_asset/library/10.png"),
+    CameraTattoo("Skull Snake",  12, imageUrl = "file:///android_asset/library/11.png"),
+    CameraTattoo("Flower",  13, imageUrl = "file:///android_asset/library/12.png"),
+    CameraTattoo("Tree",  14, imageUrl = "file:///android_asset/library/13.png")
 )
     private val history_tattoolists = listOf(
-        CameraTattoo("Sparrow",   R.drawable.tattoo, imageUrl = "file:///android_asset/library/7.png"),
-        CameraTattoo("Skull Flower",  R.drawable.heart, imageUrl = "file:///android_asset/library/8.png"),
-        CameraTattoo("Dragon Fire",  R.drawable.sparrow, imageUrl = "file:///android_asset/library/9.png"),
-        CameraTattoo("Dragon",  R.drawable.sparrow, imageUrl = "file:///android_asset/library/10.png"),
-        CameraTattoo("Skull Snake",  R.drawable.sparrow, imageUrl = "file:///android_asset/library/11.png"),
-        CameraTattoo("Flower",  R.drawable.sparrow, imageUrl = "file:///android_asset/library/12.png"),
-        CameraTattoo("Tree",  R.drawable.sparrow, imageUrl = "file:///android_asset/library/13.png"),
-        CameraTattoo("Dragon", R.drawable.dragon, imageUrl = "file:///android_asset/library/dragon.png"),
-        CameraTattoo("Wolf", R.drawable.flower, imageUrl = "file:///android_asset/library/1.png"),
-        CameraTattoo("Dragon",   R.drawable.tattoo, imageUrl = "file:///android_asset/library/2.png"),
-        CameraTattoo("Flower",  R.drawable.heart, imageUrl = "file:///android_asset/library/3.png"),
-        CameraTattoo("Fire",  R.drawable.sparrow, imageUrl = "file:///android_asset/library/4.png"),
-        CameraTattoo("Skull Fire", R.drawable.dragon, imageUrl = "file:///android_asset/library/5.png"),
-        CameraTattoo("Wolf", R.drawable.flower, imageUrl = "file:///android_asset/library/6.png")
+        CameraTattoo("Sparrow",   1, imageUrl = "file:///android_asset/library/7.png"),
+        CameraTattoo("Skull Flower",  2, imageUrl = "file:///android_asset/library/8.png"),
+        CameraTattoo("Dragon Fire",  3, imageUrl = "file:///android_asset/library/9.png"),
+        CameraTattoo("Dragon",  4, imageUrl = "file:///android_asset/library/10.png"),
+        CameraTattoo("Skull Snake",  5, imageUrl = "file:///android_asset/library/11.png"),
+        CameraTattoo("Flower",  6, imageUrl = "file:///android_asset/library/12.png"),
+        CameraTattoo("Tree",  7, imageUrl = "file:///android_asset/library/13.png"),
+        CameraTattoo("Dragon", 8, imageUrl = "file:///android_asset/library/dragon.png"),
+        CameraTattoo("Wolf", 9, imageUrl = "file:///android_asset/library/1.png"),
+        CameraTattoo("Dragon",   10, imageUrl = "file:///android_asset/library/2.png"),
+        CameraTattoo("Flower",  11, imageUrl = "file:///android_asset/library/3.png"),
+        CameraTattoo("Fire",  12, imageUrl = "file:///android_asset/library/4.png"),
+        CameraTattoo("Skull Fire", 13, imageUrl = "file:///android_asset/library/5.png"),
+        CameraTattoo("Wolf", 14, imageUrl = "file:///android_asset/library/6.png")
     )
     private lateinit var adapter: CameraTattooAdapter
     private var mActivity: FragmentActivity?=null
@@ -191,7 +191,9 @@ private val library_tattoolists = listOf(
             }
             binding?.rvTattoo?.adapter = adapter
 //            setupTattooCarousel(rvTattoo, adapter)
-            adapter.submitList(library_tattoolists) // your list
+            lifecycleScope.launch(Dispatchers.Main) {
+                adapter.submitList(library_tattoolists.toList()) // your list
+            }
         }
 
     }
@@ -231,12 +233,16 @@ private val library_tattoolists = listOf(
             library.setOnClickListener {
                 library.setTextColor(resources.getColor(R.color.white))
                 history.setTextColor(resources.getColor(R.color.lightGrey))
-                adapter.submitList(library_tattoolists)
+                lifecycleScope.launch(Dispatchers.Main) {
+                    adapter.submitList(library_tattoolists.toList())
+                }
             }
             history.setOnClickListener {
                 library.setTextColor(resources.getColor(R.color.lightGrey))
                 history.setTextColor(resources.getColor(R.color.white))
-                adapter.submitList(history_tattoolists)
+                lifecycleScope.launch(Dispatchers.Main) {
+                    adapter.submitList(history_tattoolists.toList())
+                }
             }
             gallery.setOnClickListener {
                 openPicker()

@@ -60,4 +60,6 @@
     <string name="library">Library</string>
     <string name="got_it">Got it</string>
     <string name="preview_info">Preview Info</string>
+    <string name="library_tattoos">Library Tattoos</string>
+    <string name="history_tattoos">History Tattoos</string>
 </resources>

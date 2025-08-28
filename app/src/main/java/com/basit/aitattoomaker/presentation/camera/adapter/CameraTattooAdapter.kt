@@ -14,13 +14,23 @@ class CameraTattooAdapter(
     private val onClick: (CameraTattoo) -> Unit
 ) : ListAdapter<CameraTattoo, CameraTattooAdapter.TattooViewHolder>(TattooDiffCallback()) {
 
-    class TattooViewHolder(private val binding: ItemTattooSquareBinding) : RecyclerView.ViewHolder(binding.root) {
+    init {
+        setHasStableIds(true) // ✅ important
+    }
+
+    override fun getItemId(position: Int): Long {
+        // Use a unique & consistent ID for each item
+        return getItem(position).id.toLong()
+    }
+
+    class TattooViewHolder(private val binding: ItemTattooSquareBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(cameraTattoo: CameraTattoo, onClick: (CameraTattoo) -> Unit) {
             Glide.with(binding.root)
                 .load(cameraTattoo.imageUrl)
-                .diskCacheStrategy(DiskCacheStrategy.ALL) // Or RESOURCE, DATA based on use case
-                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .into(binding.ivTattoo)
+
             binding.root.setOnClickListener { onClick(cameraTattoo) }
         }
     }
@@ -40,6 +50,7 @@ class CameraTattooAdapter(
 
     class TattooDiffCallback : DiffUtil.ItemCallback<CameraTattoo>() {
         override fun areItemsTheSame(oldItem: CameraTattoo, newItem: CameraTattoo): Boolean {
+            // ID must be unique across the list
             return oldItem.id == newItem.id
         }
 
