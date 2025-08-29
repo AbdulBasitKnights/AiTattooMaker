@@ -13,17 +13,17 @@ import com.basit.aitattoomaker.presentation.history.model.Creation
 
 class HistoryFragment : Fragment() {
     val creations = listOf(
-        Creation(imageUrl = "file:///android_asset/library/11.png"),
-        Creation(imageUrl = "file:///android_asset/library/1.png"),
-        Creation(imageUrl = "file:///android_asset/library/9.png"),
-        Creation(imageUrl = "file:///android_asset/library/2.png"),
-        Creation(imageUrl = "file:///android_asset/library/8.png"),
-        Creation(imageUrl = "file:///android_asset/library/3.png"),
-        Creation(imageUrl = "file:///android_asset/library/13.png"),
-        Creation(imageUrl = "file:///android_asset/library/4.png"),
-        Creation(imageUrl = "file:///android_asset/library/6.png"),
-        Creation(imageUrl = "file:///android_asset/library/5.png"),
-        Creation(imageUrl = "file:///android_asset/library/7.png"),
+        Creation(imageUrl = "file:///android_asset/library/11.webp"),
+        Creation(imageUrl = "file:///android_asset/library/1.webp"),
+        Creation(imageUrl = "file:///android_asset/library/9.webp"),
+        Creation(imageUrl = "file:///android_asset/library/2.webp"),
+        Creation(imageUrl = "file:///android_asset/library/8.webp"),
+        Creation(imageUrl = "file:///android_asset/library/3.webp"),
+        Creation(imageUrl = "file:///android_asset/library/13.webp"),
+        Creation(imageUrl = "file:///android_asset/library/4.webp"),
+        Creation(imageUrl = "file:///android_asset/library/6.webp"),
+        Creation(imageUrl = "file:///android_asset/library/5.webp"),
+        Creation(imageUrl = "file:///android_asset/library/7.webp"),
     )
     private var _binding: FragmentHistoryBinding? = null
     private val binding get() = _binding!!

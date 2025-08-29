@@ -27,9 +27,13 @@ class CreationAdapter(
 
         fun bind(item: Creation) {
             // Load image with Glide (works with assets, URL, drawable)
-            Glide.with(binding.root)
-                .load(item.imageUrl)
-                .into(binding.ivImg)
+            try {
+                Glide.with(binding.root)
+                    .load(item.imageUrl)
+                    .into(binding.ivImg)
+            } catch (e: Exception) {
+               e.printStackTrace()
+            }
 
             binding.root.setOnClickListener { onClick(item) }
         }
