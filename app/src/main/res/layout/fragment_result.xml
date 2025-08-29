@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:background="@color/darkGrey">
+    android:background="@color/black">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/topBar"
         android:layout_width="match_parent"
@@ -13,8 +13,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:paddingHorizontal="@dimen/_10sdp"
-        android:layout_marginTop="@dimen/_10sdp"
-        android:paddingVertical="@dimen/_7sdp"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:paddingVertical="@dimen/_4sdp"
         app:layout_constraintEnd_toEndOf="parent">
         <ImageView
             android:id="@+id/backPress"

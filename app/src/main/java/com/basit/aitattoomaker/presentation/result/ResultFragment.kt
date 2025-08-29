@@ -11,8 +11,10 @@ import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.fragment.findNavController
+import com.basit.aitattoomaker.R
 import com.basit.aitattoomaker.databinding.FragmentResultBinding
 import com.basit.aitattoomaker.extension.showDiscardDialog
+import com.basit.aitattoomaker.presentation.utils.AppUtils
 
 class ResultFragment : Fragment() {
 
@@ -46,11 +48,12 @@ class ResultFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         mActivity?.let { activity->
             buttonClicks()
+            AppUtils.getMain(activity)?.hidebottombar()
             mActivity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner) {
                 mActivity?.showDiscardDialog(
                     onDiscard = {
                         // User clicked discard, handle accordingly
-                        findNavController().popBackStack() // example: go back
+                        findNavController().popBackStack(R.id.navigation_aicreate,true)
                     },
                     onNotNow = {
                         // User clicked not now, just dismiss dialog
@@ -76,7 +79,7 @@ class ResultFragment : Fragment() {
                     mActivity?.showDiscardDialog(
                         onDiscard = {
                             // User clicked discard, handle accordingly
-                            findNavController().popBackStack() // example: go back
+                            findNavController().popBackStack(R.id.navigation_aicreate,true)
                         },
                         onNotNow = {
                             // User clicked not now, just dismiss dialog

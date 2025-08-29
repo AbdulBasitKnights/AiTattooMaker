@@ -23,6 +23,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.basit.aitattoomaker.R
@@ -44,6 +45,8 @@ import com.basit.aitattoomaker.presentation.utils.GradientStrokeDrawable
 import com.basit.aitattoomaker.presentation.utils.styleLiveData
 import com.basit.aitattoomaker.presentation.utils.style_list
 import com.basit.aitattoomaker.presentation.utils.tattooCreation
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
 
@@ -118,9 +121,14 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
             tattooCreation?.observe(viewLifecycleOwner){
                 if(it==true){
                     creationDialog?.dismiss()
-                    findNavController().navigate(
-                        AiCreateFragmentDirections.actionNavigationAicreateToResultScreen()
-                    )
+                    try {
+                        findNavController().navigate(
+                            AiCreateFragmentDirections.actionNavigationAicreateToResultScreen()
+                        )
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                    tattooCreation.postValue(false)
                 }
             }
         }
@@ -178,12 +186,10 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
 
             btnCreate.setOnClickListener {
                     creationDialog?.show()
-                Handler(Looper.getMainLooper()).postDelayed({
+                lifecycleScope.launch {
+                    delay(7000)
                     tattooCreation.postValue(true)
-                },7000)
-//                findNavController().navigate(
-//                    AiCreateFragmentDirections.actionNavigationAicreateToNavigationAitools()
-//                )
+                 }
             }
             btnClear.setOnClickListener {
                 binding?.etPrompt?.text?.clear()
