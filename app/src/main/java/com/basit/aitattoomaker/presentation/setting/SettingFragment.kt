@@ -5,17 +5,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import android.widget.Toast
 import androidx.core.content.ContextCompat.getDrawable
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.basit.aitattoomaker.R
-import com.basit.aitattoomaker.databinding.FragmentProfileBinding
 import com.basit.aitattoomaker.databinding.FragmentSettingsBinding
+import com.basit.aitattoomaker.extension.openLink
+import com.basit.aitattoomaker.extension.openRateUs
+import com.basit.aitattoomaker.extension.shareAppLink
+import com.basit.aitattoomaker.extension.shareAppLinkTo
 import com.basit.aitattoomaker.presentation.setting.adapter.ModelSettings
 import com.basit.aitattoomaker.presentation.setting.adapter.SettingsAdapter
 import com.basit.aitattoomaker.presentation.setting.adapter.SettingsClickListener
@@ -136,14 +136,6 @@ class SettingFragment : Fragment(), SettingsClickListener {
         )
         list.add(
             ModelSettings(
-                "Youtube",
-                false,
-                icon = R.drawable.yt_svg,
-                background = getDrawable(mActivity?:requireActivity(),R.drawable.bg_grey)
-            )
-        )
-        list.add(
-            ModelSettings(
                 "Twitter",
                 false,
                 icon = R.drawable.x_svg,
@@ -161,29 +153,26 @@ class SettingFragment : Fragment(), SettingsClickListener {
     override fun onSettingItemClick(which: String) {
         when(which){
             "Privacy Policy"->{
-                Toast.makeText(mActivity, "$which", Toast.LENGTH_SHORT).show()
+                mActivity?.openLink("https://www.google.com")
             }
             "Share App"->{
-                Toast.makeText(mActivity, "$which", Toast.LENGTH_SHORT).show()
+                mActivity?.shareAppLink()
             }
             "Rate Us"->{
-                Toast.makeText(mActivity, "$which", Toast.LENGTH_SHORT).show()
+                mActivity?.openRateUs()
             }
             "Terms & Conditions"->{
-                Toast.makeText(mActivity, "$which", Toast.LENGTH_SHORT).show()
+                mActivity?.openLink("https://www.google.com")
             }
 
             "Twitter" -> {
-                Toast.makeText(mActivity, "$which", Toast.LENGTH_SHORT).show()
-            }
-            "Youtube" -> {
-                Toast.makeText(mActivity, "$which", Toast.LENGTH_SHORT).show()
+                mActivity?.shareAppLinkTo("twitter")
             }
             "Instagram" -> {
-                Toast.makeText(mActivity, "$which", Toast.LENGTH_SHORT).show()
+                mActivity?.shareAppLinkTo("instagram")
             }
             "Facebook" -> {
-                Toast.makeText(mActivity, "$which", Toast.LENGTH_SHORT).show()
+                mActivity?.shareAppLinkTo("facebook")
             }
 
         }

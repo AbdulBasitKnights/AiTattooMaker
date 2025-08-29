@@ -70,9 +70,9 @@ class CaptureConfirmFragment : Fragment() {
     private var defaultTattoo: Bitmap? = null
     private val cameraTattooItems = listOf(
         CameraTattoo("Dragon", R.drawable.dragon),
-        CameraTattoo("Flower", R.drawable.flower),
-        CameraTattoo("Fire",   R.drawable.tattoo),
-        CameraTattoo("Heart",  R.drawable.heart)
+        CameraTattoo("Dragon", R.drawable.dragon),
+        CameraTattoo("Dragon",   R.drawable.dragon),
+        CameraTattoo("Dragon",  R.drawable.dragon)
     )
     private lateinit var adapter: TattooAdapter
     private var mActivity: FragmentActivity?=null
@@ -274,7 +274,7 @@ class CaptureConfirmFragment : Fragment() {
         binding?.let { b ->
             mActivity?.let { ctx ->
                 // Get drawable from id
-                val drawable = ContextCompat.getDrawable(ctx, R.drawable.tattoo)?.mutate()
+                val drawable = ContextCompat.getDrawable(ctx, R.drawable.dragon)?.mutate()
                 drawable?.alpha = 128  // set alpha
                 Glide.with(ctx)
                     .load(drawable)

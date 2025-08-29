@@ -90,7 +90,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             app:layout_constraintStart_toStartOf="parent"
-            android:src="@drawable/tattoo"
+            android:src="@drawable/dragon"
             app:layout_constraintTop_toTopOf="@+id/btnCapture"
             app:layout_constraintBottom_toBottomOf="@+id/btnCapture"
             android:background="@drawable/stroke_square_white"/>

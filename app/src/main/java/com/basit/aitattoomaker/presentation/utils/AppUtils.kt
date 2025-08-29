@@ -31,7 +31,7 @@ object AppUtils {
         "Mystical owl sitting on crescent moon",
         "Biomechanical arm tattoo with robotic parts"
     )
-    @DrawableRes var tattooID:Int= R.drawable.tattoo
+    @DrawableRes var tattooID:Int= R.drawable.dragon
     var tattooPath:String= "file:///android_asset/library/dragon.png"
     fun getMain(activity: FragmentActivity?): MainActivity? {
         return activity as? MainActivity

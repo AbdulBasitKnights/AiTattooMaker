@@ -4,7 +4,9 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.app.Activity
 import android.app.Dialog
+import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.*
@@ -27,6 +29,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.RadioButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.OptIn
 import androidx.camera.core.ExperimentalGetImage
 import androidx.core.content.ContextCompat
@@ -45,6 +48,7 @@ import com.basit.aitattoomaker.databinding.FreeLimitDialogBinding
 import com.basit.aitattoomaker.databinding.RegenerationDialogBinding
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import androidx.core.net.toUri
 
 //Dialogs
 fun FragmentActivity.showDiscardDialog(
@@ -185,6 +189,85 @@ fun Context.uriToBitmap(uri: Uri?): Bitmap? {
     } catch (e: Exception) {
         e.printStackTrace()
         null
+    }
+}
+
+infix fun FragmentActivity.openLink(link: String) {
+    try {
+        val browserIntent = Intent(Intent.ACTION_VIEW, link.toUri())
+        startActivity(browserIntent)
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+}
+fun FragmentActivity.shareAppLink() {
+    try {
+        val packageName = this.packageName
+        val appLink = "https://play.google.com/store/apps/details?id=$packageName"
+
+        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name))
+            putExtra(Intent.EXTRA_TEXT, "Check out this amazing app: $appLink")
+        }
+
+        startActivity(Intent.createChooser(shareIntent, "Share via"))
+    } catch (e: ActivityNotFoundException) {
+        e.printStackTrace()
+        Toast.makeText(this, "No app found to share link.", Toast.LENGTH_SHORT).show()
+    } catch (e: Exception) {
+        e.printStackTrace()
+        Toast.makeText(this, "Something went wrong while sharing.", Toast.LENGTH_SHORT).show()
+    }
+}
+fun FragmentActivity.openRateUs() {
+    val packageName = this.packageName
+    try {
+        // Try opening Play Store app
+        startActivity(
+            Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse("market://details?id=$packageName")
+            ).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+        )
+    } catch (e: Exception) {
+        e.printStackTrace()
+        // If Play Store app not installed → fallback to browser
+        startActivity(
+            Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
+            ).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+        )
+    }
+}
+
+fun FragmentActivity.shareAppLinkTo(app: String) {
+    val packageName = this.packageName
+    val appLink = "https://play.google.com/store/apps/details?id=$packageName"
+
+    // Which app to target
+    val targetPackage = when (app.lowercase()) {
+        "twitter" -> "com.twitter.android"
+        "instagram" -> "com.instagram.android"
+        "facebook" -> "com.facebook.katana"
+        else -> ""
+    }
+
+    try {
+        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, "Check out this amazing app: $appLink")
+            setPackage(targetPackage)
+        }
+        startActivity(shareIntent)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        Toast.makeText(this, "$app not installed.", Toast.LENGTH_SHORT).show()
     }
 }
 
