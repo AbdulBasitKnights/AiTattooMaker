@@ -63,4 +63,9 @@
     <string name="library_tattoos">Library Tattoos</string>
     <string name="history_tattoos">History Tattoos</string>
     <string name="general">General</string>
+    <string name="unlock_all_premium_features">Unlock All Premium Features</string>
+    <string name="continue">Continue</string>
+    <string name="cancel_anytime">Cancel Anytime</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="terms_of_use">Terms of Use</string>
 </resources>
