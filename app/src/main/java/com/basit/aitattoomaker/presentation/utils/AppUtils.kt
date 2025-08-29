@@ -1,5 +1,6 @@
 package com.basit.aitattoomaker.presentation.utils
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
@@ -9,6 +10,8 @@ import androidx.exifinterface.media.ExifInterface
 import androidx.fragment.app.FragmentActivity
 import com.basit.aitattoomaker.MainActivity
 import com.basit.aitattoomaker.R
+import com.basit.aitattoomaker.domain.TattooResponse
+import com.google.gson.Gson
 import java.io.File
 
 object AppUtils {
@@ -35,6 +38,16 @@ object AppUtils {
     var tattooPath:String= "file:///android_asset/library/dragon.png"
     fun getMain(activity: FragmentActivity?): MainActivity? {
         return activity as? MainActivity
+    }
+    fun loadTattoos(context: Context): TattooResponse? {
+        return try {
+            val json = context.assets.open("tattoos.json")
+                .bufferedReader().use { it.readText() }
+            Gson().fromJson(json, TattooResponse::class.java)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
     }
     fun decodeAndFixOrientation(file: File): Bitmap? {
         return if (Build.VERSION.SDK_INT >= 28) {

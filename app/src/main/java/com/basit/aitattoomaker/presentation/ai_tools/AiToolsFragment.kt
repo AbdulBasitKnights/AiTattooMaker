@@ -27,6 +27,7 @@ import androidx.core.graphics.scale
 import androidx.core.view.drawToBitmap
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.basit.aitattoomaker.R
@@ -60,42 +61,10 @@ import java.nio.FloatBuffer
 class AiToolsFragment : Fragment() {
 
     private var binding: FragmentAitoolsBinding? = null
-
+    private val tattooViewModel: AiToolsViewModel by viewModels()
     private lateinit var adapter: CameraTattooAdapter
     private var maskedBitmap: Bitmap?=null
     private var modelIndex = 0
-    private val library_tattoolists = listOf(
-        CameraTattoo("Dragon", 1, imageUrl = "file:///android_asset/library/dragon.png"),
-        CameraTattoo("Wolf", 2, imageUrl = "file:///android_asset/library/1.png"),
-        CameraTattoo("Dragon",   3, imageUrl = "file:///android_asset/library/2.png"),
-        CameraTattoo("Flower",  4, imageUrl = "file:///android_asset/library/3.png"),
-        CameraTattoo("Fire",  5, imageUrl = "file:///android_asset/library/4.png"),
-        CameraTattoo("Skull Fire", 6, imageUrl = "file:///android_asset/library/5.png"),
-        CameraTattoo("Wolf", 7, imageUrl = "file:///android_asset/library/6.png"),
-        CameraTattoo("Sparrow",   8, imageUrl = "file:///android_asset/library/7.png"),
-        CameraTattoo("Skull Flower",  9, imageUrl = "file:///android_asset/library/8.png"),
-        CameraTattoo("Dragon Fire",  10, imageUrl = "file:///android_asset/library/9.png"),
-        CameraTattoo("Dragon",  11, imageUrl = "file:///android_asset/library/10.png"),
-        CameraTattoo("Skull Snake",  12, imageUrl = "file:///android_asset/library/11.png"),
-        CameraTattoo("Flower",  13, imageUrl = "file:///android_asset/library/12.png"),
-        CameraTattoo("Tree",  14, imageUrl = "file:///android_asset/library/13.png")
-    )
-    private val history_tattoolists = listOf(
-        CameraTattoo("Sparrow",   1, imageUrl = "file:///android_asset/library/7.png"),
-        CameraTattoo("Skull Flower",  2, imageUrl = "file:///android_asset/library/8.png"),
-        CameraTattoo("Dragon Fire",  3, imageUrl = "file:///android_asset/library/9.png"),
-        CameraTattoo("Dragon",  4, imageUrl = "file:///android_asset/library/10.png"),
-        CameraTattoo("Skull Snake",  5, imageUrl = "file:///android_asset/library/11.png"),
-        CameraTattoo("Flower",  6, imageUrl = "file:///android_asset/library/12.png"),
-        CameraTattoo("Tree",  7, imageUrl = "file:///android_asset/library/13.png"),
-        CameraTattoo("Dragon", 8, imageUrl = "file:///android_asset/library/dragon.png"),
-        CameraTattoo("Wolf", 9, imageUrl = "file:///android_asset/library/1.png"),
-        CameraTattoo("Dragon",   10, imageUrl = "file:///android_asset/library/2.png"),
-        CameraTattoo("Flower",  11, imageUrl = "file:///android_asset/library/3.png"),
-        CameraTattoo("Fire",  12, imageUrl = "file:///android_asset/library/4.png"),
-        CameraTattoo("Skull Fire", 13, imageUrl = "file:///android_asset/library/5.png"),
-        CameraTattoo("Wolf", 14, imageUrl = "file:///android_asset/library/6.png")
-    )
     // If you want custom sticker pick (kept wired but not triggered)
     private val pickMedia =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
@@ -160,6 +129,7 @@ class AiToolsFragment : Fragment() {
     // ---- UI setup ----
 
     private fun setupRecycler(){
+
         binding?.apply {
 
             adapter = CameraTattooAdapter { tattoo ->
@@ -176,7 +146,7 @@ class AiToolsFragment : Fragment() {
                 }
             }
             rvTattoo.adapter = adapter
-            adapter.submitList(library_tattoolists.toList())
+            adapter.submitList(tattooViewModel.library.value?.toList())
         }
 
     }
@@ -198,7 +168,7 @@ class AiToolsFragment : Fragment() {
                 tabLibrary.setTextColor(resources.getColor(R.color.colorprimary))
                 tabHistory.setTextColor(resources.getColor(R.color.disable))
                 rvTattoo.invalidate()
-                adapter.submitList(library_tattoolists.toList())
+                adapter.submitList(tattooViewModel.library.value?.toList())
                 tabLibrary.setDrawableTint(resources.getColor(R.color.colorprimary))
                 tabHistory.setDrawableTint(resources.getColor(R.color.disable))
             }
@@ -206,7 +176,7 @@ class AiToolsFragment : Fragment() {
                 tabLibrary.setTextColor(resources.getColor(R.color.disable))
                 tabHistory.setTextColor(resources.getColor(R.color.colorprimary))
                 rvTattoo.invalidate()
-                adapter.submitList(history_tattoolists.toList())
+                adapter.submitList(tattooViewModel.history.value?.toList())
                 tabHistory.setDrawableTint(resources.getColor(R.color.colorprimary))
                 tabLibrary.setDrawableTint(resources.getColor(R.color.disable))
             }

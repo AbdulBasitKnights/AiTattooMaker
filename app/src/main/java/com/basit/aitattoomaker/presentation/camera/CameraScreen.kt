@@ -48,6 +48,7 @@ import com.basit.aitattoomaker.extension.toSafeSoftwareBitmap
 import com.basit.aitattoomaker.extension.uriToBitmap
 import com.basit.aitattoomaker.presentation.ai_create.dialog.StyleBottomSheet
 import com.basit.aitattoomaker.presentation.ai_create.model.StyleItem
+import com.basit.aitattoomaker.presentation.ai_tools.AiToolsViewModel
 import com.basit.aitattoomaker.presentation.ai_tools.adapter.TattooAdapter
 import com.basit.aitattoomaker.presentation.ai_tools.model.CameraTattoo
 import com.basit.aitattoomaker.presentation.camera.adapter.CameraTattooAdapter
@@ -77,6 +78,7 @@ class CameraScreen : Fragment() {
     private var isFrontCamera = false
     private  var cameraControl: CameraControl?=null
     private  var cameraInfo: CameraInfo?=null
+    private val tattooViewModel: AiToolsViewModel by viewModels()
     private var imageCapture: ImageCapture? = null
     private val cameraExecutor by lazy {
         Executors.newSingleThreadExecutor()
@@ -101,38 +103,6 @@ class CameraScreen : Fragment() {
         }
 //    private val viewModel: CameraViewModel by viewModels { CameraViewModelFactory( requireActivity().application, TattooRepositoryImpl(requireContext()) ) }
 //    private var defaultTattoo: Bitmap? = null
-private val library_tattoolists = listOf(
-    CameraTattoo("Dragon", 1, imageUrl = "file:///android_asset/library/dragon.png"),
-    CameraTattoo("Wolf", 2, imageUrl = "file:///android_asset/library/1.png"),
-    CameraTattoo("Dragon",   3, imageUrl = "file:///android_asset/library/2.png"),
-    CameraTattoo("Flower",  4, imageUrl = "file:///android_asset/library/3.png"),
-    CameraTattoo("Fire",  5, imageUrl = "file:///android_asset/library/4.png"),
-    CameraTattoo("Skull Fire", 6, imageUrl = "file:///android_asset/library/5.png"),
-    CameraTattoo("Wolf", 7, imageUrl = "file:///android_asset/library/6.png"),
-    CameraTattoo("Sparrow",   8, imageUrl = "file:///android_asset/library/7.png"),
-    CameraTattoo("Skull Flower",  9, imageUrl = "file:///android_asset/library/8.png"),
-    CameraTattoo("Dragon Fire",  10, imageUrl = "file:///android_asset/library/9.png"),
-    CameraTattoo("Dragon",  11, imageUrl = "file:///android_asset/library/10.png"),
-    CameraTattoo("Skull Snake",  12, imageUrl = "file:///android_asset/library/11.png"),
-    CameraTattoo("Flower",  13, imageUrl = "file:///android_asset/library/12.png"),
-    CameraTattoo("Tree",  14, imageUrl = "file:///android_asset/library/13.png")
-)
-    private val history_tattoolists = listOf(
-        CameraTattoo("Sparrow",   1, imageUrl = "file:///android_asset/library/7.png"),
-        CameraTattoo("Skull Flower",  2, imageUrl = "file:///android_asset/library/8.png"),
-        CameraTattoo("Dragon Fire",  3, imageUrl = "file:///android_asset/library/9.png"),
-        CameraTattoo("Dragon",  4, imageUrl = "file:///android_asset/library/10.png"),
-        CameraTattoo("Skull Snake",  5, imageUrl = "file:///android_asset/library/11.png"),
-        CameraTattoo("Flower",  6, imageUrl = "file:///android_asset/library/12.png"),
-        CameraTattoo("Tree",  7, imageUrl = "file:///android_asset/library/13.png"),
-        CameraTattoo("Dragon", 8, imageUrl = "file:///android_asset/library/dragon.png"),
-        CameraTattoo("Wolf", 9, imageUrl = "file:///android_asset/library/1.png"),
-        CameraTattoo("Dragon",   10, imageUrl = "file:///android_asset/library/2.png"),
-        CameraTattoo("Flower",  11, imageUrl = "file:///android_asset/library/3.png"),
-        CameraTattoo("Fire",  12, imageUrl = "file:///android_asset/library/4.png"),
-        CameraTattoo("Skull Fire", 13, imageUrl = "file:///android_asset/library/5.png"),
-        CameraTattoo("Wolf", 14, imageUrl = "file:///android_asset/library/6.png")
-    )
     private lateinit var adapter: CameraTattooAdapter
     private var mActivity: FragmentActivity?=null
     // This property is only valid between onCreateView and
@@ -201,7 +171,7 @@ private val library_tattoolists = listOf(
             binding?.rvTattoo?.adapter = adapter
 //            setupTattooCarousel(rvTattoo, adapter)
             lifecycleScope.launch(Dispatchers.Main) {
-                adapter.submitList(library_tattoolists.toList()) // your list
+                adapter.submitList(tattooViewModel.library.value?.toList()) // your list
             }
         }
 
@@ -213,7 +183,7 @@ private val library_tattoolists = listOf(
             mActivity?.let { ctx ->
                 // Get drawable from id
                 Glide.with(ctx)
-                    .load(library_tattoolists[0].imageUrl)
+                    .load(tattooViewModel.library.value?.get(0)?.imageUrl)
                     .into(b.tattoo)
             }
 
@@ -241,14 +211,14 @@ private val library_tattoolists = listOf(
                 library.setTextColor(resources.getColor(R.color.white))
                 history.setTextColor(resources.getColor(R.color.lightGrey))
                 lifecycleScope.launch(Dispatchers.Main) {
-                    adapter.submitList(library_tattoolists.toList())
+                    adapter.submitList(tattooViewModel.library.value?.toList())
                 }
             }
             history.setOnClickListener {
                 library.setTextColor(resources.getColor(R.color.lightGrey))
                 history.setTextColor(resources.getColor(R.color.white))
                 lifecycleScope.launch(Dispatchers.Main) {
-                    adapter.submitList(history_tattoolists.toList())
+                    adapter.submitList(tattooViewModel.history.value?.toList())
                 }
             }
             gallery.setOnClickListener {

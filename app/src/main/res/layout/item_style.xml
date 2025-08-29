@@ -13,6 +13,7 @@
         android:layout_width="93dp"
         android:layout_height="90dp"
         android:adjustViewBounds="true"
+        android:paddingTop="@dimen/_5sdp"
         android:background="@drawable/bg_top_round"
         android:layout_marginTop="2dp"
         app:layout_constraintEnd_toEndOf="parent"

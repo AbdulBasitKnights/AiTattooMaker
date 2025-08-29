@@ -46,6 +46,8 @@ android {
 
 dependencies {
     implementation (project(":stickerlibrary"))
+    //multidex
+    implementation(libs.multidex)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -82,4 +84,6 @@ dependencies {
     implementation ("com.google.firebase:firebase-crashlytics-ktx")
     implementation ("com.google.firebase:firebase-config-ktx")
     implementation ("com.google.firebase:firebase-messaging-ktx")
+
+    implementation("com.google.code.gson:gson:2.11.0")
 }
