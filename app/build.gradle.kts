@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     id ("kotlin-parcelize")
     id ("kotlin-kapt")
+    id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
     alias(libs.plugins.navigation.safeargs)
 }
 
@@ -11,7 +13,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.basit.aitattoomaker"
+        applicationId = "tattoome.ai.tattoogenerator"
         minSdk = 29
         targetSdk = 35
         versionCode = 1
@@ -69,13 +71,15 @@ dependencies {
     implementation(libs.glide)
     kapt (libs.compiler)
     //ssp & sdp
-    implementation("com.intuit.ssp:ssp-android:1.1.0")
-    implementation("com.intuit.sdp:sdp-android:1.1.1")
-    // Hilt
-//    implementation (libs.hilt.android)
-//    kapt (libs.hilt.compiler)
-//Wait Dialogue
-//    implementation(libs.kprogresshud)
+    implementation(libs.ssp.android)
+    implementation(libs.sdp.android)
     // ViewBinding
     implementation (libs.androidx.viewbinding)
+    // Firebase platform
+    implementation(platform("com.google.firebase:firebase-bom:33.13.0"))
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation ("com.google.firebase:firebase-analytics-ktx")
+    implementation ("com.google.firebase:firebase-crashlytics-ktx")
+    implementation ("com.google.firebase:firebase-config-ktx")
+    implementation ("com.google.firebase:firebase-messaging-ktx")
 }

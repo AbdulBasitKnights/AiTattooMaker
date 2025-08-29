@@ -10,12 +10,9 @@ import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.basit.aitattoomaker.databinding.FragmentHomeBinding
 import com.basit.aitattoomaker.databinding.FragmentResultBinding
 import com.basit.aitattoomaker.extension.showDiscardDialog
-import com.basit.aitattoomaker.presentation.home.HomeViewModel
 
 class ResultFragment : Fragment() {
 

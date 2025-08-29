@@ -6,16 +6,6 @@
     app:startDestination="@+id/navigation_aicreate">
 
     <fragment
-        android:id="@+id/navigation_home"
-        android:name="com.basit.aitattoomaker.presentation.home.HomeFragment"
-        android:label="@string/title_aicreate"
-        tools:layout="@layout/fragment_home" >
-
-        <action
-            android:id="@+id/action_navigation_home_to_navigation_aicreate"
-            app:destination="@id/navigation_aicreate" />
-    </fragment>
-    <fragment
         android:id="@+id/navigation_aicamera"
         android:name="com.basit.aitattoomaker.presentation.camera.CameraScreen"
         android:label="@string/title_aicreate"
@@ -54,18 +44,12 @@
 
     <fragment
         android:id="@+id/navigation_history"
-        android:name="com.basit.aitattoomaker.presentation.search.SearchFragment"
+        android:name="com.basit.aitattoomaker.presentation.history.HistoryFragment"
         android:label="@string/history"
-        tools:layout="@layout/fragment_notifications" />
+        tools:layout="@layout/fragment_history" />
     <fragment
         android:id="@+id/navigation_settings"
         android:name="com.basit.aitattoomaker.presentation.setting.SettingFragment"
         android:label="@string/setting"
         tools:layout="@layout/fragment_settings" />
-
-    <fragment
-        android:id="@+id/navigation_profile"
-        android:name="com.basit.aitattoomaker.presentation.search.SearchFragment"
-        android:label="@string/title_profile"
-        tools:layout="@layout/fragment_notifications" />
 </navigation>

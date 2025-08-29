@@ -388,7 +388,7 @@
         android:layout_marginHorizontal="@dimen/_10ssp"
         android:gravity="center"
         android:paddingVertical="@dimen/_10sdp"
-        android:text="Continue"
+        android:text="@string/continiue"
         android:textColor="@color/white"
         android:textSize="@dimen/_14ssp"
         app:layout_constraintEnd_toEndOf="parent"

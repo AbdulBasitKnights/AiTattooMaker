@@ -19,7 +19,9 @@ navigationFragmentKtx = "2.9.3"
 hilt = "2.57"
 navigationUiKtx = "2.9.3"
 playServicesMlkitSubjectSegmentation = "16.0.0-beta1"
+sdpAndroid = "1.1.1"
 segmentationSelfie = "16.0.0-beta6"
+sspAndroid = "1.1.1"
 viewbinding = "8.12.0"
 coreKtxVersion = "1.15.0"
 
@@ -47,8 +49,10 @@ androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifec
 androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
 androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigationUiKtx" }
 play-services-mlkit-subject-segmentation = { module = "com.google.android.gms:play-services-mlkit-subject-segmentation", version.ref = "playServicesMlkitSubjectSegmentation" }
+sdp-android = { module = "com.intuit.sdp:sdp-android", version.ref = "sdpAndroid" }
 segmentation-selfie = { module = "com.google.mlkit:segmentation-selfie", version.ref = "segmentationSelfie" }
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtxVersion" }
+ssp-android = { module = "com.intuit.ssp:ssp-android", version.ref = "sspAndroid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    tools:context=".presentation.history.HistoryFragment">
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/history"
+        android:fontFamily="@font/poppins_bold"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_14ssp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_margin="@dimen/_10sdp"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/categoryLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/history"
+        android:fontFamily="@font/poppins_bold"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_14ssp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        android:layout_margin="@dimen/_10sdp"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_creation_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/categoryLayout"
+        app:spanCount="2"
+        android:paddingBottom="@dimen/_2sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:itemCount="10"
+        tools:listitem="@layout/history_list_item" />
+
+    <LinearLayout
+        android:id="@+id/noArtWorkLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/_25sdp"
+        android:orientation="vertical">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:layout_gravity="center"
+            android:background="@drawable/history_svg"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No History"
+            android:layout_gravity="center"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:fontFamily="@font/poppins_semibold_600"
+            android:textSize="@dimen/_16ssp"
+            android:textColor="@color/white"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/lightGrey"
+            android:fontFamily="@font/poppins_medium_500"
+            android:textSize="@dimen/_11ssp"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:text="Tattoo History will appear here."/>
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
