@@ -1,4 +1,4 @@
-package com.aspire.social.ai.art.generator.iap.screens.adapter
+package com.basit.aitattoomaker.presentation.iap.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,9 +6,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.aspire.social.ai.art.generator.R
-import com.aspire.social.ai.art.generator.extension.loadWithGlide
-import com.aspire.social.ai.art.generator.iap.model.RewardItem
+import com.basit.aitattoomaker.R
+import com.basit.aitattoomaker.presentation.iap.RewardItem
 
 class RewardAdapter(private val items: List<RewardItem>) :
     RecyclerView.Adapter<RewardAdapter.RewardViewHolder>() {
