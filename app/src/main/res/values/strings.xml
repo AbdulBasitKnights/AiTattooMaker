@@ -20,7 +20,7 @@
     <string name="create">Generate Tattoo</string>
     <string name="see_all">See All</string>
     <string name="clear">Clear</string>
-    <string name="setting">Setting</string>
+    <string name="setting">Settings</string>
     <string name="ai_try">Ai try</string>
     <string name="history">History</string>
     <string name="_02_images">02  images</string>
@@ -62,4 +62,5 @@
     <string name="preview_info">Preview Info</string>
     <string name="library_tattoos">Library Tattoos</string>
     <string name="history_tattoos">History Tattoos</string>
+    <string name="general">General</string>
 </resources>

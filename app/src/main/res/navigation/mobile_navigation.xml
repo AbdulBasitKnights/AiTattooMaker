@@ -53,10 +53,15 @@
         tools:layout="@layout/fragment_aitools" />
 
     <fragment
-        android:id="@+id/navigation_search"
+        android:id="@+id/navigation_history"
         android:name="com.basit.aitattoomaker.presentation.search.SearchFragment"
-        android:label="@string/title_search"
+        android:label="@string/history"
         tools:layout="@layout/fragment_notifications" />
+    <fragment
+        android:id="@+id/navigation_settings"
+        android:name="com.basit.aitattoomaker.presentation.setting.SettingFragment"
+        android:label="@string/setting"
+        tools:layout="@layout/fragment_settings" />
 
     <fragment
         android:id="@+id/navigation_profile"
