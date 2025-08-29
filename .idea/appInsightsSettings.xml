@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="tattoome.ai.tattoogenerator" />
+                  <option name="mobileSdkAppId" value="1:998462377598:android:e8b31ce444cb6192ff522f" />
+                  <option name="projectId" value="ai-tattoo-generator-ea884" />
+                  <option name="projectNumber" value="998462377598" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
