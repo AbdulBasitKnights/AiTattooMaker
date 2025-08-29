@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "998462377598",
+    "project_id": "ai-tattoo-generator-ea884",
+    "storage_bucket": "ai-tattoo-generator-ea884.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:998462377598:android:e8b31ce444cb6192ff522f",
+        "android_client_info": {
+          "package_name": "tattoome.ai.tattoogenerator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVBElGeqH_tgD3b3a55o8uFk6B7Yj_oEs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      },
+      "admob_app_id": "ca-app-pub-5972202469838280~3300480902"
+    }
+  ],
+  "configuration_version": "1"
+}
