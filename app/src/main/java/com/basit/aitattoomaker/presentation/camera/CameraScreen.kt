@@ -48,13 +48,14 @@ import com.basit.aitattoomaker.presentation.utils.DialogUtils.dialog
 import com.basit.aitattoomaker.presentation.utils.capturedBitmap
 import com.basit.aitattoomaker.presentation.utils.selectedTattoo
 import com.bumptech.glide.Glide
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.util.concurrent.Executors
-
+@AndroidEntryPoint
 @ExperimentalGetImage
 class CameraScreen : Fragment() {
     private var binding: FragmentCameraBinding? = null

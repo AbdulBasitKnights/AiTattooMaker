@@ -15,7 +15,9 @@ import com.basit.aitattoomaker.R
 import com.basit.aitattoomaker.databinding.FragmentResultBinding
 import com.basit.aitattoomaker.extension.showDiscardDialog
 import com.basit.aitattoomaker.presentation.utils.AppUtils
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ResultFragment : Fragment() {
 
     private var _binding: FragmentResultBinding? = null

@@ -8,7 +8,7 @@ import android.os.Build
 import androidx.annotation.DrawableRes
 import androidx.exifinterface.media.ExifInterface
 import androidx.fragment.app.FragmentActivity
-import com.basit.aitattoomaker.MainActivity
+import com.basit.aitattoomaker.presentation.MainActivity
 import com.basit.aitattoomaker.R
 import com.basit.aitattoomaker.domain.TattooResponse
 import com.google.gson.Gson

@@ -45,9 +45,10 @@ import com.basit.aitattoomaker.presentation.utils.GradientStrokeDrawable
 import com.basit.aitattoomaker.presentation.utils.styleLiveData
 import com.basit.aitattoomaker.presentation.utils.style_list
 import com.basit.aitattoomaker.presentation.utils.tattooCreation
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
+@AndroidEntryPoint
 class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
 
     private var binding: FragmentAiCreateBinding? = null

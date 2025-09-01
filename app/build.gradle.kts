@@ -5,6 +5,7 @@ plugins {
     id ("kotlin-kapt")
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
+    id("dagger.hilt.android.plugin")
     alias(libs.plugins.navigation.safeargs)
 }
 
@@ -37,6 +38,9 @@ android {
     }
     kotlinOptions {
         jvmTarget = "11"
+    }
+    kapt {
+        correctErrorTypes = true
     }
     buildFeatures {
         viewBinding = true
@@ -84,6 +88,29 @@ dependencies {
     implementation ("com.google.firebase:firebase-crashlytics-ktx")
     implementation ("com.google.firebase:firebase-config-ktx")
     implementation ("com.google.firebase:firebase-messaging-ktx")
-
+    // Gson & Retrofit
     implementation("com.google.code.gson:gson:2.11.0")
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    //Chucker for API
+    //chuck library
+    debugImplementation ("com.github.chuckerteam.chucker:library:3.5.2")
+    releaseImplementation ("com.github.chuckerteam.chucker:library-no-op:3.5.2")
+    //DataStore
+    //datastore
+    implementation("androidx.datastore:datastore:1.1.1")
+    implementation("androidx.datastore:datastore-preferences-core:1.1.1")
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
+    //Hilt
+    // Dagger - Hilt
+    implementation ("com.google.dagger:hilt-android:2.57.1")
+    kapt ("com.google.dagger:hilt-android-compiler:2.57.1")
+
+    //work Manager
+    implementation ("androidx.hilt:hilt-work:1.2.0")
+    kapt("androidx.hilt:hilt-compiler:1.2.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.5.0")
+    implementation("androidx.work:work-runtime-ktx:2.7.0")
 }

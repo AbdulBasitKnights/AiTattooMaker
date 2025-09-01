@@ -19,13 +19,14 @@ import com.basit.aitattoomaker.extension.shareAppLinkTo
 import com.basit.aitattoomaker.presentation.setting.adapter.ModelSettings
 import com.basit.aitattoomaker.presentation.setting.adapter.SettingsAdapter
 import com.basit.aitattoomaker.presentation.setting.adapter.SettingsClickListener
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
+@AndroidEntryPoint
 class SettingFragment : Fragment(), SettingsClickListener {
 
     private var _binding: FragmentSettingsBinding? = null

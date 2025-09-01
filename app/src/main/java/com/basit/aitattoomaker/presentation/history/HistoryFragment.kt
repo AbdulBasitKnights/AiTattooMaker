@@ -10,7 +10,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.basit.aitattoomaker.databinding.FragmentHistoryBinding
 import com.basit.aitattoomaker.presentation.history.model.Creation
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class HistoryFragment : Fragment() {
     val creations = listOf(
         Creation(imageUrl = "file:///android_asset/library/11.webp"),
