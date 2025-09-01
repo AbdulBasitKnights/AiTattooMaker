@@ -93,7 +93,7 @@ object NetworkModule {
         okHttpClient: OkHttpClient,
     ): Retrofit {
         return Retrofit.Builder().client(okHttpClient)
-            .baseUrl("https://65.1.178.163/")
+            .baseUrl("http://65.1.178.163/")
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
             .build()
     }
@@ -105,7 +105,7 @@ object NetworkModule {
         okHttpClient: OkHttpClient,
     ): Retrofit {
         return Retrofit.Builder().client(okHttpClient)
-            .baseUrl("https://65.1.178.163/")
+            .baseUrl("http://65.1.178.163/")
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
             .build()
     }

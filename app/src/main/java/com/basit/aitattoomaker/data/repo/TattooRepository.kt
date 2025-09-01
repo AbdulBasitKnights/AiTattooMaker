@@ -11,9 +11,10 @@ import java.io.File
 import javax.inject.Inject
 
 class TattooRepository @Inject constructor(private val api: TattooApiService) {
-    suspend fun register(model: String) =
-        api.register(RegisterRequest(model))
-
+    suspend fun register(deviceData: DeviceData,modelName: ModelName): RegisterResponse {
+            api.register(deviceData.deviceId,deviceData.appName,deviceData.deviceType,deviceData.appVersion,modelName)
+        return api.register(deviceData.deviceId,deviceData.appName,deviceData.deviceType,deviceData.appVersion,modelName)
+    }
     suspend fun getProfile() = api.getDeviceProfile()
 
     suspend fun claimCredits() = api.claimDailyCredits()

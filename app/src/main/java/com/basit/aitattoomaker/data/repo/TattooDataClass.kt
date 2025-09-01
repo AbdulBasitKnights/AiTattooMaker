@@ -2,7 +2,32 @@ package com.basit.aitattoomaker.data.repo
 
 data class RegisterRequest(val device_model: String)
 
-data class RegisterResponse(val id: String, val access_token: String)
+data class RegisterResponse(
+    val meta: Meta,
+    val response: DeviceResponse
+)
+
+data class Meta(
+    val code: Int,
+    val status: String,
+    val message: String
+)
+
+data class DeviceResponse(
+    val device_id: String,
+    val created: Boolean
+)
+
+data class DeviceData(
+    val deviceId: String="",
+    val appName: String="",
+    val deviceType: String="",
+    val appVersion: String="",
+    val modelName:String=""
+)
+data class ModelName(
+    val modelName:String=""
+)
 
 data class DeviceProfile(val deviceId: String, val credits: Int)
 

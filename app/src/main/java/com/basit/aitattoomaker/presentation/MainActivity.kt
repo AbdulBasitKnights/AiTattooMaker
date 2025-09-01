@@ -1,7 +1,9 @@
 package com.basit.aitattoomaker.presentation
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.navigation.findNavController
@@ -16,6 +18,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +37,16 @@ class MainActivity : AppCompatActivity() {
             )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)*/
+        try {
+            viewModel.registerResponse.observe(this){
+                if(it!=null){
+                    Log.e("VM","Response: ${it.response}")
+                    Log.e("VM","Meta: ${it.meta}")
+                }
+            }
+        } catch (e: Exception) {
+           e.printStackTrace()
+        }
         navView.setupWithNavController(navController)
     }
     fun hidebottombar() {
