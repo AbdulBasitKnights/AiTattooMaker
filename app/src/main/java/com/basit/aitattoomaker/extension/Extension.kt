@@ -276,14 +276,21 @@ fun FragmentActivity.hideSystemBars() {
     try {
         window.decorView.post {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                window.setDecorFitsSystemWindows(false) // extend layout into system bar areas
-                window.statusBarColor = Color.BLACK     // color top bar area
-                window.navigationBarColor = Color.BLACK // color bottom bar area
-                window.insetsController?.let {
+                // Allow layout to extend behind system bars
+                window.setDecorFitsSystemWindows(false)
+
+                // Set transparent so no forced black band shows
+                window.statusBarColor = Color.TRANSPARENT
+                window.navigationBarColor = Color.TRANSPARENT
+
+                val controller = window.insetsController
+                controller?.let {
                     it.hide(WindowInsets.Type.statusBars() or WindowInsets.Type.navigationBars())
+                    // Still allow swipe to bring them temporarily
                     it.systemBarsBehavior =
                         WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
                 }
+
             } else {
                 @Suppress("DEPRECATION")
                 window.decorView.systemUiVisibility = (
@@ -294,6 +301,8 @@ fun FragmentActivity.hideSystemBars() {
                                 or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                                 or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                         )
+                window.statusBarColor = Color.TRANSPARENT
+                window.navigationBarColor = Color.TRANSPARENT
             }
         }
     } catch (e: Exception) {

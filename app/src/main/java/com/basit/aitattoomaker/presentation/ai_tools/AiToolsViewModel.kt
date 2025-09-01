@@ -25,7 +25,7 @@ class AiToolsViewModel(app: Application) : AndroidViewModel(app) {
         loadTattoos()
     }
 
-    private fun loadTattoos() {
+     fun loadTattoos() {
         viewModelScope.launch(Dispatchers.IO) {
             val data = AppUtils.loadTattoos(getApplication())
             withContext(Dispatchers.Main) {

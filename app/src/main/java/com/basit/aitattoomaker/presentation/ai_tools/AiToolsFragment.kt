@@ -27,6 +27,7 @@ import androidx.core.graphics.scale
 import androidx.core.view.drawToBitmap
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -61,7 +62,7 @@ import java.nio.FloatBuffer
 class AiToolsFragment : Fragment() {
 
     private var binding: FragmentAitoolsBinding? = null
-    private val tattooViewModel: AiToolsViewModel by viewModels()
+    private val tattooViewModel: AiToolsViewModel by activityViewModels()
     private lateinit var adapter: CameraTattooAdapter
     private var maskedBitmap: Bitmap?=null
     private var modelIndex = 0
@@ -146,7 +147,15 @@ class AiToolsFragment : Fragment() {
                 }
             }
             rvTattoo.adapter = adapter
-            adapter.submitList(tattooViewModel.library.value?.toList())
+            try {
+                tattooViewModel.library.observe(viewLifecycleOwner){
+                    if(!it.isNullOrEmpty()){
+                        adapter.submitList(it.toList())
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
 
     }

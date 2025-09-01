@@ -6,9 +6,6 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Rect
-import android.graphics.RectF
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -17,7 +14,6 @@ import android.view.LayoutInflater
 import android.view.Surface
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -34,26 +30,16 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.LinearSnapHelper
-import androidx.recyclerview.widget.RecyclerView
 import com.basit.aitattoomaker.R
-import com.basit.aitattoomaker.data.repo.TattooRepositoryImpl
 import com.basit.aitattoomaker.databinding.FragmentCameraBinding
-import com.basit.aitattoomaker.extension.toBitmapSafe
-import com.basit.aitattoomaker.extension.toSafeSoftwareBitmap
 import com.basit.aitattoomaker.extension.uriToBitmap
-import com.basit.aitattoomaker.presentation.ai_create.dialog.StyleBottomSheet
-import com.basit.aitattoomaker.presentation.ai_create.model.StyleItem
 import com.basit.aitattoomaker.presentation.ai_tools.AiToolsViewModel
-import com.basit.aitattoomaker.presentation.ai_tools.adapter.TattooAdapter
-import com.basit.aitattoomaker.presentation.ai_tools.model.CameraTattoo
 import com.basit.aitattoomaker.presentation.camera.adapter.CameraTattooAdapter
 import com.basit.aitattoomaker.presentation.camera.dialog.InfoBottomSheet
-import com.basit.aitattoomaker.presentation.camera.result.ResultBottomSheet
 import com.basit.aitattoomaker.presentation.utils.AppUtils
 import com.basit.aitattoomaker.presentation.utils.AppUtils.tattooPath
 import com.basit.aitattoomaker.presentation.utils.CameraPermissionHelper
@@ -78,7 +64,7 @@ class CameraScreen : Fragment() {
     private var isFrontCamera = false
     private  var cameraControl: CameraControl?=null
     private  var cameraInfo: CameraInfo?=null
-    private val tattooViewModel: AiToolsViewModel by viewModels()
+    private val tattooViewModel: AiToolsViewModel by activityViewModels()
     private var imageCapture: ImageCapture? = null
     private val cameraExecutor by lazy {
         Executors.newSingleThreadExecutor()
@@ -131,6 +117,11 @@ class CameraScreen : Fragment() {
             try {
                 binding?.apply {
                     flash.setImageResource(if (isFlashOn) R.drawable.flash_on else R.drawable.flash_off)
+                    mActivity?.let { ctx ->
+                        Glide.with(ctx)
+                            .load(tattooPath)
+                            .into(tattoo)
+                    }
                 }
                 AppUtils.getMain(it)?.hidebottombar()
                 setupRecycler()
@@ -169,9 +160,15 @@ class CameraScreen : Fragment() {
                 }
             }
             binding?.rvTattoo?.adapter = adapter
-//            setupTattooCarousel(rvTattoo, adapter)
-            lifecycleScope.launch(Dispatchers.Main) {
-                adapter.submitList(tattooViewModel.library.value?.toList()) // your list
+            tattooViewModel.loadTattoos()
+            try {
+                tattooViewModel.library.observe(viewLifecycleOwner) {
+                    if(!it.isNullOrEmpty()){
+                        adapter.submitList(it.toList()) // your list
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
 

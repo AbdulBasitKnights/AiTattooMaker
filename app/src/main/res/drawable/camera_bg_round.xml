@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Outer background (black, no corners) -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/black" />
+        </shape>
+    </item>
+
+    <!-- Inner background (rounded corners, inset inside the black) -->
+    <item android:left="2dp" android:top="4dp" android:right="2dp" android:bottom="4dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/transparent" /> <!-- inner color -->
+            <corners android:radius="25dp" />
+        </shape>
+    </item>
+
+</layer-list>

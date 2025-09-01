@@ -91,14 +91,16 @@
                         android:background="@android:color/transparent"
                         android:gravity="top|start"
                         android:overScrollMode="always"
+                        android:inputType="textCapSentences"
+                        android:imeOptions="actionDone"
                         android:paddingStart="@dimen/_1sdp"
                         android:paddingTop="@dimen/_5sdp"
                         android:hint="@string/type_your_tattoo"
-                        android:inputType="textCapSentences|textMultiLine"
                         android:maxLines="5"
                         android:minLines="1"
                         android:textColor="@color/white"
-                        android:textColorHint="@color/greyText" />
+                        android:textColorHint="@color/greyText"
+                        tools:ignore="RtlSymmetry" />
                 </com.google.android.material.textfield.TextInputLayout>
 
 

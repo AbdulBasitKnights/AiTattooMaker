@@ -142,7 +142,6 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
                 styleLiveData.postValue(style_list)
 //                Toast.makeText(requireContext(), "Selected: ${selected.title}", Toast.LENGTH_SHORT).show()
             }
-            rvStyles.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
             rvStyles.adapter = adapter
             styleLiveData?.observe(viewLifecycleOwner){
                 if(!it.isNullOrEmpty()){
@@ -181,6 +180,13 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
                 }
                 else{
                     btnClear.visibility= View.GONE
+                }
+            }
+            etPrompt.setOnFocusChangeListener { view, hasFocus ->
+                if (hasFocus) {
+                    view.post {
+                        rootScroll.smoothScrollTo(0, view.bottom)
+                    }
                 }
             }
 
