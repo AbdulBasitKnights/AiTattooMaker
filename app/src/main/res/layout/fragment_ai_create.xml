@@ -11,6 +11,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="0dp"
+        android:paddingBottom="0dp"
         android:layout_margin="10dp">
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/topBar"
@@ -43,7 +45,7 @@
             android:id="@+id/promptCard"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_25sdp"
+            android:layout_marginTop="@dimen/_20sdp"
             android:layout_marginHorizontal="5dp"
             android:layout_marginBottom="5dp"
             android:padding="3dp"
@@ -90,17 +92,23 @@
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
                         android:gravity="top|start"
-                        android:overScrollMode="always"
-                        android:inputType="textCapSentences"
+                        android:imeActionLabel="Done"
+                        android:focusableInTouchMode="true"
                         android:imeOptions="actionDone"
+                        android:inputType="text"
+                        android:letterSpacing="0.01"
+                        android:nestedScrollingEnabled="true"
+                        android:keyboardNavigationCluster="true"
+                        android:overScrollMode="always"
+                        android:scrollbarStyle="insideInset"
+                        android:scrollbars="vertical"
                         android:paddingStart="@dimen/_1sdp"
                         android:paddingTop="@dimen/_5sdp"
                         android:hint="@string/type_your_tattoo"
                         android:maxLines="5"
                         android:minLines="1"
                         android:textColor="@color/white"
-                        android:textColorHint="@color/greyText"
-                        tools:ignore="RtlSymmetry" />
+                        android:textColorHint="@color/greyText" />
                 </com.google.android.material.textfield.TextInputLayout>
 
 

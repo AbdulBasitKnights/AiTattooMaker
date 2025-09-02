@@ -28,6 +28,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.basit.aitattoomaker.R
 import com.basit.aitattoomaker.databinding.FragmentAiCreateBinding
+import com.basit.aitattoomaker.extension.changeImeActionLable
 import com.basit.aitattoomaker.extension.dp
 import com.basit.aitattoomaker.extension.observeKeyboardLegacy
 import com.basit.aitattoomaker.extension.setDrawableTint
@@ -160,6 +161,7 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
     private fun setupPromptField(){
         binding?.apply {
             // EditText inner scrolling (only steal touch from parent when it can scroll)
+//            binding?.etPrompt?.changeImeActionLable()
             etPrompt.isVerticalScrollBarEnabled = true
             etPrompt.overScrollMode = View.OVER_SCROLL_ALWAYS
             etPrompt.setOnTouchListener { v, ev ->
@@ -234,7 +236,7 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
      * and clear focus when IME hides.
      */
     private fun setupImeAwareScrolling(){
-        binding?.apply {
+/*        binding?.apply {
             val scroll = rootScroll
             val edit = etPrompt
             val root = requireView()
@@ -282,7 +284,7 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
                     }
                 }
             )
-        }
+        }*/
 
     }
 
@@ -313,7 +315,6 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
                 Toast.makeText(mActivity, "Pro Button", Toast.LENGTH_SHORT).show()
             }
             promptCard.setOnClickListener {
-                etPrompt.requestFocus()
                 etPrompt.showKeyboard()
             }
 
@@ -343,10 +344,15 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
 
     }
     fun View.showKeyboard() {
-        requestFocus()
-        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
+        try {
+            requestFocus()
+//            val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+//            imm.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
+
     private fun showCustomPopupVariations(view: View) {
         // Inflate the custom layout for the popup
         val inflater = LayoutInflater.from(requireContext())

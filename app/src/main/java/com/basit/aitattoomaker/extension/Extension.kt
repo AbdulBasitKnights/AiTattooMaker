@@ -274,23 +274,13 @@ fun FragmentActivity.shareAppLinkTo(app: String) {
 
 fun FragmentActivity.hideSystemBars() {
     try {
+
         window.decorView.post {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 // Allow layout to extend behind system bars
-                window.setDecorFitsSystemWindows(false)
-
-                // Set transparent so no forced black band shows
-                window.statusBarColor = Color.TRANSPARENT
-                window.navigationBarColor = Color.TRANSPARENT
-
                 val controller = window.insetsController
-                controller?.let {
-                    it.hide(WindowInsets.Type.statusBars() or WindowInsets.Type.navigationBars())
-                    // Still allow swipe to bring them temporarily
-                    it.systemBarsBehavior =
-                        WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-                }
-
+                controller?.hide(WindowInsets.Type.statusBars() or WindowInsets.Type.navigationBars())
+//                controller?.show(WindowInsets.Type.ime())  // to show keyboard
             } else {
                 @Suppress("DEPRECATION")
                 window.decorView.systemUiVisibility = (
