@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.basit.aitattoomaker.BuildConfig
 import com.basit.aitattoomaker.R
@@ -37,9 +38,45 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding?.navView?.itemBackground = null
-        val navView: BottomNavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
-        navView.setupWithNavController(navController)
+        if (binding.navView != null) {
+            NavigationUI.setupWithNavController(binding.navView, navController)
+            binding.navView.setOnNavigationItemSelectedListener { menuItem ->
+                when (menuItem.itemId) {
+                    R.id.navigation_aicreate -> {
+                        showbottombar()
+                        navController.navigate(R.id.navigation_aicreate)
+                        true
+                    }
+
+                    R.id.navigation_settings -> {
+                        showbottombar()
+                        navController.navigate(R.id.navigation_settings)
+                        true
+                    }
+
+                    R.id.navigation_history -> {
+                        showbottombar()
+                        navController.navigate(R.id.navigation_history)
+                        true
+                    }
+
+                    R.id.navigation_aicamera -> {
+                        hidebottombar()
+                        navController.navigate(R.id.navigation_aicamera)
+                        true
+                    }
+
+                    else -> {
+                        showbottombar()
+                    navController.navigate(R.id.navigation_aicreate)
+                        true
+                    }
+                }
+
+            }
+        }
+
         registerUser()
     }
 

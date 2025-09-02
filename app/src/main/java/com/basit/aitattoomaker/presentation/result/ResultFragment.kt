@@ -55,7 +55,7 @@ class ResultFragment : Fragment() {
                 mActivity?.showDiscardDialog(
                     onDiscard = {
                         // User clicked discard, handle accordingly
-                        findNavController().popBackStack(R.id.navigation_aicreate,true)
+                        findNavController().popBackStack(R.id.navigation_aicreate,false)
                     },
                     onNotNow = {
                         // User clicked not now, just dismiss dialog
@@ -81,7 +81,7 @@ class ResultFragment : Fragment() {
                     mActivity?.showDiscardDialog(
                         onDiscard = {
                             // User clicked discard, handle accordingly
-                            findNavController().popBackStack(R.id.navigation_aicreate,true)
+                            findNavController().popBackStack(R.id.navigation_aicreate,false)
                         },
                         onNotNow = {
                             // User clicked not now, just dismiss dialog
