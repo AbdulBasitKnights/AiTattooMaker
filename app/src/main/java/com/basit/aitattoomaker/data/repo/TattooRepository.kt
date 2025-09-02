@@ -30,6 +30,24 @@ class TattooRepository @Inject constructor(private val api: TattooApiService) {
             Result.failure(e)
         }
     }
+    suspend fun getToken(
+        deviceId: String,
+        appName: String,
+        deviceType: String,
+        appVersion: String,
+        modelName: ModelName
+    ): Result<RegisterResponse> {
+        return try {
+            val response = api.getToken(deviceId, appName, deviceType, appVersion, modelName)
+            if (response.isSuccessful) {
+                Result.success(response.body()!!)
+            } else {
+                Result.failure(Exception("Error: ${response.errorBody()?.string()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 
     suspend fun getProfile() = api.getDeviceProfile()
 

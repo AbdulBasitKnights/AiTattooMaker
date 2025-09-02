@@ -49,7 +49,13 @@ import com.basit.aitattoomaker.databinding.RegenerationDialogBinding
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import androidx.core.net.toUri
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
 
+val Context.dataStore by preferencesDataStore(name = "user_preferences")
+
+// Define the key for storing the access token
+val ACCESS_TOKEN_KEY = stringPreferencesKey("access_token")
 //Dialogs
 fun FragmentActivity.showDiscardDialog(
     onDiscard: () -> Unit,

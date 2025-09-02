@@ -14,8 +14,11 @@ data class Meta(
 )
 
 data class DeviceResponse(
-    val device_id: String,
-    val created: Boolean
+    val device_id: String="",
+    val created: Boolean=false,
+    val access_token: String="",
+    val refresh_token: String="",
+    val expire_on: String=""
 )
 
 data class DeviceData(

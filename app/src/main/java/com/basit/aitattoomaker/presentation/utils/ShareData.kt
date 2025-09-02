@@ -8,6 +8,7 @@ import com.basit.aitattoomaker.R
 import com.basit.aitattoomaker.presentation.ai_create.model.StyleItem
 
 var tattooCreation = MutableLiveData<Boolean?>()
+var access_Token :String?=null
 var capturedBitmap: Bitmap?=null
 @DrawableRes var selectedTattoo: Int?=null
 

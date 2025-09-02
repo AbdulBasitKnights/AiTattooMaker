@@ -113,8 +113,6 @@ class CameraScreen : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mActivity?.let {
-//            val androidId = Settings.Secure.getString(it.contentResolver, Settings.Secure.ANDROID_ID)
-//            Log.e("checkUUID","AndroidID: $androidId")
             try {
                 binding?.apply {
                     flash.setImageResource(if (isFlashOn) R.drawable.flash_on else R.drawable.flash_off)

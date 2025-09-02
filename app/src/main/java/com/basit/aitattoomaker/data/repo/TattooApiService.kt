@@ -23,6 +23,14 @@ interface TattooApiService {
         @Header("app-version") appVersion: String,
         @Body modelName: ModelName
     ): Response<RegisterResponse>
+    @POST("api/v1/devices/tokens/")
+    suspend fun getToken(
+        @Header("device-id") deviceId: String,
+        @Header("app-name") appName: String,
+        @Header("device-type") deviceType: String,
+        @Header("app-version") appVersion: String,
+        @Body modelName: ModelName
+    ): Response<RegisterResponse>
 
     @GET("api/v1/devices/profile/")
     suspend fun getDeviceProfile(): DeviceProfile
