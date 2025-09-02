@@ -50,6 +50,11 @@ interface TattooApiService {
     @Multipart
     @POST("api/v1/devices/image/generate/")
     suspend fun generateImage(
+        @Header("Authorization") token: String,
+        @Header("device-id") deviceId: String,
+        @Header("app-name") appName: String,
+        @Header("device-type") deviceType: String,
+        @Header("app-version") appVersion: String,
         @Part("is_ref_design") isRef: RequestBody,
         @Part("room_type") roomType: RequestBody,
         @Part("style_type") styleType: RequestBody,

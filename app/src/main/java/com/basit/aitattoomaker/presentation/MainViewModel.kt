@@ -1,5 +1,6 @@
 package com.basit.aitattoomaker.presentation
 
+import android.app.Application
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
@@ -7,7 +8,9 @@ import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
+import com.basit.aitattoomaker.BuildConfig
 import com.basit.aitattoomaker.data.repo.DailyCreditsResponse
 import com.basit.aitattoomaker.data.repo.DeviceData
 import com.basit.aitattoomaker.data.repo.DeviceProfile
@@ -17,6 +20,7 @@ import com.basit.aitattoomaker.data.repo.TattooApiService
 import com.basit.aitattoomaker.data.repo.TattooRepository
 import com.basit.aitattoomaker.extension.ACCESS_TOKEN_KEY
 import com.basit.aitattoomaker.extension.dataStore
+import com.basit.aitattoomaker.presentation.utils.access_Token
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -30,6 +34,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
+    val application: Application,
     private val repo: TattooRepository
 
 ) : ViewModel() {
@@ -43,14 +48,37 @@ class MainViewModel @Inject constructor(
 
     fun registerUser(deviceId: String, appName: String, deviceType: String, appVersion: String, modelName: ModelName) {
         viewModelScope.launch {
-            val result = repo.register(deviceId, appName, deviceType, appVersion, modelName)
-            _registerResponse.postValue(result)
+            isAccessTokenAvailable(application).collect { isAvailable ->
+                if (isAvailable) {
+                    // Access token exists
+                    Log.d("VM","Access token already exists")
+                    access_Token=getAccessToken(application).toString()
+                    Log.d("VM","Access Token: ${access_Token.toString()}")
+
+                } else {
+                    // Token doesn't exist
+                    viewModelScope.launch {
+                        Log.e("VM","Request for Registration")
+                        val result = repo.register(deviceId, appName, deviceType, appVersion, modelName)
+                        _registerResponse.postValue(result)
+                        result.onSuccess { registerResponse ->
+                            Log.e("VM","Request for Token")
+                            getToken(deviceId,appName,deviceType, appVersion, modelName)
+                        }
+                    } }
+            }
         }
+
     }
     fun getToken(deviceId: String, appName: String, deviceType: String, appVersion: String, modelName: ModelName) {
         viewModelScope.launch {
             val result = repo.getToken(deviceId, appName, deviceType, appVersion, modelName)
             _getTokenResponse.postValue(result)
+            result.onSuccess { registerResponse ->
+                access_Token=registerResponse.response.access_token
+                Log.e("VM","Token received")
+                storeAccessToken(application, registerResponse.response.access_token)
+            }
         }
     }
     fun loadProfile() {

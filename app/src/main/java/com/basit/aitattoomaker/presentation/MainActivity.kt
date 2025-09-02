@@ -47,11 +47,6 @@ class MainActivity : AppCompatActivity() {
     private fun registerUser() {
         try {
             lifecycleScope.launch {
-                viewModel.isAccessTokenAvailable(this@MainActivity).collect { isAvailable ->
-                    if (isAvailable) {
-                        // Access token exists
-                        access_Token = viewModel.getAccessToken(this@MainActivity).toString()
-                    } else {
                         try {
                             val androidId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
                             val manufacturer = Build.MANUFACTURER
@@ -60,21 +55,8 @@ class MainActivity : AppCompatActivity() {
                             viewModel.registerUser(androidId, "tato", "android", BuildConfig.VERSION_NAME, ModelName(deviceName))
                             viewModel.registerResponse.observe(this@MainActivity) { result ->
                                 result.onSuccess { registerResponse ->
-                                    // Handle success (e.g., show success message or navigate to another screen)
-                                    lifecycleScope.launch {
-                                        viewModel.isAccessTokenAvailable(this@MainActivity).collect { isAvailable ->
-                                            if (isAvailable) {
-                                                // Access token exists
-                                                access_Token=viewModel.getAccessToken(this@MainActivity).toString()
-
-                                            } else {
-                                                // Token doesn't exist
-                                                viewModel.getToken(androidId, "tato", "android", BuildConfig.VERSION_NAME, ModelName(deviceName))
-                                            }
-                                        }
-                                    }
-
-                                    Toast.makeText(this@MainActivity, "Registration Successful: ${registerResponse.response.device_id}", Toast.LENGTH_SHORT).show()
+                                    Log.d("VM","Success Registration")
+//                                    Toast.makeText(this@MainActivity, "Registration Successful: ${registerResponse.response.device_id}", Toast.LENGTH_SHORT).show()
                                 }.onFailure { exception ->
                                     // Handle failure (e.g., show error message)
 //                    Toast.makeText(this, "Registration Failed: ${exception.message}", Toast.LENGTH_SHORT).show()
@@ -99,8 +81,6 @@ class MainActivity : AppCompatActivity() {
                                 Log.e("VM","Exception: ${exception.message}")
                             }
                         }
-                    }
-                }
             }
         }
         catch (e: Exception){
