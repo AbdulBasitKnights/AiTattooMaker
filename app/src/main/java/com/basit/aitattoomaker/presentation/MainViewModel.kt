@@ -46,7 +46,7 @@ class MainViewModel @Inject constructor(
     private val _getTokenResponse = MutableLiveData<Result<RegisterResponse>>()
     val getTokenResponse: LiveData<Result<RegisterResponse>> get() = _getTokenResponse
 
-    fun registerUser(deviceId: String, appName: String, deviceType: String, appVersion: String, modelName: ModelName) {
+    fun registerUser(modelName: ModelName) {
         viewModelScope.launch {
             isAccessTokenAvailable(application).collect { isAvailable ->
                 if (isAvailable) {
@@ -59,20 +59,20 @@ class MainViewModel @Inject constructor(
                     // Token doesn't exist
                     viewModelScope.launch {
                         Log.e("VM","Request for Registration")
-                        val result = repo.register(deviceId, appName, deviceType, appVersion, modelName)
+                        val result = repo.register(modelName)
                         _registerResponse.postValue(result)
                         result.onSuccess { registerResponse ->
                             Log.e("VM","Request for Token")
-                            getToken(deviceId,appName,deviceType, appVersion, modelName)
+                            getToken( modelName)
                         }
                     } }
             }
         }
 
     }
-    fun getToken(deviceId: String, appName: String, deviceType: String, appVersion: String, modelName: ModelName) {
+    fun getToken( modelName: ModelName) {
         viewModelScope.launch {
-            val result = repo.getToken(deviceId, appName, deviceType, appVersion, modelName)
+            val result = repo.getToken(modelName)
             _getTokenResponse.postValue(result)
             result.onSuccess { registerResponse ->
                 access_Token=registerResponse.response.access_token

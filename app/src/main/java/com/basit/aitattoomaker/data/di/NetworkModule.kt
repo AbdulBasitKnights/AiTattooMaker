@@ -1,12 +1,16 @@
 package com.basit.aitattoomaker.data.di
 
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.provider.Settings
 import android.util.Log
 import com.basit.aitattoomaker.BuildConfig
 import com.basit.aitattoomaker.data.repo.TattooAI
 import com.basit.aitattoomaker.data.repo.TattooApiService
 import com.basit.aitattoomaker.data.responses.Tattoo
 import com.basit.aitattoomaker.presentation.application.AppController.Companion.context
+import com.basit.aitattoomaker.presentation.utils.AppUtils.BASE_URL
 import com.chuckerteam.chucker.api.ChuckerCollector
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.chuckerteam.chucker.api.RetentionManager
@@ -14,7 +18,9 @@ import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -25,8 +31,27 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-
-
+    // Provide the context for accessing device ID
+    @Singleton
+    @Provides
+    fun provideContext(@ApplicationContext context: Context): Context {
+        return context
+    }
+    @SuppressLint("HardwareIds")
+    @Singleton
+    @Provides
+    fun provideHeaderInterceptor(context: Context): Interceptor {
+        return Interceptor { chain ->
+            val request = chain.request().newBuilder()
+                .addHeader("device-id", Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)) // Replace with actual device ID
+                .addHeader("app-name", "tato") // Replace with actual app name
+                .addHeader("device-type", "android") // Replace with actual device type
+                .addHeader("app-version", BuildConfig.VERSION_NAME) // Replace with actual app version
+                .addHeader("Content-Type", "application/json")
+                .build()
+            chain.proceed(request)
+        }
+    }
 
     @Singleton
     @Provides
@@ -60,6 +85,7 @@ object NetworkModule {
     @Provides
     fun provideOkHttp(
         chuckerInterceptor: ChuckerInterceptor?,
+        headerInterceptor: Interceptor
     ): OkHttpClient {
         val httpClient = OkHttpClient.Builder()
 
@@ -73,6 +99,7 @@ object NetworkModule {
             if (chuckerInterceptor != null) {
             httpClient.addInterceptor(chuckerInterceptor)
             }
+            httpClient.addInterceptor(headerInterceptor)
         }
 //        httpClient.addInterceptor(authenticationInterceptor)
 
@@ -104,7 +131,7 @@ object NetworkModule {
         okHttpClient: OkHttpClient,
     ): Retrofit {
         return Retrofit.Builder().client(okHttpClient)
-            .baseUrl("http://65.1.178.163/")
+            .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
             .build()
     }

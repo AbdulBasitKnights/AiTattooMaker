@@ -13,14 +13,10 @@ import javax.inject.Inject
 
 class TattooRepository @Inject constructor(private val api: TattooApiService) {
     suspend fun register(
-        deviceId: String,
-        appName: String,
-        deviceType: String,
-        appVersion: String,
         modelName: ModelName
     ): Result<RegisterResponse> {
         return try {
-            val response = api.register(deviceId, appName, deviceType, appVersion, modelName)
+            val response = api.register(modelName)
             if (response.isSuccessful) {
                 Result.success(response.body()!!)
             } else {
@@ -31,14 +27,10 @@ class TattooRepository @Inject constructor(private val api: TattooApiService) {
         }
     }
     suspend fun getToken(
-        deviceId: String,
-        appName: String,
-        deviceType: String,
-        appVersion: String,
         modelName: ModelName
     ): Result<RegisterResponse> {
         return try {
-            val response = api.getToken(deviceId, appName, deviceType, appVersion, modelName)
+            val response = api.getToken(modelName)
             if (response.isSuccessful) {
                 Result.success(response.body()!!)
             } else {

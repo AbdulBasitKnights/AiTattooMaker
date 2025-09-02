@@ -15,6 +15,7 @@ import com.google.gson.Gson
 import java.io.File
 
 object AppUtils {
+    val BASE_URL = "http://65.1.178.163/"
     val tattooPrompts = listOf(
         "A majestic dragon wrapped around a samurai sword",
         "Realistic lion roaring with fiery mane",

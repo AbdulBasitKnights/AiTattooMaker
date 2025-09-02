@@ -13,11 +13,11 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object InAppModule {
 
-    @Provides
-    @Singleton
-    fun provideContext(application: Application): Context {
-        return application.applicationContext
-    }
+//    @Provides
+//    @Singleton
+//    fun provideContext(application: Application): Context {
+//        return application.applicationContext
+//    }
 
 
 }

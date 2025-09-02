@@ -48,18 +48,16 @@ class MainActivity : AppCompatActivity() {
         try {
             lifecycleScope.launch {
                         try {
-                            val androidId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
                             val manufacturer = Build.MANUFACTURER
                             val model = Build.MODEL
                             val deviceName = "${manufacturer} ${model}"
-                            viewModel.registerUser(androidId, "tato", "android", BuildConfig.VERSION_NAME, ModelName(deviceName))
+                            viewModel.registerUser(ModelName(deviceName))
                             viewModel.registerResponse.observe(this@MainActivity) { result ->
                                 result.onSuccess { registerResponse ->
                                     Log.d("VM","Success Registration")
 //                                    Toast.makeText(this@MainActivity, "Registration Successful: ${registerResponse.response.device_id}", Toast.LENGTH_SHORT).show()
                                 }.onFailure { exception ->
                                     // Handle failure (e.g., show error message)
-//                    Toast.makeText(this, "Registration Failed: ${exception.message}", Toast.LENGTH_SHORT).show()
                                     Log.e("VM","Exception: ${exception.message}")
                                 }
                             }
@@ -77,7 +75,6 @@ class MainActivity : AppCompatActivity() {
                                 Toast.makeText(this@MainActivity, "Access Token from Api: ${registerResponse.response.access_token}", Toast.LENGTH_SHORT).show()
                             }.onFailure { exception ->
                                 // Handle failure (e.g., show error message)
-//                    Toast.makeText(this, "Registration Failed: ${exception.message}", Toast.LENGTH_SHORT).show()
                                 Log.e("VM","Exception: ${exception.message}")
                             }
                         }
