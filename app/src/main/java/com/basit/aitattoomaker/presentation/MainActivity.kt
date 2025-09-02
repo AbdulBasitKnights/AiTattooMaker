@@ -3,6 +3,7 @@ package com.basit.aitattoomaker.presentation
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
@@ -38,13 +39,18 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)*/
         try {
-            viewModel.registerResponse.observe(this){
-                if(it!=null){
-                    Log.e("VM","Response: ${it.response}")
-                    Log.e("VM","Meta: ${it.meta}")
+            viewModel.registerResponse.observe(this) { result ->
+                result.onSuccess { registerResponse ->
+                    // Handle success (e.g., show success message or navigate to another screen)
+                    Toast.makeText(this, "Registration Successful: ${registerResponse.response.device_id}", Toast.LENGTH_SHORT).show()
+                }.onFailure { exception ->
+                    // Handle failure (e.g., show error message)
+//                    Toast.makeText(this, "Registration Failed: ${exception.message}", Toast.LENGTH_SHORT).show()
+                    Log.e("VM","Exception: ${exception.message}")
                 }
             }
         } catch (e: Exception) {
+            Log.e("VM","Exception: ${e.message}")
            e.printStackTrace()
         }
         navView.setupWithNavController(navController)

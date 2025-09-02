@@ -59,7 +59,6 @@ object NetworkModule {
     @Singleton
     @Provides
     fun provideOkHttp(
-//        authenticationInterceptor: AuthenticationInterceptor
         chuckerInterceptor: ChuckerInterceptor?,
     ): OkHttpClient {
         val httpClient = OkHttpClient.Builder()

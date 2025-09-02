@@ -26,7 +26,7 @@ data class DeviceData(
     val modelName:String=""
 )
 data class ModelName(
-    val modelName:String=""
+    val device_model:String=""
 )
 
 data class DeviceProfile(val deviceId: String, val credits: Int)

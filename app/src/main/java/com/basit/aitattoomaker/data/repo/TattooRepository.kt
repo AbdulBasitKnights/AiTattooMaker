@@ -7,14 +7,30 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
 import java.io.File
 import javax.inject.Inject
 
 class TattooRepository @Inject constructor(private val api: TattooApiService) {
-    suspend fun register(deviceData: DeviceData,modelName: ModelName): RegisterResponse {
-            api.register(deviceData.deviceId,deviceData.appName,deviceData.deviceType,deviceData.appVersion,modelName)
-        return api.register(deviceData.deviceId,deviceData.appName,deviceData.deviceType,deviceData.appVersion,modelName)
+    suspend fun register(
+        deviceId: String,
+        appName: String,
+        deviceType: String,
+        appVersion: String,
+        modelName: ModelName
+    ): Result<RegisterResponse> {
+        return try {
+            val response = api.register(deviceId, appName, deviceType, appVersion, modelName)
+            if (response.isSuccessful) {
+                Result.success(response.body()!!)
+            } else {
+                Result.failure(Exception("Error: ${response.errorBody()?.string()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
+
     suspend fun getProfile() = api.getDeviceProfile()
 
     suspend fun claimCredits() = api.claimDailyCredits()
