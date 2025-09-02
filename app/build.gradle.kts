@@ -113,4 +113,10 @@ dependencies {
     kapt("androidx.hilt:hilt-compiler:1.2.0")
     implementation("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.5.0")
     implementation("androidx.work:work-runtime-ktx:2.7.0")
+    //Ads
+    implementation("com.google.android.gms:play-services-ads:24.3.0")
+    //Singular
+    implementation("com.singular.sdk:singular_sdk:12.5.5")
+    //Splash
+    implementation("androidx.core:core-splashscreen:1.0.1")
 }

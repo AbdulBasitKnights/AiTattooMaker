@@ -145,12 +145,21 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
 //                Toast.makeText(requireContext(), "Selected: ${selected.title}", Toast.LENGTH_SHORT).show()
             }
             rvStyles.adapter = adapter
-            styleLiveData?.observe(viewLifecycleOwner){
-                if(!it.isNullOrEmpty()){
-                    adapter.submitList(it)
-                    adapter.setInitialSelection(it)
+            styleLiveData?.observe(viewLifecycleOwner) { list ->
+                if (!list.isNullOrEmpty()) {
+                    adapter.submitList(list)
+                    adapter.setInitialSelection(list)
+
+                    val position = list.indexOfFirst { it.isSelected } // direct index
+                    if (position != -1) {
+                        rvStyles.post { // ensure it runs after layout
+                            rvStyles.scrollToPosition(position)
+                            adapter.notifyItemChanged(position)
+                        }
+                    }
                 }
             }
+
             // Dummy data
 
         }

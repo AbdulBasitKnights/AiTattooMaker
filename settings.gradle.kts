@@ -10,6 +10,7 @@ pluginManagement {
         maven(url = "https://jitpack.io")
         maven(url = "https://maven.fabric.io/public")
         maven(url = "https://maven.google.com")
+        maven(url= "https://maven.singular.net/" )
         google {
             content {
                 includeGroupByRegex("com\\.android.*")
@@ -28,6 +29,7 @@ dependencyResolutionManagement {
         maven(url = "https://jitpack.io")
         maven(url = "https://maven.fabric.io/public")
         maven(url = "https://maven.google.com")
+        maven(url= "https://maven.singular.net/" )
     }
 }
 

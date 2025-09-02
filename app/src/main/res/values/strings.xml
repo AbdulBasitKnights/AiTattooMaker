@@ -1,5 +1,12 @@
 <resources>
+
     <string name="app_name">TattooMe</string>
+
+
+    //Ads ID's
+    <string name="App_ID" translatable="false">ca-app-pub-5972202469838280~7299753908</string>
+
+
     <string name="title_home">Home</string>
     <string name="title_aicreate">Create</string>
     <string name="title_aitools">Ai Tools</string>

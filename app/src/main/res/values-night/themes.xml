@@ -16,4 +16,12 @@
         <item name="android:navigationBarColor">@color/black</item>
         <!-- Customize your theme here. -->
     </style>
+    <style name="NoSplashTheme" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your theme here if needed -->
+        <item name="android:windowBackground">@color/black</item> <!-- Or your app's background color -->
+        <item name="android:statusBarColor">@color/darkGrey</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:navigationBarColor">@color/black</item>
+        <item name="windowSplashScreenAnimatedIcon">@null</item>
+    </style>
 </resources>
