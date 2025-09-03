@@ -1,6 +1,5 @@
 {
     "library": [
-        {"name": "Dragon", "id": 1, "imageUrl": "file:///android_asset/library/dragon.png"},
         {"name": "Wolf", "id": 2, "imageUrl": "file:///android_asset/library/1.webp"},
         {"name": "Dragon", "id": 3, "imageUrl": "file:///android_asset/library/2.webp"},
         {"name": "Flower", "id": 4, "imageUrl": "file:///android_asset/library/3.webp"},
@@ -32,7 +31,6 @@
         {"name": "Tree", "id": 7, "imageUrl": "file:///android_asset/library/13.webp"},
         {"name": "Dragon", "id": 8, "imageUrl": "file:///android_asset/library/dragon.png"},
         {"name": "Wolf", "id": 9, "imageUrl": "file:///android_asset/library/1.webp"},
-        {"name": "Dragon", "id": 10, "imageUrl": "file:///android_asset/library/2.webp"},
         {"name": "Flower", "id": 11, "imageUrl": "file:///android_asset/library/3.webp"},
         {"name": "Fire", "id": 12, "imageUrl": "file:///android_asset/library/4.webp"},
         {"name": "Skull Fire", "id": 13, "imageUrl": "file:///android_asset/library/5.webp"},

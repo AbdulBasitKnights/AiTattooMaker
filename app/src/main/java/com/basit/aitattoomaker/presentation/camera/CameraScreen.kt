@@ -192,7 +192,7 @@ class CameraScreen : Fragment() {
             mActivity?.let { ctx ->
                 // Get drawable from id
                 Glide.with(ctx)
-                    .load(tattooViewModel.library.value?.get(0)?.imageUrl)
+                    .load(tattooPath)
                     .into(b.tattoo)
             }
 

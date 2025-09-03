@@ -210,6 +210,6 @@ abstract class BaseSticker(
         const val MODE_MULTIPLE: Int = 2 // Indicates whether scaling and rotation are enabled
 
         private const val PADDING =
-            30 // To prevent the image from being too close to the border, a margin is set here
+            5 // To prevent the image from being too close to the border, a margin is set here
     }
 }

@@ -78,10 +78,12 @@ class StickerLayout : View, View.OnTouchListener {
      * @param sticker
      */
     fun addSticker(sticker: Sticker?) {
-        val size = StickerManager.getInstance().stickerList.size
+        val size = getInstance().stickerList.size
         if (size < 9) {
-            StickerManager.getInstance().addSticker(sticker)
-            StickerManager.getInstance().setFocusSticker(sticker)
+            getInstance().addSticker(sticker)
+            getInstance().setFocusSticker(sticker)
+            sticker?.reset()
+            sticker?.scale(2.5f,2.5f)
             invalidate()
         } else {
             Toast.makeText(
@@ -91,8 +93,26 @@ class StickerLayout : View, View.OnTouchListener {
             ).show()
         }
     }
+    fun updateStickerZoom(alpha:Int=128) {
+        currentSticker?.let {sticker->
+            val manager = getInstance()
+            val focused = manager.getFocusSticker()
+            if (focused != null && sticker != null) {
+                focused.bitmap = sticker.bitmap
+                focused.alpha = alpha
+                sticker.reset()
+                sticker?.scale(1.5f,1.5f)
+                focused.clearColorFilter()
+                sticker?.getColorFilterData()?.let { (color, mode) ->
+                    focused.setColorFilter(color, mode)
+                }
+                invalidate()
+
+            }
+        }
+    }
     fun addOrUpdateSticker(sticker: Sticker?,alpha:Int=128) {
-        val manager = StickerManager.getInstance()
+        val manager = getInstance()
         val focused = manager.getFocusSticker()
         if (focused != null && sticker != null) {
             focused.bitmap = sticker.bitmap
@@ -104,7 +124,7 @@ class StickerLayout : View, View.OnTouchListener {
             }
             invalidate()
 
-    } else {
+        } else {
             // No focused sticker → add new one
             val size = manager.stickerList.size
             if (size < 9) {
@@ -122,7 +142,7 @@ class StickerLayout : View, View.OnTouchListener {
     }
     fun updateSticker(alpha:Int=128) {
         currentSticker?.let {sticker->
-            val manager = StickerManager.getInstance()
+            val manager = getInstance()
             val focused = manager.getFocusSticker()
             if (focused != null && sticker != null) {
                 focused.bitmap = sticker.bitmap

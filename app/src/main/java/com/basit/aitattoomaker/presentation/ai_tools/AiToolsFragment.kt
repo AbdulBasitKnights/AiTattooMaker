@@ -66,6 +66,8 @@ class AiToolsFragment : Fragment() {
     private val tattooViewModel: AiToolsViewModel by activityViewModels()
     private lateinit var adapter: CameraTattooAdapter
     private var maskedBitmap: Bitmap?=null
+    private var basedBitmap: Bitmap?=null
+    var undo:Boolean=false
     private var modelIndex = 0
     // If you want custom sticker pick (kept wired but not triggered)
     private val pickMedia =
@@ -114,6 +116,32 @@ class AiToolsFragment : Fragment() {
                 DialogUtils.show(it, "Processing...")
                 dialog?.show()
                 cycleAndLoadModel(first = true) // loads model1 initially
+                binding?.undo?.setOnClickListener {
+                    if(!undo){
+                        basedBitmap?.let {
+                            binding?.maskedStickerView?.setImageAndMask(it, it)
+                            StickerFactory.currentSticker?.let {sticker->
+                                binding?.slStickerLayout?.updateStickerZoom(128)
+                            }
+                            undo=true
+                        }
+
+                    }
+                    else{
+                        basedBitmap?.let {
+                            maskedBitmap?.let {mask->
+                                binding?.maskedStickerView?.setImageAndMask(it, mask)
+                                StickerFactory.currentSticker?.let {sticker->
+                                    binding?.slStickerLayout?.updateStickerZoom(128)
+                                }
+                                undo=false
+                            }
+                        }
+
+
+                    }
+
+                }
             }
             catch (e:Exception){
                 e.printStackTrace()
@@ -323,9 +351,10 @@ class AiToolsFragment : Fragment() {
             }
 
             applyContainerRatio(base.width, base.height)
-
+            basedBitmap=base
             // ✅ Sticker view gets original image + mask
             binding?.maskedStickerView?.setImageAndMask(baseBitmap, maskBitmap)
+
 
             // ✅ Background view gets cutout background only
             bgBitmap?.let {
