@@ -54,8 +54,8 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
 
     private var binding: FragmentAiCreateBinding? = null
     companion object {
-        var selectedItemIdPosition: Int? = 1
-        var selectedItemIdPositionCanvas: Int? = 1
+        var selectedItemIdPosition: Int? = 0
+        var selectedItemIdPositionCanvas: Int? = 0
     }
     private lateinit var adapter: StyleAdapter
 

@@ -27,4 +27,19 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">10dp</item>
     </style>
+    <style name="TopRoundedImageStyle" parent="">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.TopRoundedOnly</item>
+    </style>
+
+    <style name="ShapeAppearance.TopRoundedOnly" parent="">
+        <!-- Top corners rounded -->
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">9dp</item>
+        <item name="cornerSizeTopRight">9dp</item>
+
+        <!-- Bottom corners square -->
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+    </style>
+
 </resources>

@@ -2,6 +2,7 @@ package com.basit.aitattoomaker.presentation.ai_create.adapter
 
 import android.graphics.Color
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
@@ -40,6 +41,9 @@ class StyleAdapter(
 
         fun bind(item: StyleItem) = with(binding) {
             tvTattooName.text = item.title
+            /*if(item.id==""){
+                binding.root.visibility= View.INVISIBLE
+            }*/
             Glide.with(ivTattoo).load(item.imageUrl).into(ivTattoo)
 
             // highlight with gradient stroke if selected
