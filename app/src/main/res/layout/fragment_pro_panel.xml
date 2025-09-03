@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/black">
 
 
     <androidx.viewpager2.widget.ViewPager2
@@ -20,8 +21,8 @@
         android:id="@+id/videoView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintDimensionRatio="584:500"
-        android:background="@color/transparent"
+        app:layout_constraintDimensionRatio="360:319"
+        android:background="@drawable/pro_bg"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -54,7 +55,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
-    <ImageView
+    <TextView
         android:id="@+id/tvHeading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -62,8 +63,8 @@
         android:src="@drawable/create_svg"
         android:text="Be Pro"
         android:textSize="@dimen/_22ssp"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="@+id/viewPager"
-        app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/guide1" />
 
@@ -76,7 +77,7 @@
         android:paddingHorizontal="@dimen/_30sdp"
         android:textColor="@color/lightGrey"
         android:textSize="@dimen/_10ssp"
-        android:layout_marginTop="@dimen/_7sdp"
+        android:layout_marginTop="@dimen/_2sdp"
         app:layout_constraintEnd_toEndOf="@+id/tvHeading"
         app:layout_constraintStart_toStartOf="@+id/tvHeading"
         app:layout_constraintTop_toBottomOf="@+id/tvHeading" />

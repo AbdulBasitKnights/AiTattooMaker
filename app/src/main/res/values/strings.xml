@@ -75,4 +75,7 @@
     <string name="cancel_anytime">Cancel Anytime</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="terms_of_use">Terms of Use</string>
+    <string name="next">Next</string>
+    <string name="get_started">Get Started</string>
+    <string name="skip">Skip</string>
 </resources>

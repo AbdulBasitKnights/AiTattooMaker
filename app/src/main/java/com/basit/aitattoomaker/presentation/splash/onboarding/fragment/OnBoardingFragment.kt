@@ -1,6 +1,7 @@
 package com.basit.aitattoomaker.presentation.splash.onboarding.fragment
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.basit.aitattoomaker.databinding.FragmentOnboardingBinding
+import com.basit.aitattoomaker.presentation.MainActivity
 import com.basit.aitattoomaker.presentation.splash.onboarding.OnBoardingActivity
 import kotlinx.coroutines.Job
 
@@ -66,6 +68,10 @@ class OnBoardingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         mActivity?.let { activity->
             binding?.skip?.setOnClickListener {
+                mActivity?.startActivity(Intent(activity, MainActivity::class.java))
+                mActivity?.finish()
+            }
+            binding?.next?.setOnClickListener {
                 nav.goNext()
             }
         }

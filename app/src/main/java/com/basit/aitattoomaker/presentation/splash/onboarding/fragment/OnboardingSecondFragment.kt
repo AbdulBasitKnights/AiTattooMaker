@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import com.basit.aitattoomaker.databinding.FragmentOnboardingBinding
 import com.basit.aitattoomaker.databinding.FragmentSecondOnboardingBinding
 import com.basit.aitattoomaker.presentation.MainActivity
 import com.basit.aitattoomaker.presentation.utils.SharedPref
@@ -47,12 +46,13 @@ class OnboardingSecondFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         mActivity?.let {
             preferenceManager = SharedPref(it).getSharedPreferences()
+            binding?.next?.setOnClickListener {
+                preferenceManager?.edit()?.putBoolean("firstTime", false)?.apply()
+                startActivity(Intent(mActivity, MainActivity::class.java))
+                mActivity?.finish()
+            }
         }
-        binding?.skip?.setOnClickListener {
-            preferenceManager?.edit()?.putBoolean("firstTime", false)?.apply()
-            startActivity(Intent(mActivity, MainActivity::class.java))
-            mActivity?.finish()
-        }
+
 //        binding?.shimmerViewContainer?.startShimmer()
     }
 

@@ -154,7 +154,7 @@ class SettingFragment : Fragment(), SettingsClickListener {
     override fun onSettingItemClick(which: String) {
         when(which){
             "Privacy Policy"->{
-                mActivity?.openLink("https://www.google.com")
+                mActivity?.openLink("https://www.terafort.com/privacy.html")
             }
             "Share App"->{
                 mActivity?.shareAppLink()
@@ -163,7 +163,7 @@ class SettingFragment : Fragment(), SettingsClickListener {
                 mActivity?.openRateUs()
             }
             "Terms & Conditions"->{
-                mActivity?.openLink("https://www.google.com")
+                mActivity?.openLink("https://www.terafort.com/T&C.html")
             }
 
             "Twitter" -> {

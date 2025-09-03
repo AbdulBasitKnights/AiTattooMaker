@@ -54,28 +54,28 @@ class SplashActivity : AppCompatActivity() {
                 Singular.event("splash_screen")
                 lifecycleScope.launch {
                     delay(2000)
-                   /* if(preferenceManager.getBoolean(FIRST_TIME_KEY, true)==true){
+                    if(preferenceManager.getBoolean(FIRST_TIME_KEY, true)==true){
                         startActivity(Intent(this@SplashActivity, OnBoardingActivity::class.java))
                         finish()
                     }
-                    else{*/
+                    else{
                         startActivity(Intent(this@SplashActivity, MainActivity::class.java))
                         finish()
-//                    }
+                    }
                 }
             }
         }
         else{
             lifecycleScope.launch {
                 delay(2000)
-              /*  if(preferenceManager.getBoolean(FIRST_TIME_KEY, true)==true){
+                if(preferenceManager.getBoolean(FIRST_TIME_KEY, true)==true){
                     startActivity(Intent(this@SplashActivity, OnBoardingActivity::class.java))
                     finish()
                 }
-                else{*/
+                else{
                     startActivity(Intent(this@SplashActivity, MainActivity::class.java))
                     finish()
-//                }
+                }
 
             }
         }

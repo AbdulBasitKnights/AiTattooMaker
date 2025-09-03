@@ -15,6 +15,7 @@ import android.view.Surface
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraControl
@@ -36,6 +37,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.basit.aitattoomaker.R
 import com.basit.aitattoomaker.databinding.FragmentCameraBinding
+import com.basit.aitattoomaker.extension.showDiscardDialog
 import com.basit.aitattoomaker.extension.uriToBitmap
 import com.basit.aitattoomaker.presentation.ai_tools.AiToolsViewModel
 import com.basit.aitattoomaker.presentation.camera.adapter.CameraTattooAdapter
@@ -114,6 +116,17 @@ class CameraScreen : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         mActivity?.let {
             try {
+                mActivity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner) {
+                    mActivity?.showDiscardDialog(
+                        onDiscard = {
+                            // User clicked discard, handle accordingly
+                            findNavController().popBackStack(R.id.navigation_aicreate,false)
+                        },
+                        onNotNow = {
+                            // User clicked not now, just dismiss dialog
+                        }
+                    )
+                }
                 binding?.apply {
                     flash.setImageResource(if (isFlashOn) R.drawable.flash_on else R.drawable.flash_off)
                     mActivity?.let { ctx ->
@@ -197,7 +210,7 @@ class CameraScreen : Fragment() {
             }
             cross?.setOnClickListener {
                 try {
-                    findNavController().popBackStack()
+                    findNavController().popBackStack(R.id.navigation_aicreate,false)
                 }
                 catch (e:Exception){
                     e.printStackTrace()

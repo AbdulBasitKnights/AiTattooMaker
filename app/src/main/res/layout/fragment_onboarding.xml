@@ -39,18 +39,23 @@
         app:layout_constraintHeight_percent="0.3"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/skip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/_15sdp"
         android:background="@drawable/bg_round"
-        android:backgroundTint="@color/darkGrey"
-        android:paddingHorizontal="@dimen/_9sdp"
-        android:paddingVertical="@dimen/_5sdp"
-        android:text="Skip"
+        android:backgroundTint="@color/black_trans"
+        android:paddingVertical="@dimen/_7sdp"
+        android:paddingStart="@dimen/_8sdp"
+        android:paddingEnd="@dimen/_3sdp"
+        android:text="@string/skip"
+        android:textSize="@dimen/_13ssp"
         android:textColor="@color/white"
+        android:drawablePadding="@dimen/_1sdp"
         android:visibility="visible"
+        android:textAllCaps="true"
+        app:drawableEndCompat="@drawable/arrow_ob_top"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -66,7 +71,7 @@
         android:textColor="@color/white"
         android:textSize="@dimen/_20sdp"
         android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@+id/main_detail2"
+        app:layout_constraintTop_toTopOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -82,8 +87,38 @@
         android:textSize="@dimen/_12sdp"
         android:textStyle="normal"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/main_welcome2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="@dimen/_20sdp"
+        android:background="@drawable/ob1_dot"
+        app:layout_constraintTop_toTopOf="@+id/next"
+        app:layout_constraintBottom_toBottomOf="@+id/next"/>
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/_20sdp"
+        android:paddingHorizontal="@dimen/_15sdp"
+        android:paddingVertical="@dimen/_6sdp"
+        android:fontFamily="@font/poppins_medium_500"
+        android:gravity="center"
+        android:text="@string/next"
+        android:textColor="@color/white"
+        android:background="@drawable/bg_round"
+        android:backgroundTint="@color/colorprimary"
+        android:textSize="@dimen/_12sdp"
+        android:textStyle="normal"
+        android:visibility="visible"
+        android:layout_marginBottom="@dimen/_20sdp"
+        app:drawableEndCompat="@drawable/arrow_ob"
+        android:drawablePadding="@dimen/_5sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
