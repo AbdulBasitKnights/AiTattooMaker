@@ -2,6 +2,7 @@ package com.basit.aitattoomaker.presentation.camera
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
@@ -9,6 +10,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Surface
@@ -72,14 +74,36 @@ class CameraScreen : Fragment() {
     private val cameraExecutor by lazy {
         Executors.newSingleThreadExecutor()
     }
-    private val cameraPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-        if (isGranted) {
-            // Permission granted, perform your task here
-            startCamera()
-        } else {
-            // Permission denied, handle appropriately (e.g., show a message)
+    private val cameraPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                // ✅ Permission granted
+                startCamera()
+            } else {
+                // ❌ Permission denied
+                if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
+                    // User denied but didn’t check "Don’t ask again"
+                    Toast.makeText(requireContext(), "Camera permission is required!", Toast.LENGTH_SHORT).show()
+                } else {
+                    // User denied + "Don’t ask again"
+                    showPermissionSettingsDialog()
+                }
+            }
         }
+    private fun showPermissionSettingsDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Camera Permission Needed")
+            .setMessage("Please enable Camera permission in Settings to use this feature.")
+            .setPositiveButton("Go to Settings") { _, _ ->
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                    data = Uri.fromParts("package", requireContext().packageName, null)
+                }
+                startActivity(intent)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
+
     private val pickMedia =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             if (uri != null) {
@@ -249,13 +273,18 @@ class CameraScreen : Fragment() {
             }
         }
         binding?.btnCapture?.setOnClickListener {
-            mActivity?.let {
-                DialogUtils.show(it, "Capturing...")
-                dialog?.show()
+            if (CameraPermissionHelper.hasCameraPermission(requireContext())) {
+                mActivity?.let {
+                    DialogUtils.show(it, "Capturing...")
+                    dialog?.show()
+                }
+                captureImage()
+            } else {
+                cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
             }
-            captureImage()
         }
     }
+
     fun openPicker() {
         pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
