@@ -44,6 +44,7 @@ import com.basit.aitattoomaker.presentation.utils.AppUtils.tattooPath
 import com.basit.aitattoomaker.presentation.utils.DialogUtils
 import com.basit.aitattoomaker.presentation.utils.DialogUtils.dialog
 import com.basit.aitattoomaker.presentation.utils.capturedBitmap
+import com.basit.aitattoomaker.presentation.utils.editedBitmap
 import com.basit.aitattoomaker.presentation.utils.tattooCreation
 import com.basit.library.stickerview.Sticker
 import com.basit.library.stickerview.StickerFactory
@@ -54,6 +55,7 @@ import com.google.mlkit.vision.segmentation.subject.SubjectSegmentation
 import com.google.mlkit.vision.segmentation.subject.SubjectSegmenterOptions
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
@@ -116,7 +118,7 @@ class AiToolsFragment : Fragment() {
                 DialogUtils.show(it, "Processing...")
                 dialog?.show()
                 cycleAndLoadModel(first = true) // loads model1 initially
-                binding?.undo?.setOnClickListener {
+                binding?.autoZoom?.setOnClickListener {
                     if(!undo){
                         basedBitmap?.let {
                             binding?.maskedStickerView?.setImageAndMask(it, it)
@@ -266,6 +268,7 @@ class AiToolsFragment : Fragment() {
             StickerFactory?.isStickerFocused?.observe(viewLifecycleOwner){
                 if(it==true){
                     removeSticker.show()
+                    autoZoom.show()
                     opacityLayout.show()
                     bottom.visibility = View.INVISIBLE
                     save.visibility= View.INVISIBLE
@@ -273,6 +276,7 @@ class AiToolsFragment : Fragment() {
                 else{
                     instructionOverlay.visibility= View.INVISIBLE
                     removeSticker.visibility=View.INVISIBLE
+                    autoZoom.visibility=View.INVISIBLE
                     opacityLayout.visibility=View.INVISIBLE
                     bottom.show()
                     save.visibility= View.VISIBLE
@@ -286,7 +290,9 @@ class AiToolsFragment : Fragment() {
                 }
             }
 
-            save.setOnClickListener { saveToGallery() }
+            save.setOnClickListener {
+                saveToGallery()
+            }
 
             gallery.setOnClickListener {
                 dialog?.show()
@@ -513,25 +519,16 @@ class AiToolsFragment : Fragment() {
         // Ensure current edits applied visually
         binding?.slStickerLayout?.clearFocusAll()
         mActivity?.let {
-            DialogUtils.show(it, "Saving...")
+            DialogUtils.show(it, "Loading...")
         }
         dialog?.show()
-        val outBitmap = binding?.photoContainer?.drawToBitmap() // composed output
+        editedBitmap = binding?.photoContainer?.drawToBitmap() // composed output
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
-            outBitmap?.let {
-                val ok = saveBitmapToGallery(outBitmap, "tattoo_result_${System.currentTimeMillis()}.png")
-                withContext(Dispatchers.Main) {
-                    dialog?.dismiss()
-                    if(ok){
-                        mActivity?.showDownloadDialog()
-                    }
-                    else{
-                        Toast.makeText(requireContext(), if (ok) "Saved to gallery" else "Save failed", Toast.LENGTH_SHORT).show()
-                    }
-
-                }
+            delay(1000)
+            withContext(Dispatchers.Main){
+                findNavController().navigate(AiToolsFragmentDirections.actionNavigationAitoolsToNavigationSave())
+                dialog?.dismiss()
             }
-
         }
     }
 

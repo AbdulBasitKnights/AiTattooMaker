@@ -10,6 +10,7 @@ import com.basit.aitattoomaker.presentation.ai_create.model.StyleItem
 var tattooCreation = MutableLiveData<Boolean?>()
 var access_Token :String?=null
 var capturedBitmap: Bitmap?=null
+var editedBitmap: Bitmap?=null
 @DrawableRes var selectedTattoo: Int?=null
 
 val style_list: ArrayList<StyleItem> = arrayListOf(

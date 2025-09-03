@@ -132,7 +132,7 @@
         android:layout_marginStart="@dimen/_10sdp"
         android:layout_marginBottom="@dimen/_15sdp"/>
     <ImageView
-        android:id="@+id/undo"
+        android:id="@+id/autoZoom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_round_black_trans"

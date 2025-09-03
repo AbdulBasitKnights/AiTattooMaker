@@ -36,7 +36,16 @@
         android:id="@+id/navigation_aitools"
         android:name="com.basit.aitattoomaker.presentation.ai_tools.AiToolsFragment"
         android:label="@string/title_aitools"
-        tools:layout="@layout/fragment_aitools" />
+        tools:layout="@layout/fragment_aitools" >
+        <action
+            android:id="@+id/action_navigation_aitools_to_navigation_save"
+            app:destination="@id/navigation_save" />
+    </fragment>
+    <fragment
+        android:id="@+id/navigation_save"
+        android:name="com.basit.aitattoomaker.presentation.ai_tools.SaveFragment"
+        android:label="@string/save"
+        tools:layout="@layout/fragment_save" />
 
     <fragment
         android:id="@+id/navigation_history"
