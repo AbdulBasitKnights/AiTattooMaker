@@ -93,4 +93,7 @@
     <string name="next">Next</string>
     <string name="get_started">Get Started</string>
     <string name="skip">Skip</string>
+    <string name="exit">Exit ?</string>
+    <string name="are_you_sure">Are you sure, you want to exit?</string>
+    <string name="yes">Yes</string>
 </resources>

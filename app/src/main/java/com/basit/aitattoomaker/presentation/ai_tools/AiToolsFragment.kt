@@ -213,12 +213,13 @@ class AiToolsFragment : Fragment() {
                 tabHistory.setDrawableTint(resources.getColor(R.color.disable))
             }
             tabHistory.setOnClickListener {
-                tabLibrary.setTextColor(resources.getColor(R.color.disable))
-                tabHistory.setTextColor(resources.getColor(R.color.colorprimary))
-                rvTattoo.invalidate()
-                adapter.submitList(tattooViewModel.history.value?.toList())
-                tabHistory.setDrawableTint(resources.getColor(R.color.colorprimary))
-                tabLibrary.setDrawableTint(resources.getColor(R.color.disable))
+                Toast.makeText(mActivity, "Upcoming Feature", Toast.LENGTH_SHORT).show()
+//                tabLibrary.setTextColor(resources.getColor(R.color.disable))
+//                tabHistory.setTextColor(resources.getColor(R.color.colorprimary))
+//                rvTattoo.invalidate()
+//                adapter.submitList(tattooViewModel.history.value?.toList())
+//                tabHistory.setDrawableTint(resources.getColor(R.color.colorprimary))
+//                tabLibrary.setDrawableTint(resources.getColor(R.color.disable))
             }
             binding?.cancelOpacity?.setOnClickListener {
                 slStickerLayout.updateSticker(128)

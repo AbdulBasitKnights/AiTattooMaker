@@ -51,6 +51,7 @@ import kotlinx.coroutines.launch
 import androidx.core.net.toUri
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.basit.aitattoomaker.databinding.ExitDialogBinding
 
 val Context.dataStore by preferencesDataStore(name = "user_preferences")
 
@@ -63,6 +64,28 @@ fun FragmentActivity.showDiscardDialog(
 ) {
     val dialog = Dialog(this)
     val binding = DiscardDialogBinding.inflate(layoutInflater)
+    dialog.setContentView(binding.root)
+    // Optional: make background transparent
+    dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+    // Handle clicks
+    binding.discard.setOnClickListener {
+        onDiscard()
+        dialog.dismiss()
+    }
+    binding.notNow.setOnClickListener {
+        onNotNow()
+        dialog.dismiss()
+    }
+    // Prevent outside touch dismiss if you want
+    dialog.setCancelable(false)
+    dialog.show()
+}
+fun FragmentActivity.showExitDialog(
+    onDiscard: () -> Unit,
+    onNotNow: () -> Unit
+) {
+    val dialog = Dialog(this)
+    val binding = ExitDialogBinding.inflate(layoutInflater)
     dialog.setContentView(binding.root)
     // Optional: make background transparent
     dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)

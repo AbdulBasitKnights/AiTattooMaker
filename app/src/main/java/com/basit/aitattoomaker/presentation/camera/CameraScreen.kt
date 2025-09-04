@@ -6,8 +6,10 @@ import android.app.AlertDialog
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.Settings
@@ -42,6 +44,7 @@ import com.basit.aitattoomaker.ads.AdsManager
 import com.basit.aitattoomaker.ads.AdsManager.isShowingAd
 import com.basit.aitattoomaker.databinding.FragmentCameraBinding
 import com.basit.aitattoomaker.extension.showDiscardDialog
+import com.basit.aitattoomaker.extension.showExitDialog
 import com.basit.aitattoomaker.extension.uriToBitmap
 import com.basit.aitattoomaker.presentation.ai_tools.AiToolsViewModel
 import com.basit.aitattoomaker.presentation.camera.adapter.CameraTattooAdapter
@@ -123,7 +126,19 @@ class CameraScreen : Fragment() {
                 Log.d("PhotoPicker", "No media selected")
             }
         }
-//    private val viewModel: CameraViewModel by viewModels { CameraViewModelFactory( requireActivity().application, TattooRepositoryImpl(requireContext()) ) }
+    private val pickLegacyImage =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val uri = result.data?.data
+                uri?.let {
+                    mActivity?.uriToBitmap(uri)?.let {
+                        showResultDialog(it)
+                    }
+                }
+            }
+        }
+
+    //    private val viewModel: CameraViewModel by viewModels { CameraViewModelFactory( requireActivity().application, TattooRepositoryImpl(requireContext()) ) }
 //    private var defaultTattoo: Bitmap? = null
     private lateinit var adapter: CameraTattooAdapter
     private var mActivity: FragmentActivity?=null
@@ -150,11 +165,11 @@ class CameraScreen : Fragment() {
         mActivity?.let {
             try {
                 mActivity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner) {
-                    mActivity?.showDiscardDialog(
+                    mActivity?.showExitDialog(
                         onDiscard = {
                             // User clicked discard, handle accordingly
-//                            mActivity?.finish()
-                            findNavController().popBackStack(R.id.navigation_aicreate,false)
+                            mActivity?.finish()
+//                            findNavController().popBackStack(R.id.navigation_aicreate,false)
                         },
                         onNotNow = {
                             // User clicked not now, just dismiss dialog
@@ -237,19 +252,38 @@ class CameraScreen : Fragment() {
     private fun setupClickListeners() {
         binding?.apply {
             flipCamera?.setOnClickListener {
-                bindCameraUseCases(true)
+                if (CameraPermissionHelper.hasCameraPermission(requireContext())) {
+                    bindCameraUseCases(true)
+                } else {
+                    cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                }
             }
             flash.setOnClickListener {
-                toggleFlash()
+                if (CameraPermissionHelper.hasCameraPermission(requireContext())) {
+                    toggleFlash()
+                } else {
+                    cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                }
+
             }
             cross?.setOnClickListener {
-                try {
-//                    mActivity?.finish()
-                    findNavController().popBackStack(R.id.navigation_aicreate,false)
+                mActivity?.showExitDialog(
+                    onDiscard = {
+                        // User clicked discard, handle accordingly
+                        mActivity?.finish()
+//                            findNavController().popBackStack(R.id.navigation_aicreate,false)
+                    },
+                    onNotNow = {
+                        // User clicked not now, just dismiss dialog
+                    }
+                )
+             /*   try {
+                    mActivity?.finish()
+//                    findNavController().popBackStack(R.id.navigation_aicreate,false)
                 }
                 catch (e:Exception){
                     e.printStackTrace()
-                }
+                }*/
             }
             library.setOnClickListener {
                 library.setTextColor(resources.getColor(R.color.white))
@@ -296,9 +330,11 @@ class CameraScreen : Fragment() {
         }
     }
 
-    fun openPicker() {
-        pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-    }
+/*    fun openPicker() {
+        openPicker()
+//        pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+    }*/
+
     /** Toggle Flash */
     private fun toggleFlash() {
         if (isFrontCamera) return // no flash on front camera
@@ -425,6 +461,40 @@ class CameraScreen : Fragment() {
             }
         }
     }
+    fun openPicker() {
+        when {
+            // Android 13+ → New Photo Picker
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
+                pickMedia.launch(
+                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                )
+            }
+
+            // Android 10–12 → Legacy ACTION_PICK
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
+                val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).apply {
+                    type = "image/*"
+                }
+                pickLegacyImage.launch(intent)
+            }
+
+            // Android 9 and below → Need READ_EXTERNAL_STORAGE
+            else -> {
+                if (ContextCompat.checkSelfPermission(
+                        requireContext(),
+                        Manifest.permission.READ_EXTERNAL_STORAGE
+                    ) == PackageManager.PERMISSION_GRANTED
+                ) {
+                    val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).apply {
+                        type = "image/*"
+                    }
+                    pickLegacyImage.launch(intent)
+                } else {
+                    requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_STORAGE_PERMISSION)
+                }
+            }
+        }
+    }
 
     /** Camera setup */
     private fun startCamera() {
@@ -507,5 +577,7 @@ class CameraScreen : Fragment() {
     companion object {
         private const val TAG = "CameraScreen"
         private const val PICK_TATTOO_REQUEST = 1001
+        private const val REQUEST_PICK_IMAGE = 101
+        private const val REQUEST_STORAGE_PERMISSION = 102
     }
 }

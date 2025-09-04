@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_10sdp"
         android:layout_marginTop="@dimen/_10sdp"
-        android:visibility="invisible"
+        android:visibility="visible"
         android:background="@drawable/cross_svg"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
@@ -109,6 +109,7 @@
             android:text="@string/history"
             android:layout_marginStart="@dimen/_10sdp"
             android:textColor="@color/lightGrey"
+            android:visibility="invisible"
             app:layout_constraintTop_toTopOf="@+id/library"
             app:layout_constraintBottom_toBottomOf="@+id/library"
             android:textSize="@dimen/_11ssp"/>
