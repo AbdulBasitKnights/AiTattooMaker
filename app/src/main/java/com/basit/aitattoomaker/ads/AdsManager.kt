@@ -33,6 +33,7 @@ import kotlinx.coroutines.launch
 import androidx.core.graphics.drawable.toDrawable
 import com.basit.aitattoomaker.presentation.utils.AppUtils
 import com.google.android.gms.ads.AdError
+import com.google.android.gms.ads.AdListener
 
 object AdsManager {
     var bannerAdRequest: AdRequest? = null
@@ -46,22 +47,64 @@ object AdsManager {
     var isShowingAd = false
     val isPremiumSubscription: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     /**Banner**/
-    fun loadBannerAd(adView: AdView, fragmentActivity: FragmentActivity) {
+    fun loadBannerAd(
+        adView: AdView,
+        fragmentActivity: FragmentActivity,
+        highFloorAdUnitId: String,
+        normalAdUnitId: String
+    ) {
         try {
+            Log.d("BannerAd", "loadBannerAd")
+            var secondRequest=false
             if (isPremiumSubscription.value != true && NetworkUtils.isOnline(fragmentActivity)) {
-                if (bannerAdRequest == null)
+// set first ad id (high floor)
+                adView.adUnitId = highFloorAdUnitId
+                if (bannerAdRequest == null) {
                     bannerAdRequest = AdRequest.Builder().build()
-                bannerAdRequest?.let { bannerAdRequest->
-                    adView.visibility = View.VISIBLE
-                    adView.loadAd(bannerAdRequest)
                 }
+
+                adView.adListener = object : AdListener() {
+                    override fun onAdLoaded() {
+                        Log.d("BannerAd", "Ad Loaded")
+                        adView.visibility = View.VISIBLE
+                        FirebaseEvents.firebaseUserAction("Download", "ban_image_dow_req_suc")
+                        FirebaseEvents.firebaseUserAction("Download", "ban_image_dow_view")
+                    }
+
+                    override fun onAdFailedToLoad(error: LoadAdError) {
+                        if(!secondRequest){
+                            Log.e("BannerAd", "High floor failed: ${error.message}")
+                            FirebaseEvents.firebaseUserAction("Download", "ban_image_dow_req_fail_hf")
+                            FirebaseEvents.firebaseUserAction("Download", "ban_image_dow_req")
+                            // retry with normal ad ID
+                            adView.adUnitId = normalAdUnitId
+                            adView.loadAd(bannerAdRequest!!)
+                            secondRequest=true
+                        }
+                        else{
+                            Log.e("BannerAd", "Normal failed: ${error.message}")
+                            FirebaseEvents.firebaseUserAction("Download", "ban_image_dow_req_fail")
+                        }
+
+                    }
+                }
+                bannerAdRequest?.let { request ->
+                    adView.visibility=View.VISIBLE
+                    adView.loadAd(request)
+                    FirebaseEvents.firebaseUserAction("Download", "ban_image_dow_req_hf")
+                    Log.w("BannerAd", "High Floor Request:")
+                }
+
             } else {
                 adView.visibility = View.INVISIBLE
+                Log.d("BannerAd", "Else")
             }
         } catch (e: Exception) {
+            Log.d("BannerAd", "Exception: ${e.message}")
             e.printStackTrace()
         }
     }
+
     /**Interstitial After Home Ads**/
     fun loadInterstitialAdAfterSplash(
         activity: FragmentActivity,
@@ -89,20 +132,20 @@ object AdsManager {
                                 safeCallback { onAdLoaded() }
                                 FirebaseEvents.firebaseUserAction(
                                     "AfterHome",
-                                    "inter_af_home_req_suc")
+                                    "inter_after_home_req_suc")
                             }
 
                             override fun onAdFailedToLoad(error: LoadAdError) {
                                 safeCallback { onAdFailed() }
                                 FirebaseEvents.firebaseUserAction(
                                     "AfterHome",
-                                    "inter_af_home_view_req_fail")
+                                    "inter_after_home_view_req_fail")
 
                             }
                         })
                     FirebaseEvents.firebaseUserAction(
                         "AfterHome",
-                        "inter_af_home_req")
+                        "inter_after_home_req")
                 }
 
             }
@@ -115,19 +158,19 @@ object AdsManager {
                             safeCallback { onAdLoaded() }
                             FirebaseEvents.firebaseUserAction(
                                 "AfterHome",
-                                "inter_af_home_req_suc_hf")
+                                "inter_after_home_req_suc_hf")
                         }
 
                         override fun onAdFailedToLoad(error: LoadAdError) {
                             loadSecond()
                             FirebaseEvents.firebaseUserAction(
                                 "AfterHome",
-                                "inter_af_home_view_req_fail_hf")
+                                "inter_after_home_view_req_fail_hf")
                         }
                     })
                 FirebaseEvents.firebaseUserAction(
                     "AfterHome",
-                    "inter_af_home_req_hf")
+                    "inter_after_home_req_hf")
             }
 
         }
@@ -170,8 +213,8 @@ object AdsManager {
                             e.printStackTrace()
                         }
                         FirebaseEvents.firebaseUserAction(
-                            "Splash",
-                            if(isHighFloor)"ad_show_failed_splash_hf" else "ad_show_failed_splash")
+                            "AfterHome",
+                            if(isHighFloor)"inter_after_home_show_fail_hf" else "inter_after_home_show_fail")
                         onAdFailed()
                     }
 
@@ -180,8 +223,8 @@ object AdsManager {
                         AppUtils.disableImmersiveMode(activity)
                         isShowingAd = true
                         FirebaseEvents.firebaseUserAction(
-                            "Splash",
-                            if(isHighFloor)"ad_shown_splash_hf" else "ad_shown_splash")
+                            "AfterHome",
+                            if(isHighFloor)"inter_after_home_view_hf" else "inter_after_home_view")
                         ad.setOnPaidEventListener {
                             val impressionData: AdValue = it
                             val data = SingularAdData(

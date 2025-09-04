@@ -11,6 +11,7 @@ import com.basit.aitattoomaker.ads.AdsManager.isShowingAd
 import com.basit.aitattoomaker.presentation.application.AppController
 import com.basit.aitattoomaker.presentation.application.AppController.Companion.context
 import com.basit.aitattoomaker.presentation.splash.onboarding.AdsManagerNew
+import com.basit.aitattoomaker.presentation.utils.FirebaseEvents
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
@@ -47,7 +48,7 @@ class AppOpenManager(private val myApplication: AppController) : LifecycleObserv
     fun showAdIfAvailable() {
         // Only show ad if there is not already an app open ad currently showing
         // and an ad is available.
-        if (!isShowingAd && isAdAvailable && isPremiumSubscription.value != true && !isSplash) {
+        if (!isShowingAd && isAdAvailable && isPremiumSubscription.value != true && isSplash) {
 //            if (GlobalValues.is24hourEnabled.value == false) {
 
 
@@ -64,10 +65,15 @@ class AppOpenManager(private val myApplication: AppController) : LifecycleObserv
                         }
 
                         override fun onAdFailedToShowFullScreenContent(adError: AdError) {
-
+                            FirebaseEvents.firebaseUserAction(
+                                "Resume",
+                                "app_open_fail_to_view")
                         }
 
                         override fun onAdShowedFullScreenContent() {
+                            FirebaseEvents.firebaseUserAction(
+                                "Resume",
+                                "app_open_view")
                             isShowingAd = true
                         }
                     }
@@ -84,6 +90,7 @@ class AppOpenManager(private val myApplication: AppController) : LifecycleObserv
      * Request an ad
      */
     fun fetchAd() {
+        var oneTime=false
         if (isAdAvailable) {
             /*if (currentActivity is SplashActivity) {
                 openAdLoaded.value = 1
@@ -99,6 +106,9 @@ class AppOpenManager(private val myApplication: AppController) : LifecycleObserv
             override fun onAdLoaded(ad: AppOpenAd) {
                 appOpenAd = ad
                 loadTime = Date().time
+                FirebaseEvents.firebaseUserAction(
+                    "Resume",
+                    "app_open_req_suc")
             }
 
 
@@ -109,7 +119,31 @@ class AppOpenManager(private val myApplication: AppController) : LifecycleObserv
              */
             override fun onAdFailedToLoad(loadAdError: LoadAdError) {
                 // Handle the error.
-                Log.e("ERROR", "onAdFailedToLoad")
+
+                Log.e("AppOpenAd", "onAdFailedToLoad")
+                FirebaseEvents.firebaseUserAction(
+                    "Resume",
+                    "app_open_req_fail")
+                val request = adRequest
+                if (isPremiumSubscription.value == false && oneTime == false) {
+                    if (AD_UNIT_ID != null) {
+                        loadCallback?.let {
+                            CoroutineScope(Dispatchers.Main).launch {
+                                AppOpenAd.load(
+                                    myApplication,
+                                    AD_UNIT_ID,
+                                    request,
+                                    it
+                                )
+                            }
+                        }
+                        oneTime=true
+                    }
+                    FirebaseEvents.firebaseUserAction(
+                        "Resume",
+                        "app_open_req")
+                }
+                Log.d("AppOpenAd", "requestWithNormalID")
             }
 
         }
@@ -126,6 +160,9 @@ class AppOpenManager(private val myApplication: AppController) : LifecycleObserv
                             )
                         }
                     }
+                    FirebaseEvents.firebaseUserAction(
+                        "Resume",
+                        "app_open_req")
                 }
         }
     }

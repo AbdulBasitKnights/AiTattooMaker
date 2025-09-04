@@ -8,7 +8,8 @@
     <string name="App_Open_Ad" translatable="false">ca-app-pub-5972202469838280/5025901208</string>
     <string name="App_Open_Ad_hf" translatable="false">ca-app-pub-5972202469838280/3501351956</string>
     <string name="rewardedVideo" translatable="false">ca-app-pub-5972202469838280/8602983244</string>
-    <string name="Banner_ID" translatable="false">ca-app-pub-5972202469838280/3277887101</string>
+    <string name="Banner_ID_HF" translatable="false">ca-app-pub-5972202469838280/8447907944</string>
+    <string name="Banner_ID" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
     //After Home Ads
     <string name="inter_af_home" translatable="false">ca-app-pub-5972202469838280/3030578664</string>
     <string name="inter_af_home_hf" translatable="false">ca-app-pub-5972202469838280/2074071281</string>

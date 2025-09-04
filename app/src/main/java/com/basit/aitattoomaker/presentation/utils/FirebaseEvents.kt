@@ -18,7 +18,7 @@ object FirebaseEvents {
     var firebaseAnalytics: FirebaseAnalytics? = null
     fun firebaseUserAction(activityName: String, actionName: String) {
         val action=formatString(actionName)
-      /*  CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             context?.let {
                 if (FirebaseApp.getApps(it).isEmpty()) {
                     FirebaseApp.initializeApp(it)
@@ -34,7 +34,7 @@ object FirebaseEvents {
                     Singular.event(action)
                 }
             }
-        }*/
+        }
     }
 
 

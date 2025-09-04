@@ -19,6 +19,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.basit.aitattoomaker.R
+import com.basit.aitattoomaker.ads.AdsManager
 import com.basit.aitattoomaker.databinding.FragmentSaveBinding
 import com.basit.aitattoomaker.extension.showDiscardDialog
 import com.basit.aitattoomaker.extension.showDownloadDialog
@@ -63,6 +64,9 @@ class SaveFragment : Fragment() {
         super.onViewCreated(v, s)
         mActivity?.let {activity->
             try {
+                binding?.adViewBanner?.let {
+                    AdsManager.loadBannerAd(it, activity,activity.resources.getString(R.string.Banner_ID_HF),activity.resources.getString(R.string.Banner_ID))
+                }
                 mActivity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner) {
                     mActivity?.showDiscardDialog(
                         onDiscard = {
