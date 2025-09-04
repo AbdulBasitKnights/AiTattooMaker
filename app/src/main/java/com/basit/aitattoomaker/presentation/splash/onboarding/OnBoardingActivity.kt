@@ -13,6 +13,8 @@ import com.basit.aitattoomaker.databinding.ActivityMainBinding
 import com.basit.aitattoomaker.databinding.ActivityOnboardingBinding
 import com.basit.aitattoomaker.extension.hideSystemBars
 import com.basit.aitattoomaker.presentation.MainViewModel
+import com.basit.aitattoomaker.presentation.splash.onboarding.AdsManagerNew.slot4Loaded
+import com.basit.aitattoomaker.presentation.splash.onboarding.AdsManagerNew.slot5Loaded
 import com.basit.aitattoomaker.presentation.splash.onboarding.adapter.OnboardingViewPager
 import com.basit.aitattoomaker.presentation.splash.onboarding.fragment.OnBoardingFragment
 import kotlin.getValue
@@ -37,21 +39,6 @@ class OnBoardingActivity : FragmentActivity(), OnBoardingFragment.PagerNav {
 //        )
 
 //        isSplash =true
-        if (native_full_sec1?:true){
-            loadNativeAdOB4(this)
-        }
-
-        if (fo_hf_native_full_scr1?:true) {
-            loadNativeAd4(this)
-        }
-
-        if (native_full_sec2?:true){
-            loadNativeAdOB5(this)
-        }
-
-        if (fo_hf_native_full_scr2?:true) {
-            loadNativeAd5(this)
-        }
 
         setViewPagerAdapter()
     }

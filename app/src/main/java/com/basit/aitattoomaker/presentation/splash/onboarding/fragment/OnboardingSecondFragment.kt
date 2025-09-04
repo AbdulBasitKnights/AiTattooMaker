@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.basit.aitattoomaker.R
+import com.basit.aitattoomaker.ads.AdsManager
 import com.basit.aitattoomaker.databinding.FragmentSecondOnboardingBinding
 import com.basit.aitattoomaker.presentation.MainActivity
 import com.basit.aitattoomaker.presentation.utils.FirebaseEvents
@@ -51,18 +52,30 @@ class OnboardingSecondFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mActivity?.let {
+        mActivity?.let {activity ->
             FirebaseEvents.firebaseUserAction("Onboarding","ob_2")
-            preferenceManager = SharedPref(it).getSharedPreferences()
+            preferenceManager = SharedPref(activity).getSharedPreferences()
             binding?.next?.setOnClickListener {
                 FirebaseEvents.firebaseUserAction("Onboarding","ob_2_next")
                 preferenceManager?.edit()?.putBoolean("firstTime", false)?.apply()
-                startActivity(Intent(mActivity, MainActivity::class.java))
-                mActivity?.finish()
+                AdsManager.showInterstitialSplash(activity, AdsManager.inter_bf_home_hf?: AdsManager.inter_bf_home,if(AdsManager.inter_bf_home_hf!=null)true else false,{
+                    navigateToMain()
+                },{
+                    navigateToMain()
+                },{
+                    navigateToMain()
+                },{
+                    navigateToMain()
+                })
+
             }
         }
 
 //        binding?.shimmerViewContainer?.startShimmer()
+    }
+    fun navigateToMain(){
+        startActivity(Intent(mActivity, MainActivity::class.java))
+        mActivity?.finish()
     }
     private fun initializeVideoView() {
         val videoUri = Uri.parse("android.resource://${requireContext().packageName}/${R.raw.ob2_video}")

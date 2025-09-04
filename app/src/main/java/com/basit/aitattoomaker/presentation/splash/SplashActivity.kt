@@ -67,16 +67,26 @@ class SplashActivity : AppCompatActivity() {
     }
     fun navigate(){
         lifecycleScope.launch {
-            delay(2000)
             if(preferenceManager.getBoolean(FIRST_TIME_KEY, true)==true){
                 startActivity(Intent(this@SplashActivity, OnBoardingActivity::class.java))
                 finish()
             }
             else{
-                startActivity(Intent(this@SplashActivity, MainActivity::class.java))
-                finish()
+                AdsManager.showInterstitialSplash(this@SplashActivity, AdsManager.inter_bf_home_hf?: AdsManager.inter_bf_home,if(AdsManager.inter_bf_home_hf!=null)true else false,{
+                    navigateToMain()
+                },{
+                    navigateToMain()
+                },{
+                    navigateToMain()
+                },{
+                    navigateToMain()
+                })
             }
         }
+    }
+    fun navigateToMain(){
+        startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+        finish()
     }
     override fun onResume() {
         super.onResume()

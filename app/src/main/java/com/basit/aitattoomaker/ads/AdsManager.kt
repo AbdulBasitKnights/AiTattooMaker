@@ -279,7 +279,7 @@ object AdsManager {
         }
 
     }
-    fun showInterstitialSplash(activity:FragmentActivity, ad: InterstitialAd, isHighFloor:Boolean, onAdFailed: () -> Unit, onAdShown: () -> Unit,
+    fun showInterstitialSplash(activity:FragmentActivity, ad: InterstitialAd?, isHighFloor:Boolean, onAdFailed: () -> Unit, onAdShown: () -> Unit,
                                onAdDismissed: () -> Unit, onNoInternetorPro: () -> Unit) {
         if (isPremiumSubscription.value != true && NetworkUtils.isOnline(activity)) {
             showLoadingAdDialog(activity)
@@ -290,7 +290,7 @@ object AdsManager {
                     e.printStackTrace()
                 }
                 delay(1000)
-                ad.fullScreenContentCallback = object : FullScreenContentCallback() {
+                ad?.fullScreenContentCallback = object : FullScreenContentCallback() {
                     override fun onAdShowedFullScreenContent() {
                         isShowingAd = true
                         onAdShown()
@@ -311,8 +311,8 @@ object AdsManager {
                             e.printStackTrace()
                         }
                         FirebaseEvents.firebaseUserAction(
-                            "Splash",
-                            if(isHighFloor)"ad_show_failed_splash_hf" else "ad_show_failed_splash")
+                            "BeforeHome",
+                            if(isHighFloor)"inter_bf_home_fail_hf" else "inter_bf_home_fail")
                         onAdFailed()
                     }
 
@@ -320,8 +320,8 @@ object AdsManager {
                         super.onAdImpression()
                         isShowingAd = true
                         FirebaseEvents.firebaseUserAction(
-                            "Splash",
-                            if(isHighFloor)"ad_shown_splash_hf" else "ad_shown_splash")
+                            "BeforeHome",
+                            if(isHighFloor)"inter_bf_home_view_hf" else "inter_bf_home_view")
                         ad?.setOnPaidEventListener {
                             val impressionData: AdValue = it
                             val data = SingularAdData(
