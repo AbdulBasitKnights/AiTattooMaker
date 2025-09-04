@@ -42,6 +42,7 @@ import androidx.navigation.fragment.findNavController
 import com.basit.aitattoomaker.R
 import com.basit.aitattoomaker.ads.AdsManager
 import com.basit.aitattoomaker.ads.AdsManager.isShowingAd
+import com.basit.aitattoomaker.ads.AdsManager.loadInterstitialAdAfterSplash
 import com.basit.aitattoomaker.databinding.FragmentCameraBinding
 import com.basit.aitattoomaker.extension.showDiscardDialog
 import com.basit.aitattoomaker.extension.showExitDialog
@@ -164,6 +165,7 @@ class CameraScreen : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         mActivity?.let {
             try {
+                loadInterstitialAdAfterSplash(it,resources.getString(R.string.inter_af_home_hf),resources.getString(R.string.inter_af_home),{},{},{})
                 mActivity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner) {
                     mActivity?.showExitDialog(
                         onDiscard = {

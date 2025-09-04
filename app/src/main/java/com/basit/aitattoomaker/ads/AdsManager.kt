@@ -58,12 +58,19 @@ object AdsManager {
             var secondRequest=false
             if (isPremiumSubscription.value != true && NetworkUtils.isOnline(fragmentActivity)) {
 // set first ad id (high floor)
-                adView.adUnitId = highFloorAdUnitId
+//                adView.adUnitId = highFloorAdUnitId
                 if (bannerAdRequest == null) {
+                    FirebaseEvents.firebaseUserAction("Download", "ban_image_dow_req")
                     bannerAdRequest = AdRequest.Builder().build()
+                    bannerAdRequest?.let { request ->
+                        adView.visibility=View.VISIBLE
+                        adView.loadAd(request)
+                        FirebaseEvents.firebaseUserAction("Download", "ban_image_dow_req_suc")
+                        FirebaseEvents.firebaseUserAction("Download", "ban_image_dow_view")
+                    }
                 }
 
-                adView.adListener = object : AdListener() {
+               /* adView.adListener = object : AdListener() {
                     override fun onAdLoaded() {
                         Log.d("BannerAd", "Ad Loaded")
                         adView.visibility = View.VISIBLE
@@ -93,7 +100,7 @@ object AdsManager {
                     adView.loadAd(request)
                     FirebaseEvents.firebaseUserAction("Download", "ban_image_dow_req_hf")
                     Log.w("BannerAd", "High Floor Request:")
-                }
+                }*/
 
             } else {
                 adView.visibility = View.INVISIBLE
