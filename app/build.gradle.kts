@@ -55,9 +55,11 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.constraintlayout)
-//    implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.process)
     implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -118,4 +120,7 @@ dependencies {
     implementation("com.singular.sdk:singular_sdk:12.5.5")
     //Splash
     implementation("androidx.core:core-splashscreen:1.0.1")
+    //Billing
+    //InAppBilling
+    implementation("com.android.billingclient:billing-ktx:7.1.1")
 }

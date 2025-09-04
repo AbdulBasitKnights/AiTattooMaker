@@ -10,7 +10,7 @@ import androidx.core.content.ContextCompat
 
 object MediaPermissionHelper {
     // For Android 13+ (API 33+)
-    fun getRequiredPermissions(): Array<String> {
+    /*fun getRequiredPermissions(): Array<String> {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
                 arrayOf(
@@ -30,9 +30,9 @@ object MediaPermissionHelper {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
             )
         }
-    }
+    }*/
 
-    fun hasAllPermissions(context: Context): Boolean {
+  /*  fun hasAllPermissions(context: Context): Boolean {
         return getRequiredPermissions().all {
             ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
         }
@@ -42,5 +42,5 @@ object MediaPermissionHelper {
         return getRequiredPermissions().any {
             ActivityCompat.shouldShowRequestPermissionRationale(activity, it)
         }
-    }
+    }*/
 }

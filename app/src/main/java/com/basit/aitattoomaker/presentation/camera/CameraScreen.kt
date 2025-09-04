@@ -39,6 +39,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.basit.aitattoomaker.R
 import com.basit.aitattoomaker.ads.AdsManager
+import com.basit.aitattoomaker.ads.AdsManager.isShowingAd
 import com.basit.aitattoomaker.databinding.FragmentCameraBinding
 import com.basit.aitattoomaker.extension.showDiscardDialog
 import com.basit.aitattoomaker.extension.uriToBitmap
@@ -46,6 +47,7 @@ import com.basit.aitattoomaker.presentation.ai_tools.AiToolsViewModel
 import com.basit.aitattoomaker.presentation.camera.adapter.CameraTattooAdapter
 import com.basit.aitattoomaker.presentation.camera.dialog.InfoBottomSheet
 import com.basit.aitattoomaker.presentation.utils.AppUtils
+import com.basit.aitattoomaker.presentation.utils.AppUtils.isRational
 import com.basit.aitattoomaker.presentation.utils.AppUtils.tattooPath
 import com.basit.aitattoomaker.presentation.utils.CameraPermissionHelper
 import com.basit.aitattoomaker.presentation.utils.DialogUtils
@@ -78,9 +80,12 @@ class CameraScreen : Fragment() {
     private val cameraPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
+                isRational=false
+                isShowingAd=true
                 // ✅ Permission granted
                 startCamera()
             } else {
+                isShowingAd=false
                 // ❌ Permission denied
                 if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
                     // User denied but didn’t check "Don’t ask again"
@@ -96,12 +101,15 @@ class CameraScreen : Fragment() {
             .setTitle("Camera Permission Needed")
             .setMessage("Please enable Camera permission in Settings to use this feature.")
             .setPositiveButton("Go to Settings") { _, _ ->
+                isRational=true
                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                     data = Uri.fromParts("package", requireContext().packageName, null)
                 }
                 startActivity(intent)
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton("Cancel", { dialog, _ ->
+                mActivity?.finish()
+            })
             .show()
     }
 
@@ -469,6 +477,7 @@ class CameraScreen : Fragment() {
     binding?.flash?.visibility = if (isFrontCamera) View.INVISIBLE else View.VISIBLE
     }
     private fun requestCameraPermission() {
+        isShowingAd=true
         cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
     }
 
@@ -481,6 +490,18 @@ class CameraScreen : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         cameraExecutor.shutdown()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(isRational){
+            if (CameraPermissionHelper.hasCameraPermission(requireContext())) {
+                startCamera()
+            } else {
+                requestCameraPermission()
+            }
+            isRational=false
+        }
     }
 
     companion object {

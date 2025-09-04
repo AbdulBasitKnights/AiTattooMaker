@@ -9,6 +9,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import com.basit.aitattoomaker.R
 import com.basit.aitattoomaker.ads.AdsManager
+import com.basit.aitattoomaker.ads.AdsManager.isPremiumSubscription
 import com.basit.aitattoomaker.data.repo.NetworkUtils
 import com.basit.aitattoomaker.databinding.ActivitySplashBinding
 import com.basit.aitattoomaker.presentation.MainActivity
@@ -41,6 +42,7 @@ class SplashActivity : AppCompatActivity() {
         preferenceManager =
             SharedPref(this@SplashActivity)
                 .getSharedPreferences()
+        isPremiumSubscription.postValue(false)
         /*AdsManager.loadInterstitialAdSplash(this,resources.getString(R.string.inter_af_home_hf),resources.getString(R.string.inter_af_home),{
             navigate()
         },{

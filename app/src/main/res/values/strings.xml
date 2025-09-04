@@ -5,7 +5,8 @@
 
     //Ads ID's
     <string name="App_ID" translatable="false">ca-app-pub-5972202469838280~3300480902</string>
-    <string name="App_Open_Ad" translatable="false">ca-app-pub-5972202469838280/8745239732</string>
+    <string name="App_Open_Ad" translatable="false">ca-app-pub-5972202469838280/5025901208</string>
+    <string name="App_Open_Ad_hf" translatable="false">ca-app-pub-5972202469838280/3501351956</string>
     <string name="rewardedVideo" translatable="false">ca-app-pub-5972202469838280/8602983244</string>
     <string name="Banner_ID" translatable="false">ca-app-pub-5972202469838280/3277887101</string>
     //After Home Ads
