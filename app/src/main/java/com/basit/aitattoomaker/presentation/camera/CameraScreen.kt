@@ -287,6 +287,9 @@ class CameraScreen : Fragment() {
                     e.printStackTrace()
                 }*/
             }
+            setting?.setOnClickListener {
+                findNavController().navigate(CameraScreenDirections.actionNavigationAicameraToNavigationSettings())
+            }
             library.setOnClickListener {
                 library.setTextColor(resources.getColor(R.color.white))
                 history.setTextColor(resources.getColor(R.color.lightGrey))

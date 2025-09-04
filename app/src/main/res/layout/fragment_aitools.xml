@@ -293,7 +293,7 @@
             android:paddingVertical="5dp"
             android:paddingHorizontal="@dimen/_10sdp"
             android:gravity="center"
-            android:text="@string/save"
+            android:text="@string/next"
             android:textColor="@color/white"
             android:background="@drawable/bg_round"
             android:backgroundTint="@color/colorprimary"

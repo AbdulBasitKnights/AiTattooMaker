@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_navigation_aicamera_to_navigation_aitools"
             app:destination="@id/navigation_aitools" />
+        <action
+            android:id="@+id/action_navigation_aicamera_to_navigation_settings"
+            app:destination="@id/navigation_settings" />
     </fragment>
     <fragment
         android:id="@+id/navigation_aicreate"

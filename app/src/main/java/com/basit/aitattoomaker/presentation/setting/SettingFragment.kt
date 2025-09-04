@@ -5,10 +5,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.core.content.ContextCompat.getDrawable
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.basit.aitattoomaker.R
 import com.basit.aitattoomaker.databinding.FragmentSettingsBinding
@@ -16,9 +18,11 @@ import com.basit.aitattoomaker.extension.openLink
 import com.basit.aitattoomaker.extension.openRateUs
 import com.basit.aitattoomaker.extension.shareAppLink
 import com.basit.aitattoomaker.extension.shareAppLinkTo
+import com.basit.aitattoomaker.extension.showExitDialog
 import com.basit.aitattoomaker.presentation.setting.adapter.ModelSettings
 import com.basit.aitattoomaker.presentation.setting.adapter.SettingsAdapter
 import com.basit.aitattoomaker.presentation.setting.adapter.SettingsClickListener
+import com.basit.aitattoomaker.presentation.utils.AppUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -59,6 +63,23 @@ class SettingFragment : Fragment(), SettingsClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecycler()
+            mActivity?.let {
+                AppUtils.getMain(it)?.hidebottombar()
+            }
+        mActivity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner) {
+            mActivity?.showExitDialog(
+                onDiscard = {
+                    // User clicked discard, handle accordingly
+                            findNavController().popBackStack(R.id.navigation_aicamera,false)
+                },
+                onNotNow = {
+                    // User clicked not now, just dismiss dialog
+                }
+            )
+        }
+        binding?.backActionbar?.setOnClickListener {
+            findNavController().popBackStack(R.id.navigation_aicamera,false)
+        }
     }
 
     private fun setupRecycler() {
