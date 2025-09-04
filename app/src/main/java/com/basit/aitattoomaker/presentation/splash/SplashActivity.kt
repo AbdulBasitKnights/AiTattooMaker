@@ -7,11 +7,14 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
+import com.basit.aitattoomaker.R
+import com.basit.aitattoomaker.ads.AdsManager
 import com.basit.aitattoomaker.data.repo.NetworkUtils
 import com.basit.aitattoomaker.databinding.ActivitySplashBinding
 import com.basit.aitattoomaker.presentation.MainActivity
 import com.basit.aitattoomaker.presentation.splash.onboarding.OnBoardingActivity
 import com.basit.aitattoomaker.presentation.utils.AppUtils.FIRST_TIME_KEY
+import com.basit.aitattoomaker.presentation.utils.FirebaseEvents
 import com.basit.aitattoomaker.presentation.utils.LogUtils
 import com.basit.aitattoomaker.presentation.utils.SharedPref
 import com.singular.sdk.Singular
@@ -38,6 +41,13 @@ class SplashActivity : AppCompatActivity() {
         preferenceManager =
             SharedPref(this@SplashActivity)
                 .getSharedPreferences()
+        AdsManager.loadInterstitialAdSplash(this,resources.getString(R.string.inter_af_home_hf),resources.getString(R.string.inter_af_home),{
+            navigate()
+        },{
+            navigate()
+        },{
+            navigate()
+        })
         initSingularSdk()
     }
     private fun initSingularSdk() {
@@ -51,32 +61,20 @@ class SplashActivity : AppCompatActivity() {
                     LogUtils.printDebugLog("IS_DEFERRED_KEY :" + singularLinkParams.isDeferred)
                 }
                 isSingularInitialized = Singular.init(this@SplashActivity, viewmodel.singularConfig)
-                Singular.event("splash_screen")
-                lifecycleScope.launch {
-                    delay(2000)
-                    if(preferenceManager.getBoolean(FIRST_TIME_KEY, true)==true){
-                        startActivity(Intent(this@SplashActivity, OnBoardingActivity::class.java))
-                        finish()
-                    }
-                    else{
-                        startActivity(Intent(this@SplashActivity, MainActivity::class.java))
-                        finish()
-                    }
-                }
             }
         }
-        else{
-            lifecycleScope.launch {
-                delay(2000)
-                if(preferenceManager.getBoolean(FIRST_TIME_KEY, true)==true){
-                    startActivity(Intent(this@SplashActivity, OnBoardingActivity::class.java))
-                    finish()
-                }
-                else{
-                    startActivity(Intent(this@SplashActivity, MainActivity::class.java))
-                    finish()
-                }
-
+        FirebaseEvents.firebaseUserAction("Splash","splash_view")
+    }
+    fun navigate(){
+        lifecycleScope.launch {
+            delay(2000)
+            if(preferenceManager.getBoolean(FIRST_TIME_KEY, true)==true){
+                startActivity(Intent(this@SplashActivity, OnBoardingActivity::class.java))
+                finish()
+            }
+            else{
+                startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+                finish()
             }
         }
     }

@@ -14,8 +14,8 @@ import com.basit.aitattoomaker.R
 import com.basit.aitattoomaker.databinding.FragmentOnboardingBinding
 import com.basit.aitattoomaker.presentation.MainActivity
 import com.basit.aitattoomaker.presentation.splash.onboarding.AdsManagerNew
-import com.basit.aitattoomaker.presentation.splash.onboarding.AdsManagerNew.ObnativeAd3
-import com.basit.aitattoomaker.presentation.splash.onboarding.AdsManagerNew.ObnativeAdhigh3
+import com.basit.aitattoomaker.presentation.splash.onboarding.ObnativeAd3
+import com.basit.aitattoomaker.presentation.splash.onboarding.ObnativeAdhigh3
 
 
 class OnboardingThirdFragment : Fragment() {
@@ -34,7 +34,7 @@ class OnboardingThirdFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentOnboardingBinding.inflate(inflater, container, false)
-        if (AdsManagerNew.native_ob4?:true || AdsManagerNew.hf_native_ob4?:true){
+        if (native_ob4?:true || hf_native_ob4?:true){
             loadNativeAd3()
         }
         return binding?.root

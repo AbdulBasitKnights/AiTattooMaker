@@ -13,6 +13,7 @@ import androidx.fragment.app.FragmentActivity
 import com.basit.aitattoomaker.R
 import com.basit.aitattoomaker.databinding.FragmentSecondOnboardingBinding
 import com.basit.aitattoomaker.presentation.MainActivity
+import com.basit.aitattoomaker.presentation.utils.FirebaseEvents
 import com.basit.aitattoomaker.presentation.utils.SharedPref
 
 
@@ -51,8 +52,10 @@ class OnboardingSecondFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mActivity?.let {
+            FirebaseEvents.firebaseUserAction("Onboarding","ob_2")
             preferenceManager = SharedPref(it).getSharedPreferences()
             binding?.next?.setOnClickListener {
+                FirebaseEvents.firebaseUserAction("Onboarding","ob_2_next")
                 preferenceManager?.edit()?.putBoolean("firstTime", false)?.apply()
                 startActivity(Intent(mActivity, MainActivity::class.java))
                 mActivity?.finish()

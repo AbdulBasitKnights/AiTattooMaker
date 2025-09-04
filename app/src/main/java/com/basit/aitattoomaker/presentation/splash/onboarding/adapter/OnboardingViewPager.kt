@@ -52,11 +52,11 @@ class OnboardingViewPager(
         pages.clear()
 
         pages += Page.CORE_1
-        if (AdsManagerNew.ObnativeAdhigh4 != null || AdsManagerNew.ObnativeAd4 != null) {
+        if (ObnativeAdhigh4 != null || ObnativeAd4 != null) {
             pages += Page.AD_4
         }
         pages += Page.CORE_3
-        if (AdsManagerNew.ObnativeAdhigh5 != null || AdsManagerNew.ObnativeAd5 != null) {
+        if (ObnativeAdhigh5 != null || ObnativeAd5 != null) {
             pages += Page.AD_5
         }
         pages += Page.CORE_4

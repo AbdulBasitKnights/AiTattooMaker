@@ -279,8 +279,8 @@ class ProPanelFragment : Fragment() {
                             creditsViewModel.subscribe("google","${purchaseInfo.purchaseToken}","${purchaseInfo.sku}")
                         }*//*
                         GlobalValues.isProVersion.value = true
-                        //    AdUtils.mInterstitialAd = null
-                        AdUtils.rewardedAd = null
+                        //    mInterstitialAd = null
+                        rewardedAd = null
                     }
 
                     skuKeyMonthly -> {
@@ -288,8 +288,8 @@ class ProPanelFragment : Fragment() {
                             creditsViewModel.subscribe("google","${purchaseInfo.purchaseToken}","${purchaseInfo.sku}")
                         }*//*
                         GlobalValues.isProVersion.value = true
-                        // AdUtils.mInterstitialAd = null
-                        AdUtils.rewardedAd = null
+                        // mInterstitialAd = null
+                        rewardedAd = null
                     }
 
                     else -> {
@@ -303,8 +303,8 @@ class ProPanelFragment : Fragment() {
                 when (purchaseInfo.sku) {
                     skuKeyWeekly -> {
                         GlobalValues.isProVersion.postValue(true)
-                        // AdUtils.mInterstitialAd = null
-                        AdUtils.rewardedAd = null
+                        // mInterstitialAd = null
+                        rewardedAd = null
 
                         FirebaseEvents.firebaseUserActionNew("IAPP", "iap_successful")
                         FirebaseEvents.firebaseUserActionNew("IAPP", "iap_weekly_subscribed")
@@ -331,8 +331,8 @@ class ProPanelFragment : Fragment() {
                         FirebaseEvents.firebaseUserActionNew("IAPP", "iap_successful")
                         FirebaseEvents.firebaseUserActionNew("IAPP", "iap_monthly_subscribed")
                         GlobalValues.isProVersion.postValue(true)
-                        //  AdUtils.mInterstitialAd = null
-                        AdUtils.rewardedAd = null
+                        //  mInterstitialAd = null
+                        rewardedAd = null
                         mActivity?.let {
                             creditsViewModel.subscribe(
                                 "android","${purchaseInfo.purchaseToken}","${purchaseInfo.sku}"
@@ -353,8 +353,8 @@ class ProPanelFragment : Fragment() {
                         FirebaseEvents.firebaseUserActionNew("IAPP", "iap_successful")
                         FirebaseEvents.firebaseUserActionNew("IAPP", "iap_monthly_subscribed")
                         GlobalValues.isProVersion.postValue(true)
-                        //  AdUtils.mInterstitialAd = null
-                        AdUtils.rewardedAd = null
+                        //  mInterstitialAd = null
+                        rewardedAd = null
                         mActivity?.let {
                             creditsViewModel.subscribe(
                                 "android","${purchaseInfo.purchaseToken}","${purchaseInfo.sku}"

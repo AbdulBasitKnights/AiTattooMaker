@@ -13,6 +13,7 @@ import androidx.fragment.app.FragmentActivity
 import com.basit.aitattoomaker.databinding.FragmentOnboardingBinding
 import com.basit.aitattoomaker.presentation.MainActivity
 import com.basit.aitattoomaker.presentation.splash.onboarding.OnBoardingActivity
+import com.basit.aitattoomaker.presentation.utils.FirebaseEvents
 import kotlinx.coroutines.Job
 
 class OnBoardingFragment : Fragment() {
@@ -67,11 +68,14 @@ class OnBoardingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mActivity?.let { activity->
+            FirebaseEvents.firebaseUserAction("Onboarding","ob_1_view")
             binding?.skip?.setOnClickListener {
+                FirebaseEvents.firebaseUserAction("Onboarding","ob_1_skip")
                 mActivity?.startActivity(Intent(activity, MainActivity::class.java))
                 mActivity?.finish()
             }
             binding?.next?.setOnClickListener {
+                FirebaseEvents.firebaseUserAction("Onboarding","ob_1_next")
                 nav.goNext()
             }
         }

@@ -37,20 +37,20 @@ class OnBoardingActivity : FragmentActivity(), OnBoardingFragment.PagerNav {
 //        )
 
 //        isSplash =true
-        if (AdsManagerNew.native_full_sec1?:true){
-            AdsManagerNew.loadNativeAdOB4(this)
+        if (native_full_sec1?:true){
+            loadNativeAdOB4(this)
         }
 
-        if (AdsManagerNew.fo_hf_native_full_scr1?:true) {
-            AdsManagerNew.loadNativeAd4(this)
+        if (fo_hf_native_full_scr1?:true) {
+            loadNativeAd4(this)
         }
 
-        if (AdsManagerNew.native_full_sec2?:true){
-            AdsManagerNew.loadNativeAdOB5(this)
+        if (native_full_sec2?:true){
+            loadNativeAdOB5(this)
         }
 
-        if (AdsManagerNew.fo_hf_native_full_scr2?:true) {
-            AdsManagerNew.loadNativeAd5(this)
+        if (fo_hf_native_full_scr2?:true) {
+            loadNativeAd5(this)
         }
 
         setViewPagerAdapter()
@@ -79,8 +79,8 @@ class OnBoardingActivity : FragmentActivity(), OnBoardingFragment.PagerNav {
     private fun setViewPagerAdapter() {
         viewPager= findViewById(R.id.viewPager2)
         viewPager?.adapter = pagerAdapter
-        AdsManagerNew.slot4Loaded.observe(this) { if (it) pagerAdapter.refresh() }
-        AdsManagerNew.slot5Loaded.observe(this) { if (it) pagerAdapter.refresh() }
+        slot4Loaded.observe(this) { if (it) pagerAdapter.refresh() }
+        slot5Loaded.observe(this) { if (it) pagerAdapter.refresh() }
     }
 
     fun goNextPage() {

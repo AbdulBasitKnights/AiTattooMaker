@@ -4,7 +4,20 @@
 
 
     //Ads ID's
-    <string name="App_ID" translatable="false">ca-app-pub-5972202469838280~7299753908</string>
+    <string name="App_ID" translatable="false">ca-app-pub-5972202469838280~3300480902</string>
+    <string name="App_Open_Ad" translatable="false">ca-app-pub-5972202469838280/8745239732</string>
+    <string name="rewardedVideo" translatable="false">ca-app-pub-5972202469838280/8602983244</string>
+    <string name="Banner_ID" translatable="false">ca-app-pub-5972202469838280/3277887101</string>
+    //After Home Ads
+    <string name="inter_af_home" translatable="false">ca-app-pub-5972202469838280/3030578664</string>
+    <string name="inter_af_home_hf" translatable="false">ca-app-pub-5972202469838280/2074071281</string>
+    //Before Home Ads
+    <string name="inter_bf_home" translatable="false">ca-app-pub-5972202469838280/6295036256</string>
+    <string name="inter_bf_home_hf" translatable="false">ca-app-pub-5972202469838280/7907500825</string>
+    //Home Ads
+    <string name="inter_home" translatable="false">ca-app-pub-5972202469838280/7061871756</string>
+    <string name="inter_home_hf" translatable="false">ca-app-pub-5972202469838280/5658093075</string>
+
 
 
     <string name="title_home">Home</string>

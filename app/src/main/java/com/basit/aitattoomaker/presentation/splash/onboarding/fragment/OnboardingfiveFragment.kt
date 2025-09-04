@@ -14,8 +14,8 @@ import com.basit.aitattoomaker.R
 import com.basit.aitattoomaker.data.repo.NetworkUtils
 import com.basit.aitattoomaker.databinding.FragmentOnboardingfiveBinding
 import com.basit.aitattoomaker.presentation.splash.onboarding.AdsManagerNew
-import com.basit.aitattoomaker.presentation.splash.onboarding.AdsManagerNew.fo_enable_auto_next_full_scr
-import com.basit.aitattoomaker.presentation.splash.onboarding.AdsManagerNew.fo_time_auto_next_full_scr
+import com.basit.aitattoomaker.presentation.splash.onboarding.fo_enable_auto_next_full_scr
+import com.basit.aitattoomaker.presentation.splash.onboarding.fo_time_auto_next_full_scr
 import com.basit.aitattoomaker.presentation.utils.FirebaseEvents
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdLoader
@@ -96,13 +96,13 @@ class OnboardingfiveFragment : Fragment() {
 
 
     fun loadNativeAd5(context: Context) {
-        if (AdsManagerNew.ObnativeAdhigh5 == null && AdsManagerNew.fo_hf_native_full_scr2?:true) {
+        if (ObnativeAdhigh5 == null && fo_hf_native_full_scr2?:true) {
             try {
                 val adLoader = AdLoader.Builder(context, "")
                     .forNativeAd { nativeAd ->
                         Log.w("checkNativeOB","Hf_Native_full_scr2: Loaded")
 //                        FirebaseEvents.firebaseUserAction("fullscreenhigh1", "onboardingFragment")
-                        AdsManagerNew.ObnativeAdhigh5 = nativeAd
+                        ObnativeAdhigh5 = nativeAd
                         Log.d("checkNativeOB","Hf_Native_full_scr2: Show")
                         loadNativeListTemplate5()
                     }
@@ -126,16 +126,16 @@ class OnboardingfiveFragment : Fragment() {
     private fun loadNativeListTemplate5() {
         try {
             val headlineView = binding?.primary5
-            headlineView?.text = AdsManagerNew.ObnativeAdhigh5?.headline
-            binding?.adBody5?.text = AdsManagerNew.ObnativeAdhigh5?.body
+            headlineView?.text = ObnativeAdhigh5?.headline
+            binding?.adBody5?.text = ObnativeAdhigh5?.body
             val imageView = binding?.AdImage5
-            imageView?.mediaContent = AdsManagerNew.ObnativeAdhigh5?.mediaContent
+            imageView?.mediaContent = ObnativeAdhigh5?.mediaContent
             val callToActionView = binding?.cta5
-            callToActionView?.text = AdsManagerNew.ObnativeAdhigh5?.callToAction
+            callToActionView?.text = ObnativeAdhigh5?.callToAction
             binding?.adViewLayout5?.headlineView = headlineView
             binding?.adViewLayout5?.mediaView = imageView
             binding?.adViewLayout5?.callToActionView = callToActionView
-            AdsManagerNew.ObnativeAdhigh5?.let { binding?.adViewLayout5?.setNativeAd(it) }
+            ObnativeAdhigh5?.let { binding?.adViewLayout5?.setNativeAd(it) }
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -144,12 +144,12 @@ class OnboardingfiveFragment : Fragment() {
 
     @SuppressLint("NotifyDataSetChanged")
     fun loadNativeAdOB5(context: Context) {
-        if (AdsManagerNew.ObnativeAd5 == null  && AdsManagerNew.native_full_sec2?:true) {
+        if (ObnativeAd5 == null  && native_full_sec2?:true) {
             try {
                 val adLoader = AdLoader.Builder(context, "")
                     .forNativeAd { nativeAd ->
                         Log.w("checkNativeOB","Native_full_scr2: Loaded")
-                        AdsManagerNew.ObnativeAd5 = nativeAd
+                        ObnativeAd5 = nativeAd
 //                        FirebaseEvents.firebaseUserAction("fullscreen1", "onboardingFragment")
                         Log.d("checkNativeOB","Native_full_scr2: Show")
                         loadNativeListTemplateNormalOB5()
@@ -172,18 +172,18 @@ class OnboardingfiveFragment : Fragment() {
     private fun loadNativeListTemplateNormalOB5() {
         try {
             val headlineView = binding?.primary5
-            headlineView?.text = AdsManagerNew.ObnativeAd5?.headline
-            binding?.adBody5?.text = AdsManagerNew.ObnativeAd5?.body
+            headlineView?.text = ObnativeAd5?.headline
+            binding?.adBody5?.text = ObnativeAd5?.body
             val imageView = binding?.AdImage5
-            imageView?.mediaContent = AdsManagerNew.ObnativeAd5?.mediaContent
+            imageView?.mediaContent = ObnativeAd5?.mediaContent
             val callToActionView = binding?.cta5
-            callToActionView?.text = AdsManagerNew.ObnativeAd5?.callToAction
+            callToActionView?.text = ObnativeAd5?.callToAction
             binding?.adViewLayout5?.headlineView = headlineView
             binding?.adViewLayout5?.mediaView = imageView
             binding?.adViewLayout5?.callToActionView = callToActionView
-            AdsManagerNew.ObnativeAd5?.let { binding?.adViewLayout5?.setNativeAd(it) }
+            ObnativeAd5?.let { binding?.adViewLayout5?.setNativeAd(it) }
             binding?.adViewLayout5?.setOnClickListener {
-                AdsManagerNew.ObnativeAd5?.performClick(Bundle())
+                ObnativeAd5?.performClick(Bundle())
             }
         } catch (e: Exception) {
             e.printStackTrace()
