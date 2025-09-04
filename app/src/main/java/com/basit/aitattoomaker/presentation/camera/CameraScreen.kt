@@ -38,6 +38,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.basit.aitattoomaker.R
+import com.basit.aitattoomaker.ads.AdsManager
 import com.basit.aitattoomaker.databinding.FragmentCameraBinding
 import com.basit.aitattoomaker.extension.showDiscardDialog
 import com.basit.aitattoomaker.extension.uriToBitmap
@@ -352,8 +353,23 @@ class CameraScreen : Fragment() {
 //        }
         capturedBitmap=bitmap
         dialog?.dismiss()
-        bitmap?.let { bitmap ->
-            findNavController().navigate(CameraScreenDirections.actionNavigationAicameraToNavigationAitools())
+        mActivity?.let { activity->
+            AdsManager.showInterstitialAfterSplash(activity, AdsManager.inter_af_home_hf?: AdsManager.inter_af_home,
+                if(AdsManager.inter_af_home_hf!=null)true else false,
+                {bitmap?.let { bitmap ->
+                    findNavController().navigate(CameraScreenDirections.actionNavigationAicameraToNavigationAitools())
+                }},
+                {
+                    bitmap?.let { bitmap ->
+                        findNavController().navigate(CameraScreenDirections.actionNavigationAicameraToNavigationAitools())
+                    }
+                },
+                {},
+                {
+                    bitmap?.let { bitmap ->
+                        findNavController().navigate(CameraScreenDirections.actionNavigationAicameraToNavigationAitools())
+                    }
+                })
         }
     }
 

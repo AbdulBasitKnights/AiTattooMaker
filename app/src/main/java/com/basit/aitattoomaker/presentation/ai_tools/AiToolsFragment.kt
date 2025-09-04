@@ -341,7 +341,7 @@ class AiToolsFragment : Fragment() {
 
         val base = if (first) capturedBitmap else BitmapFactory.decodeResource(resources, resId)
         if (base == null) {
-            Toast.makeText(requireContext(), "Failed to load default photo", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(requireContext(), "Failed to load default photo", Toast.LENGTH_SHORT).show()
             dialog?.dismiss()
             return
         }
@@ -351,7 +351,7 @@ class AiToolsFragment : Fragment() {
             val (baseBitmap, maskBitmap, bgBitmap) = runSmartSegmentation(base)
 
             if (baseBitmap == null || maskBitmap == null) {
-                Toast.makeText(requireContext(), "Segmentation failed", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(requireContext(), "Segmentation failed", Toast.LENGTH_SHORT).show()
                 dialog?.dismiss()
                 return@launch
             }
@@ -407,7 +407,7 @@ class AiToolsFragment : Fragment() {
                 // Optional: if mask coverage is too low, fallback to base as mask
                 if (coveragePercent < 10f) {
                     Log.w("Segmentation", "⚠️ Mask too small (<10%), using base as mask")
-                    Toast.makeText(mActivity, "Please Recapture the Image, subject are is too small", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(mActivity, "Please Recapture the Image, subject are is too small", Toast.LENGTH_SHORT).show()
                     mask = base.copy(Bitmap.Config.ARGB_8888, true)
                 }
 
@@ -461,7 +461,7 @@ class AiToolsFragment : Fragment() {
 
             // Optional: if mask coverage is too low (<10%), fallback to base
             if (coveragePercent < 10f) {
-                Toast.makeText(mActivity, "Please Recapture the Image, subject are is too small", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(mActivity, "Please Recapture the Image, subject are is too small", Toast.LENGTH_SHORT).show()
 
                 Log.w("SelfieSegmentation", "⚠️ Mask too small (<10%), using base as mask")
                 mask = base.copy(Bitmap.Config.ARGB_8888, true)

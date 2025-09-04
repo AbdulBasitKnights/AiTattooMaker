@@ -31,6 +31,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import androidx.core.graphics.drawable.toDrawable
+import com.basit.aitattoomaker.presentation.utils.AppUtils
 import com.google.android.gms.ads.AdError
 
 object AdsManager {
@@ -86,14 +87,22 @@ object AdsManager {
                             override fun onAdLoaded(ad: InterstitialAd) {
                                 inter_af_home = ad
                                 safeCallback { onAdLoaded() }
-                                // show immediately if splash
-                                inter_af_home?.show(activity)
+                                FirebaseEvents.firebaseUserAction(
+                                    "AfterHome",
+                                    "inter_af_home_req_suc")
                             }
 
                             override fun onAdFailedToLoad(error: LoadAdError) {
                                 safeCallback { onAdFailed() }
+                                FirebaseEvents.firebaseUserAction(
+                                    "AfterHome",
+                                    "inter_af_home_view_req_fail")
+
                             }
                         })
+                    FirebaseEvents.firebaseUserAction(
+                        "AfterHome",
+                        "inter_af_home_req")
                 }
 
             }
@@ -104,15 +113,21 @@ object AdsManager {
                         override fun onAdLoaded(ad: InterstitialAd) {
                             inter_af_home_hf = ad
                             safeCallback { onAdLoaded() }
-
-                            // show immediately if splash
-                            inter_af_home_hf?.show(activity)
+                            FirebaseEvents.firebaseUserAction(
+                                "AfterHome",
+                                "inter_af_home_req_suc_hf")
                         }
 
                         override fun onAdFailedToLoad(error: LoadAdError) {
                             loadSecond()
+                            FirebaseEvents.firebaseUserAction(
+                                "AfterHome",
+                                "inter_af_home_view_req_fail_hf")
                         }
                     })
+                FirebaseEvents.firebaseUserAction(
+                    "AfterHome",
+                    "inter_af_home_req_hf")
             }
 
         }
@@ -121,9 +136,9 @@ object AdsManager {
         }
 
     }
-    fun showInterstitialAfterSplash(activity:FragmentActivity, ad: InterstitialAd, isHighFloor:Boolean, onAdFailed: () -> Unit, onAdShown: () -> Unit,
+    fun showInterstitialAfterSplash(activity:FragmentActivity, ad: InterstitialAd?, isHighFloor:Boolean, onAdFailed: () -> Unit, onAdShown: () -> Unit,
                                onAdDismissed: () -> Unit, onNoInternetorPro: () -> Unit) {
-        if (isPremiumSubscription.value != true && NetworkUtils.isOnline(activity)) {
+        if (isPremiumSubscription.value != true && NetworkUtils.isOnline(activity) && ad!=null) {
             showLoadingAdDialog(activity)
             CoroutineScope(Dispatchers.Main).launch {
                 try {
@@ -142,6 +157,8 @@ object AdsManager {
                         isShowingAd = false
                         inter_af_home=null
                         inter_af_home_hf=null
+                        loadInterstitialAdAfterSplash(activity,activity.resources.getString(R.string.inter_af_home_hf),activity.resources.getString(R.string.inter_af_home),{},{},{})
+                        AppUtils.enableImmersiveMode(activity)
                         onAdDismissed()
                     }
 
@@ -160,11 +177,12 @@ object AdsManager {
 
                     override fun onAdImpression() {
                         super.onAdImpression()
+                        AppUtils.disableImmersiveMode(activity)
                         isShowingAd = true
                         FirebaseEvents.firebaseUserAction(
                             "Splash",
                             if(isHighFloor)"ad_shown_splash_hf" else "ad_shown_splash")
-                        ad?.setOnPaidEventListener {
+                        ad.setOnPaidEventListener {
                             val impressionData: AdValue = it
                             val data = SingularAdData(
                                 "AdmobMediation_"+ extractMediatedNetworkName(splashInterstitialAd?.responseInfo?.mediationAdapterClassName),
@@ -184,6 +202,7 @@ object AdsManager {
 
                     }
                 }
+                ad.show(activity)
             }
         }
         else{
@@ -247,6 +266,13 @@ object AdsManager {
 
             }
             if(inter_af_home_hf==null && inter_bf_home==null){
+                if (System.currentTimeMillis() - startTime > timeoutMillis) {
+                    FirebaseEvents.firebaseUserAction(
+                        "BeforeHome",
+                        "inter_bf_home_req_timeout")
+                    safeCallback { onAdFailed() }
+                    return
+                }
                 val adRequest = AdRequest.Builder().build()
                 InterstitialAd.load(activity, highFloorAd, adRequest,
                     object : InterstitialAdLoadCallback() {
@@ -281,7 +307,7 @@ object AdsManager {
     }
     fun showInterstitialSplash(activity:FragmentActivity, ad: InterstitialAd?, isHighFloor:Boolean, onAdFailed: () -> Unit, onAdShown: () -> Unit,
                                onAdDismissed: () -> Unit, onNoInternetorPro: () -> Unit) {
-        if (isPremiumSubscription.value != true && NetworkUtils.isOnline(activity)) {
+        if (isPremiumSubscription.value != true && NetworkUtils.isOnline(activity) && ad!=null) {
             showLoadingAdDialog(activity)
             CoroutineScope(Dispatchers.Main).launch {
                 try {
@@ -290,7 +316,7 @@ object AdsManager {
                     e.printStackTrace()
                 }
                 delay(1000)
-                ad?.fullScreenContentCallback = object : FullScreenContentCallback() {
+                ad.fullScreenContentCallback = object : FullScreenContentCallback() {
                     override fun onAdShowedFullScreenContent() {
                         isShowingAd = true
                         onAdShown()
@@ -342,6 +368,7 @@ object AdsManager {
 
                     }
                 }
+                ad.show(activity)
             }
         }
         else{

@@ -1,11 +1,15 @@
 package com.basit.aitattoomaker.presentation.utils
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.os.Build
 import androidx.annotation.DrawableRes
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.exifinterface.media.ExifInterface
 import androidx.fragment.app.FragmentActivity
 import com.basit.aitattoomaker.presentation.MainActivity
@@ -49,6 +53,20 @@ object AppUtils {
         } catch (e: Exception) {
             e.printStackTrace()
             null
+        }
+    }
+     fun disableImmersiveMode(activity: Activity) {
+        WindowCompat.setDecorFitsSystemWindows(activity.window, true)
+        WindowInsetsControllerCompat(activity.window, activity.window.decorView).show(
+            WindowInsetsCompat.Type.systemBars()
+        )
+    }
+     fun enableImmersiveMode(activity: Activity) {
+        WindowCompat.setDecorFitsSystemWindows(activity.window, false)
+        WindowInsetsControllerCompat(activity.window, activity.window.decorView).let { controller ->
+            controller.hide(WindowInsetsCompat.Type.systemBars())
+            controller.systemBarsBehavior =
+                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
     }
     fun decodeAndFixOrientation(file: File): Bitmap? {

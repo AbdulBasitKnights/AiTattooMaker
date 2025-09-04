@@ -24,4 +24,9 @@
         <item name="android:navigationBarColor">@color/black</item>
         <item name="windowSplashScreenAnimatedIcon">@null</item>
     </style>
+    <style name="Theme.AdSafe" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:fitsSystemWindows">true</item>
+        <item name="android:windowFullscreen">false</item>
+    </style>
+
 </resources>

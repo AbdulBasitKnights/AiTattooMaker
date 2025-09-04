@@ -1,6 +1,7 @@
 package com.basit.aitattoomaker.presentation
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -10,12 +11,15 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.basit.aitattoomaker.BuildConfig
 import com.basit.aitattoomaker.R
+import com.basit.aitattoomaker.ads.AdsManager.loadInterstitialAdAfterSplash
 import com.basit.aitattoomaker.data.repo.ModelName
 import com.basit.aitattoomaker.databinding.ActivityMainBinding
 import com.basit.aitattoomaker.extension.hideSystemBars
@@ -38,6 +42,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding?.navView?.itemBackground = null
+        loadInterstitialAdAfterSplash(this,resources.getString(R.string.inter_af_home_hf),resources.getString(R.string.inter_af_home),{},{},{})
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
         if (binding.navView != null) {
             NavigationUI.setupWithNavController(binding.navView, navController)
@@ -129,4 +134,7 @@ class MainActivity : AppCompatActivity() {
     fun showbottombar() {
         binding?.navView?.visibility = View.VISIBLE
     }
+
+
+
 }

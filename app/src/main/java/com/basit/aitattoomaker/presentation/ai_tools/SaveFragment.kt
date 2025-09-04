@@ -12,12 +12,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.basit.aitattoomaker.R
 import com.basit.aitattoomaker.databinding.FragmentSaveBinding
+import com.basit.aitattoomaker.extension.showDiscardDialog
 import com.basit.aitattoomaker.extension.showDownloadDialog
 import com.basit.aitattoomaker.presentation.utils.DialogUtils
 import com.basit.aitattoomaker.presentation.utils.DialogUtils.dialog
@@ -60,6 +63,22 @@ class SaveFragment : Fragment() {
         super.onViewCreated(v, s)
         mActivity?.let {activity->
             try {
+                mActivity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner) {
+                    mActivity?.showDiscardDialog(
+                        onDiscard = {
+                            // User clicked discard, handle accordingly
+//                            mActivity?.finish()
+                            try {
+                                findNavController().popBackStack(R.id.navigation_aicamera,false)
+                            } catch (e: Exception) {
+                               e.printStackTrace()
+                            }
+                        },
+                        onNotNow = {
+                            // User clicked not now, just dismiss dialog
+                        }
+                    )
+                }
                 val uri=saveBitmapToCache(activity, editedBitmap!!)
                 tattooCreation.postValue(false)
                 binding?.apply {
@@ -73,7 +92,13 @@ class SaveFragment : Fragment() {
                         shareUri(activity, uri)
                     }
                     cross.setOnClickListener {
-                        findNavController().popBackStack()
+                        try {
+                            findNavController().popBackStack(R.id.navigation_aicamera,false)
+                        }
+                        catch (e:Exception){
+                            e.printStackTrace()
+                        }
+
                     }
                 }
             }

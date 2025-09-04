@@ -28,15 +28,13 @@
             app:layout_constraintBottom_toBottomOf="@+id/previewView"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-
     <ImageView
         android:id="@+id/cross"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_10sdp"
         android:layout_marginTop="@dimen/_10sdp"
-        android:visibility="gone"
+        android:visibility="invisible"
         android:background="@drawable/cross_svg"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>

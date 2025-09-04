@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.basit.aitattoomaker.R
-import com.basit.aitattoomaker.ads.AdsManager
 import com.basit.aitattoomaker.databinding.FragmentSecondOnboardingBinding
 import com.basit.aitattoomaker.presentation.MainActivity
 import com.basit.aitattoomaker.presentation.utils.FirebaseEvents
