@@ -144,6 +144,7 @@ class CameraScreen : Fragment() {
                     mActivity?.showDiscardDialog(
                         onDiscard = {
                             // User clicked discard, handle accordingly
+//                            mActivity?.finish()
                             findNavController().popBackStack(R.id.navigation_aicreate,false)
                         },
                         onNotNow = {
@@ -234,6 +235,7 @@ class CameraScreen : Fragment() {
             }
             cross?.setOnClickListener {
                 try {
+//                    mActivity?.finish()
                     findNavController().popBackStack(R.id.navigation_aicreate,false)
                 }
                 catch (e:Exception){

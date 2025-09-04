@@ -41,13 +41,13 @@ class SplashActivity : AppCompatActivity() {
         preferenceManager =
             SharedPref(this@SplashActivity)
                 .getSharedPreferences()
-        AdsManager.loadInterstitialAdSplash(this,resources.getString(R.string.inter_af_home_hf),resources.getString(R.string.inter_af_home),{
+        /*AdsManager.loadInterstitialAdSplash(this,resources.getString(R.string.inter_af_home_hf),resources.getString(R.string.inter_af_home),{
             navigate()
         },{
             navigate()
         },{
             navigate()
-        })
+        })*/
         initSingularSdk()
     }
     private fun initSingularSdk() {
@@ -64,15 +64,18 @@ class SplashActivity : AppCompatActivity() {
             }
         }
         FirebaseEvents.firebaseUserAction("Splash","splash_view")
+        navigate()
     }
     fun navigate(){
         lifecycleScope.launch {
+            delay(1500)
             if(preferenceManager.getBoolean(FIRST_TIME_KEY, true)==true){
                 startActivity(Intent(this@SplashActivity, OnBoardingActivity::class.java))
                 finish()
             }
             else{
-                AdsManager.showInterstitialSplash(this@SplashActivity, AdsManager.inter_bf_home_hf?: AdsManager.inter_bf_home,if(AdsManager.inter_bf_home_hf!=null)true else false,{
+                navigateToMain()
+              /*  AdsManager.showInterstitialSplash(this@SplashActivity, AdsManager.inter_bf_home_hf?: AdsManager.inter_bf_home,if(AdsManager.inter_bf_home_hf!=null)true else false,{
                     navigateToMain()
                 },{
                     navigateToMain()
@@ -80,7 +83,7 @@ class SplashActivity : AppCompatActivity() {
                     navigateToMain()
                 },{
                     navigateToMain()
-                })
+                })*/
             }
         }
     }

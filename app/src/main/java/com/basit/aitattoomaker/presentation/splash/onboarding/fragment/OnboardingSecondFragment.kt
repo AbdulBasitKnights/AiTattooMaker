@@ -58,7 +58,8 @@ class OnboardingSecondFragment : Fragment() {
             binding?.next?.setOnClickListener {
                 FirebaseEvents.firebaseUserAction("Onboarding","ob_2_next")
                 preferenceManager?.edit()?.putBoolean("firstTime", false)?.apply()
-                AdsManager.showInterstitialSplash(activity, AdsManager.inter_bf_home_hf?: AdsManager.inter_bf_home,if(AdsManager.inter_bf_home_hf!=null)true else false,{
+                navigateToMain()
+             /*   AdsManager.showInterstitialSplash(activity, AdsManager.inter_bf_home_hf?: AdsManager.inter_bf_home,if(AdsManager.inter_bf_home_hf!=null)true else false,{
                     navigateToMain()
                 },{
                     navigateToMain()
@@ -66,7 +67,7 @@ class OnboardingSecondFragment : Fragment() {
                     navigateToMain()
                 },{
                     navigateToMain()
-                })
+                })*/
 
             }
         }

@@ -5,6 +5,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.basit.aitattoomaker.presentation.splash.onboarding.AdsManagerNew
+import com.basit.aitattoomaker.presentation.splash.onboarding.AdsManagerNew.ObnativeAd4
+import com.basit.aitattoomaker.presentation.splash.onboarding.AdsManagerNew.ObnativeAd5
+import com.basit.aitattoomaker.presentation.splash.onboarding.AdsManagerNew.ObnativeAdhigh4
+import com.basit.aitattoomaker.presentation.splash.onboarding.AdsManagerNew.ObnativeAdhigh5
 import com.basit.aitattoomaker.presentation.splash.onboarding.fragment.OnBoardingFragment
 import com.basit.aitattoomaker.presentation.splash.onboarding.fragment.OnboardingFourthFragment
 import com.basit.aitattoomaker.presentation.splash.onboarding.fragment.OnboardingSecondFragment
