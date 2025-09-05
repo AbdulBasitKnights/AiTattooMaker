@@ -7,5 +7,6 @@ import java.util.UUID
 @Parcelize
 data class Creation(
     val id: String = UUID.randomUUID().toString(), // auto-generated unique ID
-    val imageUrl: String
+    val imageUrl: String,
+    var isSelected: Boolean = false
 ) : Parcelable

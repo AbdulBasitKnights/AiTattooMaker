@@ -11,10 +11,11 @@ import androidx.fragment.app.FragmentActivity
 import com.basit.aitattoomaker.databinding.FragmentHistoryBinding
 import com.basit.aitattoomaker.presentation.history.model.Creation
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.File
 
 @AndroidEntryPoint
 class HistoryFragment : Fragment() {
-    val creations = listOf(
+    var creations = listOf(
         Creation(imageUrl = "file:///android_asset/library/11.webp"),
         Creation(imageUrl = "file:///android_asset/library/1.webp"),
         Creation(imageUrl = "file:///android_asset/library/9.webp"),
@@ -54,6 +55,13 @@ class HistoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mActivity?.let {
+            val directoryPath = File(it.filesDir, "TattooMe")
+
+// Map the creations to the corresponding paths in the "TattooMe" folder
+            creations = directoryPath.listFiles()?.map {
+                // Create the Creation object with the file path as the imageUrl
+                Creation(imageUrl = "file://${it.absolutePath}")
+            } ?: emptyList()  // In case there are no files, return an empty list
             if(isAdded){
                 setupRecycler()
                 // Complete the code here
@@ -63,6 +71,7 @@ class HistoryFragment : Fragment() {
 
     private fun setupRecycler() {
         val adapter = CreationAdapter { creation ->
+            creation.isSelected=true
             Toast.makeText(requireActivity(), "Clicked: ${creation.id}", Toast.LENGTH_SHORT).show()
         }
         binding.rvCreationList.adapter = adapter
