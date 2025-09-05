@@ -51,12 +51,39 @@ import kotlinx.coroutines.launch
 import androidx.core.net.toUri
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.navigation.findNavController
 import com.basit.aitattoomaker.databinding.ExitDialogBinding
 
 val Context.dataStore by preferencesDataStore(name = "user_preferences")
 
 // Define the key for storing the access token
 val ACCESS_TOKEN_KEY = stringPreferencesKey("access_token")
+
+//Navigation
+fun FragmentActivity.nextNavigateTo(
+    navDirections: Int
+) {
+    try {
+        findNavController(R.id.nav_host_fragment_activity_main).navigate(navDirections)
+    } catch (e: Exception) {
+        e.printStackTrace()
+//        Log.e(NAVIGATION_ISSUE, "ISSUE: $e")
+    }
+}
+
+
+fun FragmentActivity.popBackStack(popBackToFragment: Int? = null) {
+    try {
+        val navController = findNavController(R.id.nav_host_fragment_activity_main)
+        if (popBackToFragment == null) navController.popBackStack() else navController.popBackStack(
+            destinationId = popBackToFragment,
+            inclusive = false
+        )
+    } catch (e: Exception) {
+        e.printStackTrace()
+//        Log.e(NAVIGATION_ISSUE, "ISSUE: $e")
+    }
+}
 //Dialogs
 fun FragmentActivity.showDiscardDialog(
     onDiscard: () -> Unit,

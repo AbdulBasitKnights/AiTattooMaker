@@ -84,7 +84,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-//        registerUser()
+        registerUser()
     }
 
     @SuppressLint("HardwareIds")

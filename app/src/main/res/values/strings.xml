@@ -20,6 +20,8 @@
     <string name="inter_home" translatable="false">ca-app-pub-5972202469838280/7061871756</string>
     <string name="inter_home_hf" translatable="false">ca-app-pub-5972202469838280/5658093075</string>
 
+    //InApp Purchase Token
+    <string name="licenseKey">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiHR/gTPhwfRkyVLehBEYUfA1qENY105e5MvuCmSagGKKOOfvjLaDILkIBHwwH3ZQ3Gb5fG4+3WV/FHYdtqPqwVXbV97OKKeYG6/hwVX3PKviD5mDUcIzhMr9ZTaq0PUtGYR5BoHHLfG9Ak1B0nnghaMRZb17oEn93sC5XivBZ+FxdsRhEoiSq71NMhmY7XaSyBKTGKBavR3UNrYMPA3Sp+k5d71V6PUFUAWIzl5EQfcknL1GeOFvd8SokElEDjEnpFdUqwe4Te/m7awAnDgVW7jt+e251jTBd6k1W33oDzED6TAyDVpixgIS6PCtDOSpWgqRX1QXr9osoW2nB3rQywIDAQAB</string>
 
 
     <string name="title_home">Home</string>

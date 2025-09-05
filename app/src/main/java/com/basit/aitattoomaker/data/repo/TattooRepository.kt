@@ -1,14 +1,6 @@
 package com.basit.aitattoomaker.data.repo
 
-import android.graphics.Bitmap
-import android.net.Uri
-import com.basit.aitattoomaker.domain.Tattoo
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.Response
-import java.io.File
+import com.basit.aitattoomaker.presentation.utils.access_Token
 import javax.inject.Inject
 
 class TattooRepository @Inject constructor(private val api: TattooApiService) {
@@ -45,7 +37,7 @@ class TattooRepository @Inject constructor(private val api: TattooApiService) {
 
     suspend fun claimCredits() = api.claimDailyCredits()
 
-    suspend fun getPlans() = api.getSubscriptionPlans()
+    suspend fun getPlans(accessToken: String) = api.getSubscriptionPlans(accessToken)
 
     suspend fun getTransactions() = api.getTransactions()
 
@@ -69,8 +61,8 @@ class TattooRepository @Inject constructor(private val api: TattooApiService) {
 //        )
 //    }
 
-    suspend fun subscribe(planId: Int, txnId: String, amount: String) =
-        api.subscribe(PurchaseRequest(planId, txnId, amount))
+    suspend fun subscribe(req:PurchaseRequest) =
+        api.subscribe(access_Token,req)
 
 
 }

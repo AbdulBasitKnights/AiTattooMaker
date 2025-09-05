@@ -36,7 +36,6 @@ data class DeviceProfile(val deviceId: String, val credits: Int)
 
 data class DailyCreditsResponse(val claimed: Boolean, val credits: Int)
 
-data class SubscriptionPlan(val id: Int, val name: String, val price: String)
 
 data class Transaction(val id: String, val amount: String, val date: String)
 
@@ -51,4 +50,30 @@ data class PurchaseRequest(
     val purchase_amount: String
 )
 
-data class PurchaseResponse(val success: Boolean, val message: String)
+
+data class SubscriptionResponse(
+    val meta: Meta,
+    val response: ResponseData
+)
+
+data class ResponseData(
+    val subscription_id: String,
+    val subscription_plan: SubscriptionPlan,
+    val started_at: String,
+    val expires_at: String,
+    val days_remaining: Int,
+    val credits_added: Int,
+    val new_credit_balance: Int,
+    val purchase_amount: String,
+    val status: String
+)
+
+data class SubscriptionPlan(
+    val id: String,
+    val name: String,
+    val duration: String,
+    val duration_days: Int,
+    val credits: Int
+)
+
+

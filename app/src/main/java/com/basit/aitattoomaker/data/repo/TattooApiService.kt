@@ -31,7 +31,7 @@ interface TattooApiService {
     suspend fun claimDailyCredits(): DailyCreditsResponse
 
     @GET("api/v1/devices/subscriptions/plans/")
-    suspend fun getSubscriptionPlans(): List<SubscriptionPlan>
+    suspend fun getSubscriptionPlans(@Header("Authorization") token: String?=null): List<SubscriptionPlan>
 
     @GET("api/v1/devices/credits/transactions/")
     suspend fun getTransactions(): List<Transaction>
@@ -50,7 +50,8 @@ interface TattooApiService {
     ): GenerateImageResponse
 
     @POST("api/v1/devices/subscriptions/purchase/")
-    suspend fun subscribe(@Body request: PurchaseRequest): PurchaseResponse
+    suspend fun subscribe(@Header("Authorization") token: String?=null,
+                          @Body request: PurchaseRequest): SubscriptionResponse
 
 
 }
