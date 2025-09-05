@@ -15,19 +15,7 @@ import java.io.File
 
 @AndroidEntryPoint
 class HistoryFragment : Fragment() {
-    var creations = listOf(
-        Creation(imageUrl = "file:///android_asset/library/11.webp"),
-        Creation(imageUrl = "file:///android_asset/library/1.webp"),
-        Creation(imageUrl = "file:///android_asset/library/9.webp"),
-        Creation(imageUrl = "file:///android_asset/library/2.webp"),
-        Creation(imageUrl = "file:///android_asset/library/8.webp"),
-        Creation(imageUrl = "file:///android_asset/library/3.webp"),
-        Creation(imageUrl = "file:///android_asset/library/13.webp"),
-        Creation(imageUrl = "file:///android_asset/library/4.webp"),
-        Creation(imageUrl = "file:///android_asset/library/6.webp"),
-        Creation(imageUrl = "file:///android_asset/library/5.webp"),
-        Creation(imageUrl = "file:///android_asset/library/7.webp"),
-    )
+    var creations : List<Creation>?=null
     private var _binding: FragmentHistoryBinding? = null
     private val binding get() = _binding!!
     private var mActivity: FragmentActivity?=null
@@ -61,7 +49,19 @@ class HistoryFragment : Fragment() {
             creations = directoryPath.listFiles()?.map {
                 // Create the Creation object with the file path as the imageUrl
                 Creation(imageUrl = "file://${it.absolutePath}")
-            } ?: emptyList()  // In case there are no files, return an empty list
+            } ?: listOf(
+                Creation(imageUrl = "file:///android_asset/library/11.webp"),
+                Creation(imageUrl = "file:///android_asset/library/1.webp"),
+                Creation(imageUrl = "file:///android_asset/library/9.webp"),
+                Creation(imageUrl = "file:///android_asset/library/2.webp"),
+                Creation(imageUrl = "file:///android_asset/library/8.webp"),
+                Creation(imageUrl = "file:///android_asset/library/3.webp"),
+                Creation(imageUrl = "file:///android_asset/library/13.webp"),
+                Creation(imageUrl = "file:///android_asset/library/4.webp"),
+                Creation(imageUrl = "file:///android_asset/library/6.webp"),
+                Creation(imageUrl = "file:///android_asset/library/5.webp"),
+                Creation(imageUrl = "file:///android_asset/library/7.webp"),
+            )
             if(isAdded){
                 setupRecycler()
                 // Complete the code here
@@ -72,7 +72,7 @@ class HistoryFragment : Fragment() {
     private fun setupRecycler() {
         val adapter = CreationAdapter { creation ->
             creation.isSelected=true
-            Toast.makeText(requireActivity(), "Clicked: ${creation.id}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireActivity(), "Clicked: ${creation.imageUrl}", Toast.LENGTH_SHORT).show()
         }
         binding.rvCreationList.adapter = adapter
         adapter.submitList(creations)
