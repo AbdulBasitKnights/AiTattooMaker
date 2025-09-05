@@ -482,21 +482,7 @@ class CameraScreen : Fragment() {
                 }
                 pickLegacyImage.launch(intent)
             }
-
-            // Android 9 and below → Need READ_EXTERNAL_STORAGE
             else -> {
-                if (ContextCompat.checkSelfPermission(
-                        requireContext(),
-                        Manifest.permission.READ_EXTERNAL_STORAGE
-                    ) == PackageManager.PERMISSION_GRANTED
-                ) {
-                    val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).apply {
-                        type = "image/*"
-                    }
-                    pickLegacyImage.launch(intent)
-                } else {
-                    requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_STORAGE_PERMISSION)
-                }
             }
         }
     }

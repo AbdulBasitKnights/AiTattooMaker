@@ -1,7 +1,11 @@
 package com.basit.aitattoomaker.presentation.ai_tools
 
+import android.Manifest
+import android.app.Activity
 import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
@@ -22,6 +26,7 @@ import androidx.activity.addCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.scale
 import androidx.core.view.drawToBitmap
@@ -38,7 +43,6 @@ import com.basit.aitattoomaker.extension.show
 import com.basit.aitattoomaker.extension.showDiscardDialog
 import com.basit.aitattoomaker.extension.showDownloadDialog
 import com.basit.aitattoomaker.extension.uriToBitmap
-import com.basit.aitattoomaker.presentation.ai_tools.model.CameraTattoo
 import com.basit.aitattoomaker.presentation.camera.adapter.CameraTattooAdapter
 import com.basit.aitattoomaker.presentation.utils.AppUtils.tattooPath
 import com.basit.aitattoomaker.presentation.utils.DialogUtils
@@ -84,7 +88,18 @@ class AiToolsFragment : Fragment() {
                 Log.d("PhotoPicker", "No media selected")
             }
         }
-
+    private val pickLegacyImage =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val uri = result.data?.data
+                uri?.let {
+                    mActivity?.uriToBitmap(uri)?.let {
+                        capturedBitmap=it
+                        cycleAndLoadModel(true)
+                    }
+                }
+            }
+        }
     private var mActivity: FragmentActivity?=null
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -302,10 +317,28 @@ class AiToolsFragment : Fragment() {
         }
 
     }
-    fun openPicker() {
+    /*fun openPicker() {
         pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+    }*/
+    fun openPicker() {
+        when {
+            // Android 13+ → New Photo Picker
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
+                pickMedia.launch(
+                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                )
+            }
+            // Android 10–12 → Legacy ACTION_PICK
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
+                val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).apply {
+                    type = "image/*"
+                }
+                pickLegacyImage.launch(intent)
+            }
+            else -> {
+            }
+        }
     }
-
     private fun cycleAndLoadModel(first:Boolean=true) {
         // 4 demo models cycling [1..4]
         if(first){
