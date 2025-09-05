@@ -40,14 +40,11 @@ interface TattooApiService {
     suspend fun getTokens(@Body request: TokenRequest): TokenResponse
 
     @Multipart
-    @POST("api/v1/devices/image/generate/")
-    suspend fun generateImage(
-        @Header("Authorization") token: String?=null,
-        @Part("is_ref_design") isRef: RequestBody,
-        @Part("room_type") roomType: RequestBody,
-        @Part("style_type") styleType: RequestBody,
-        @Part base_img: MultipartBody.Part
-    ): GenerateImageResponse
+    @POST("api/v1/devices/image/tattoo/generate/")
+    suspend fun generateTattoo(
+        @Header("Authorization") token: String,
+        @Body request: GenerationRequest
+    ): GenerationResponse
 
     @POST("api/v1/devices/subscriptions/purchase/")
     suspend fun subscribe(@Header("Authorization") token: String?=null,

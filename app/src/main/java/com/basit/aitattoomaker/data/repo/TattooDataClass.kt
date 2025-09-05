@@ -42,7 +42,6 @@ data class Transaction(val id: String, val amount: String, val date: String)
 data class TokenRequest(val device_model: String)
 data class TokenResponse(val access_token: String, val refresh_token: String)
 
-data class GenerateImageResponse(val id: String, val imageUrl: String)
 
 data class PurchaseRequest(
     val subscription_plan_id: Int,
@@ -74,6 +73,27 @@ data class SubscriptionPlan(
     val duration: String,
     val duration_days: Int,
     val credits: Int
+)
+data class GenerationResponse(
+    val meta: Meta,
+    val response: GenerationData
+)
+data class GenerationData(
+    val generation_id: String,
+    val img_id: String,
+    val status: String,
+    val generation_type: String,
+    val generated_img_url: String,
+    val credits_remaining: Int,
+    val credits_used: Int,
+    val processing_time: String,
+    val style: String,
+    val original_prompt: String,
+    val moderated_prompt: String
+)
+data class GenerationRequest(
+    val style: String,
+    val prompt: String
 )
 
 

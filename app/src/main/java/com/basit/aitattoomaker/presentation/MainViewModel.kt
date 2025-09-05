@@ -10,11 +10,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.basit.aitattoomaker.data.repo.DailyCreditsResponse
 import com.basit.aitattoomaker.data.repo.DeviceProfile
+import com.basit.aitattoomaker.data.repo.GenerationRequest
 import com.basit.aitattoomaker.data.repo.ModelName
 import com.basit.aitattoomaker.data.repo.PurchaseRequest
 import com.basit.aitattoomaker.data.repo.RegisterResponse
 import com.basit.aitattoomaker.data.repo.SubscriptionPlan
 import com.basit.aitattoomaker.data.repo.TattooRepository
+import com.basit.aitattoomaker.data.sealed.GenerationUiState
 import com.basit.aitattoomaker.data.sealed.SubscriptionUiState
 import com.basit.aitattoomaker.extension.ACCESS_TOKEN_KEY
 import com.basit.aitattoomaker.extension.dataStore
@@ -42,7 +44,9 @@ class MainViewModel @Inject constructor(
     val subscriptionState: LiveData<SubscriptionUiState> = _subscriptionState
     private val _getPlan = MutableLiveData<List<SubscriptionPlan>>()
     val getPlan: LiveData<List<SubscriptionPlan>> = _getPlan
-
+    private val _state = MutableLiveData<GenerationUiState>(GenerationUiState.Idle)
+    val state: LiveData<GenerationUiState> = _state
+    /** Register New User **/
     fun registerUser(modelName: ModelName) {
         viewModelScope.launch {
             isAccessTokenAvailable(application).collect { isAvailable ->
@@ -67,6 +71,7 @@ class MainViewModel @Inject constructor(
         }
 
     }
+    /** Get Token **/
     fun getToken( modelName: ModelName) {
         viewModelScope.launch {
             val result = repo.getToken(modelName)
@@ -87,7 +92,7 @@ class MainViewModel @Inject constructor(
             }
         }
     }
-
+    /** Claim Daily Credits**/
     fun claimDailyCredits(onResult: (DailyCreditsResponse?) -> Unit) {
         viewModelScope.launch {
             try {
@@ -98,6 +103,7 @@ class MainViewModel @Inject constructor(
             }
         }
     }
+
     suspend fun storeAccessToken(context: Context, token: String) {
         context.dataStore.edit { preferences ->
             preferences[ACCESS_TOKEN_KEY] = token
@@ -116,8 +122,18 @@ class MainViewModel @Inject constructor(
             token != null
         }
     }
-
-
+    /** First Get Subscription Plans and then Subscribe**/
+    fun getSubPlan() {
+        viewModelScope.launch {
+            try {
+                val response = repo.getPlans(access_Token?:"")
+                _getPlan.value = response
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+    /**Get Subscription**/
     fun purchaseSubscription(
         planId: Int,
         transactionId: String,
@@ -139,15 +155,43 @@ class MainViewModel @Inject constructor(
             }
         }
     }
-    fun getSubPlan() {
+
+
+    /** Ai Tattoo Generation**/
+
+    fun generateTattoo(style: String, prompt: String, token: String) {
         viewModelScope.launch {
+            _state.value = GenerationUiState.Loading
             try {
-                val response = repo.getPlans(access_Token?:"")
-                _getPlan.value = response
+                val request = GenerationRequest(style = style, prompt = prompt)
+                val response = repo.generateTattoo(request,token)
+
+                _state.value = GenerationUiState.Success(response)
             } catch (e: Exception) {
-               e.printStackTrace()
+                _state.value = GenerationUiState.Error(e.message ?: "Something went wrong")
             }
         }
     }
+ /*   viewModel.state.observe(viewLifecycleOwner) { state ->
+        when (state) {
+            is GenerationUiState.Idle -> {
+                // Nothing yet
+            }
+            is GenerationUiState.Loading -> {
+                showLoader() // e.g., progress bar or dialog
+            }
+            is GenerationUiState.Success -> {
+                hideLoader()
+                val data = state.data.response
+                Toast.makeText(context, "Generated: ${data.generated_img_url}", Toast.LENGTH_SHORT).show()
+                // TODO: load image with Glide/Picasso/Coil
+            }
+            is GenerationUiState.Error -> {
+                hideLoader()
+                Toast.makeText(context, "Error: ${state.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }*/
+
 
 }

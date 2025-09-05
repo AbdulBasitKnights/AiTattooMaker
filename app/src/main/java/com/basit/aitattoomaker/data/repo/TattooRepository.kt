@@ -44,22 +44,9 @@ class TattooRepository @Inject constructor(private val api: TattooApiService) {
     suspend fun getTokens(model: String) =
         api.getTokens(TokenRequest(model))
 
-//    suspend fun generateImage(
-//        isRef: Boolean,
-//        roomType: String,
-//        styleType: String,
-//        file: File
-//    ): GenerateImageResponse {
-//        val requestFile = file.asRequestBody("image/*".toMediaType())
-//        val body = MultipartBody.Part.createFormData("base_img", file.name, requestFile)
-//
-//        return api.generateImage(
-//            isRef.toString().toRequestBody("text/plain".toMediaType()),
-//            roomType.toRequestBody("text/plain".toMediaType()),
-//            styleType.toRequestBody("text/plain".toMediaType()),
-//            body
-//        )
-//    }
+    suspend fun generateTattoo(req: GenerationRequest,token:String): GenerationResponse {
+        return api.generateTattoo(access_Token?:token,req)
+    }
 
     suspend fun subscribe(req:PurchaseRequest) =
         api.subscribe(access_Token,req)
