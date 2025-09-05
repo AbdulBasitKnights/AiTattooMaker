@@ -402,6 +402,10 @@ class CameraScreen : Fragment() {
 //        }
         capturedBitmap=bitmap
         dialog?.dismiss()
+        binding?.apply {
+            isFlashOn=false
+            flash.setImageResource(if (isFlashOn) R.drawable.flash_on else R.drawable.flash_off)
+        }
         mActivity?.let { activity->
             AdsManager.showInterstitialAfterSplash(activity, AdsManager.inter_af_home_hf?: AdsManager.inter_af_home,
                 if(AdsManager.inter_af_home_hf!=null)true else false,
