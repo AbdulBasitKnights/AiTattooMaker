@@ -159,11 +159,10 @@ class MainViewModel @Inject constructor(
 
     /** Ai Tattoo Generation**/
 
-    fun generateTattoo(style: String, prompt: String, token: String) {
+    fun generateTattoo(request:GenerationRequest, token: String) {
         viewModelScope.launch {
             _state.value = GenerationUiState.Loading
             try {
-                val request = GenerationRequest(style = style, prompt = prompt)
                 val response = repo.generateTattoo(request,token)
 
                 _state.value = GenerationUiState.Success(response)

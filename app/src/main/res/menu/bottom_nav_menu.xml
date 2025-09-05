@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-<!--    <item-->
-<!--        android:id="@+id/navigation_aicreate"-->
-<!--        android:icon="@drawable/create_svg"-->
-<!--        android:title="@string/title_aicreate" />-->
+    <item
+        android:id="@+id/navigation_aicreate"
+        android:icon="@drawable/create_svg"
+        android:title="@string/title_aicreate" />
 
     <item
         android:id="@+id/navigation_aicamera"
         android:icon="@drawable/camera_try_svg"
         android:title="@string/ai_try" />
 
-<!--    <item-->
-<!--        android:id="@+id/navigation_history"-->
-<!--        android:icon="@drawable/history_svg"-->
-<!--        android:title="@string/history" />-->
-<!--    <item-->
-<!--        android:id="@+id/navigation_settings"-->
-<!--        android:icon="@drawable/setting"-->
-<!--        android:title="@string/setting" />-->
+    <item
+        android:id="@+id/navigation_history"
+        android:icon="@drawable/history_svg"
+        android:title="@string/history" />
+    <item
+        android:id="@+id/navigation_settings"
+        android:icon="@drawable/setting"
+        android:title="@string/setting" />
 
 </menu>

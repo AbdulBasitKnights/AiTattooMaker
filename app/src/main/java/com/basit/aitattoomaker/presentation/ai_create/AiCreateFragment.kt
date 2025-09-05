@@ -23,16 +23,21 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.basit.aitattoomaker.R
+import com.basit.aitattoomaker.data.repo.GenerationRequest
+import com.basit.aitattoomaker.data.sealed.GenerationUiState
 import com.basit.aitattoomaker.databinding.FragmentAiCreateBinding
 import com.basit.aitattoomaker.extension.changeImeActionLable
 import com.basit.aitattoomaker.extension.dp
 import com.basit.aitattoomaker.extension.observeKeyboardLegacy
 import com.basit.aitattoomaker.extension.setDrawableTint
 import com.basit.aitattoomaker.extension.setDrawableWithTint
+import com.basit.aitattoomaker.presentation.MainViewModel
 import com.basit.aitattoomaker.presentation.ai_create.adapter.StyleAdapter
 import com.basit.aitattoomaker.presentation.ai_create.dialog.AiCreationDialog
 import com.basit.aitattoomaker.presentation.ai_create.dialog.StyleBottomSheet
@@ -43,21 +48,31 @@ import com.basit.aitattoomaker.presentation.utils.AppUtils.tattooPrompts
 import com.basit.aitattoomaker.presentation.utils.DialogUtils.creationDialog
 import com.basit.aitattoomaker.presentation.utils.DialogUtils.showCreationDialog
 import com.basit.aitattoomaker.presentation.utils.GradientStrokeDrawable
+import com.basit.aitattoomaker.presentation.utils.access_Token
 import com.basit.aitattoomaker.presentation.utils.styleLiveData
 import com.basit.aitattoomaker.presentation.utils.style_list
 import com.basit.aitattoomaker.presentation.utils.tattooCreation
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.getValue
+
 @AndroidEntryPoint
 class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
 
     private var binding: FragmentAiCreateBinding? = null
+    private val viewModel: MainViewModel by activityViewModels()
     companion object {
         var selectedItemIdPosition: Int? = 0
         var selectedItemIdPositionCanvas: Int? = 0
+        var prompt:String=""
+        var selectedStylePrompt:String="Simple clean execution, straightforward design, universal appeal, balanced proportions, clear readability"
+        var selectedStyle:String="No Style"
+        var variations:Int=1
+        var dimensions:String="512*512"
     }
     private lateinit var adapter: StyleAdapter
+
 
 
     // dp helper
@@ -120,19 +135,8 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
             setupPromptField()
             setupImeAwareScrolling()
             setupOutsideTapToClearFocus()
-            tattooCreation?.observe(viewLifecycleOwner){
-                if(it==true){
-                    creationDialog?.dismiss()
-                    try {
-                        findNavController().navigate(
-                            AiCreateFragmentDirections.actionNavigationAicreateToResultScreen()
-                        )
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
-                    tattooCreation.postValue(false)
-                }
-            }
+            imageGenerationsObserver()
+
         }
 
     }
@@ -142,6 +146,8 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
             adapter = StyleAdapter { selected ->
                 style_list.forEach { it.isSelected = it.id == selected.id }
                 styleLiveData.postValue(style_list)
+                selectedStylePrompt=selected.prompt
+                selectedStyle=selected.title
 //                Toast.makeText(requireContext(), "Selected: ${selected.title}", Toast.LENGTH_SHORT).show()
             }
             rvStyles.adapter = adapter
@@ -200,17 +206,6 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
                         rootScroll.smoothScrollTo(0, view.bottom)
                     }
                 }
-            }
-
-            btnCreate.setOnClickListener {
-                    creationDialog?.show()
-                lifecycleScope.launch {
-                    delay(7000)
-                    tattooCreation.postValue(true)
-                 }
-            }
-            btnClear.setOnClickListener {
-                binding?.etPrompt?.text?.clear()
             }
         }
 
@@ -349,6 +344,23 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
                 sheet.show(parentFragmentManager, "StyleBottomSheet")
 
             }
+
+            btnCreate.setOnClickListener {
+                if(etPrompt.text.toString().isEmpty()){
+                    Toast.makeText(mActivity, "Please write some prompt", Toast.LENGTH_SHORT).show()
+                }
+                else if(etPrompt.text.toString().length<3){
+                    Toast.makeText(mActivity, "Too Short Prompt", Toast.LENGTH_SHORT).show()
+                }
+                else{
+                    prompt=etPrompt.text.toString()
+                    viewModel.generateTattoo(GenerationRequest(style = selectedStyle, prompt =prompt+" $selectedStylePrompt"/*, gen_number = 1, dimensions = ""*/), access_Token?:"")
+                }
+
+            }
+            btnClear.setOnClickListener {
+                binding?.etPrompt?.text?.clear()
+            }
         }
 
     }
@@ -419,7 +431,7 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
 
 
     private fun showCustomPopupCanvas(view: View, margin: Int = 8) { // margin in dp
-        val inflater = LayoutInflater.from(requireContext())
+        val inflater = LayoutInflater.from(mActivity)
         val popupView = inflater.inflate(R.layout.popup_custom_layout_canvas, null)
 
         // Create PopupWindow matching width of anchor view
@@ -483,8 +495,37 @@ class AiCreateFragment : Fragment(R.layout.fragment_ai_create) {
         landscape.setOnClickListener { updateSelection(2, landscape, getString(R.string._4_3))
             binding?.btnCanvas?.setDrawableWithTint(R.drawable.landscape_svg, defaultColor)}
     }
-
+    private fun imageGenerationsObserver() {
+           viewModel.state.observe(viewLifecycleOwner) { state ->
+           when (state) {
+               is GenerationUiState.Idle -> {
+                   // Nothing yet
+               }
+               is GenerationUiState.Loading -> {
+                   creationDialog?.show()
+               }
+               is GenerationUiState.Success -> {
+                   creationDialog?.dismiss()
+                   val data = state.data.response
+                   try {
+                       findNavController().navigate(
+                           AiCreateFragmentDirections.actionNavigationAicreateToResultScreen()
+                       )
+                   } catch (e: Exception) {
+                       e.printStackTrace()
+                   }
+                   Toast.makeText(context, "Generated: ${data.generated_img_url}", Toast.LENGTH_SHORT).show()
+               }
+               is GenerationUiState.Error -> {
+                   creationDialog?.dismiss()
+                   Toast.makeText(context, "Error: ${state.message}", Toast.LENGTH_SHORT).show()
+               }
+           }
+       }
+    }
 
 }
+
+
 
 

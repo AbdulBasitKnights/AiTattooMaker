@@ -93,7 +93,9 @@ data class GenerationData(
 )
 data class GenerationRequest(
     val style: String,
-    val prompt: String
+    val prompt: String,
+    val gen_number: Int?=null,
+    val dimensions: String?=null
 )
 
 

@@ -1,6 +1,7 @@
 package com.basit.aitattoomaker.presentation.splash
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
@@ -12,17 +13,22 @@ import com.basit.aitattoomaker.ads.AdsManager
 import com.basit.aitattoomaker.ads.AdsManager.isPremiumSubscription
 import com.basit.aitattoomaker.data.repo.NetworkUtils
 import com.basit.aitattoomaker.databinding.ActivitySplashBinding
+import com.basit.aitattoomaker.extension.ACCESS_TOKEN_KEY
+import com.basit.aitattoomaker.extension.dataStore
 import com.basit.aitattoomaker.presentation.MainActivity
 import com.basit.aitattoomaker.presentation.splash.onboarding.OnBoardingActivity
 import com.basit.aitattoomaker.presentation.utils.AppUtils.FIRST_TIME_KEY
 import com.basit.aitattoomaker.presentation.utils.FirebaseEvents
 import com.basit.aitattoomaker.presentation.utils.LogUtils
 import com.basit.aitattoomaker.presentation.utils.SharedPref
+import com.basit.aitattoomaker.presentation.utils.access_Token
 import com.singular.sdk.Singular
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class SplashActivity : AppCompatActivity() {
@@ -42,6 +48,11 @@ class SplashActivity : AppCompatActivity() {
         preferenceManager =
             SharedPref(this@SplashActivity)
                 .getSharedPreferences()
+        try {
+            access_Token=getAccessToken(this@SplashActivity).toString()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
         isPremiumSubscription.postValue(false)
         /*AdsManager.loadInterstitialAdSplash(this,resources.getString(R.string.inter_af_home_hf),resources.getString(R.string.inter_af_home),{
             navigate()
@@ -88,6 +99,13 @@ class SplashActivity : AppCompatActivity() {
                 })*/
             }
         }
+    }
+    fun getAccessToken(context: Context): Flow<String?> {
+        return context.dataStore.data
+            .map { preferences ->
+                // Retrieve the access token from DataStore (return null if it doesn't exist)
+                preferences[ACCESS_TOKEN_KEY]
+            }
     }
     fun navigateToMain(){
         startActivity(Intent(this@SplashActivity, MainActivity::class.java))

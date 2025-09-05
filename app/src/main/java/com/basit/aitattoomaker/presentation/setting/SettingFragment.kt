@@ -63,14 +63,14 @@ class SettingFragment : Fragment(), SettingsClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecycler()
-            mActivity?.let {
+         /*   mActivity?.let {
                 AppUtils.getMain(it)?.hidebottombar()
-            }
+            }*/
         mActivity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner) {
             mActivity?.showExitDialog(
                 onDiscard = {
                     // User clicked discard, handle accordingly
-                            findNavController().popBackStack(R.id.navigation_aicamera,false)
+                            findNavController().popBackStack(R.id.navigation_aicreate,false)
                 },
                 onNotNow = {
                     // User clicked not now, just dismiss dialog
@@ -78,7 +78,7 @@ class SettingFragment : Fragment(), SettingsClickListener {
             )
         }
         binding?.backActionbar?.setOnClickListener {
-            findNavController().popBackStack(R.id.navigation_aicamera,false)
+            findNavController().popBackStack(R.id.navigation_aicreate,false)
         }
     }
 

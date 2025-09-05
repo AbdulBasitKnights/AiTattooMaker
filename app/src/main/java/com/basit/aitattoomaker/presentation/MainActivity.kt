@@ -46,27 +46,27 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
         if (binding.navView != null) {
             NavigationUI.setupWithNavController(binding.navView, navController)
-            hidebottombar()
-            navController.navigate(R.id.navigation_aicamera)
+//            hidebottombar()
+//            navController.navigate(R.id.navigation_aicamera)
             binding.navView.setOnNavigationItemSelectedListener { menuItem ->
                 when (menuItem.itemId) {
-//                    R.id.navigation_aicreate -> {
-//                        showbottombar()
-//                        navController.navigate(R.id.navigation_aicreate)
-//                        true
-//                    }
-//
-//                    R.id.navigation_settings -> {
-//                        showbottombar()
-//                        navController.navigate(R.id.navigation_settings)
-//                        true
-//                    }
-//
-//                    R.id.navigation_history -> {
-//                        showbottombar()
-//                        navController.navigate(R.id.navigation_history)
-//                        true
-//                    }
+                    R.id.navigation_aicreate -> {
+                        showbottombar()
+                        navController.navigate(R.id.navigation_aicreate)
+                        true
+                    }
+
+                    R.id.navigation_settings -> {
+                        showbottombar()
+                        navController.navigate(R.id.navigation_settings)
+                        true
+                    }
+
+                    R.id.navigation_history -> {
+                        showbottombar()
+                        navController.navigate(R.id.navigation_history)
+                        true
+                    }
 
                     R.id.navigation_aicamera -> {
                         hidebottombar()
@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
 
                     else -> {
                         showbottombar()
-                    navController.navigate(R.id.navigation_aicamera)
+                    navController.navigate(R.id.navigation_aicreate)
                         true
                     }
                 }

@@ -17,6 +17,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
@@ -56,7 +57,7 @@ import kotlin.getValue
 class ProPanelFragment : Fragment() {
     private var onCloseListener: OnCloseListener? = null
     var binding: FragmentProPanelBinding? = null
-    private val viewModel: MainViewModel by viewModels()
+    private val viewModel: MainViewModel by activityViewModels()
     private var mActivity: FragmentActivity? = null
     var subPlans: List<SubscriptionPlan>? = null
     private lateinit var iapConnector: IapConnector

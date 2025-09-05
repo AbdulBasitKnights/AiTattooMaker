@@ -44,7 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_10sdp"
         android:layout_marginTop="@dimen/_10sdp"
-        android:visibility="visible"
+        android:visibility="invisible"
         android:background="@drawable/setting_svg"
         app:layout_constraintStart_toEndOf="@+id/cross"
         app:layout_constraintTop_toTopOf="parent"/>
