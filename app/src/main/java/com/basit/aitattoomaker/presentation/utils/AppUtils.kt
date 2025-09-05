@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.os.Build
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -17,6 +18,12 @@ import com.basit.aitattoomaker.R
 import com.basit.aitattoomaker.domain.TattooResponse
 import com.google.gson.Gson
 import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
+import java.net.URL
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 object AppUtils {
     val BASE_URL = "http://65.1.178.163/"
@@ -45,6 +52,32 @@ object AppUtils {
     var tattooPath:String= "file:///android_asset/library/1.webp"
     fun getMain(activity: FragmentActivity?): MainActivity? {
         return activity as? MainActivity
+    }
+    fun downloadAndSaveImage(context: Context, imageUrl: String) {
+        try {
+            // Generate file name using system time
+            val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+            val fileName = "tattoo_$timeStamp.png"
+            val appDir = File(context.filesDir, "TattooMe") // MyAppImages is your folder name
+            if (!appDir.exists()) appDir.mkdir()  // Create folder if it doesn't exist
+            // Open the image URL connection
+            val url = URL(imageUrl)
+            val inputStream: InputStream = url.openStream()
+            val bitmap = BitmapFactory.decodeStream(inputStream)
+
+            // Save the image to internal storage in the "MyAppImages" folder
+            val outputFile = File(appDir, fileName)
+            val outputStream = FileOutputStream(outputFile)
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+            outputStream.flush()
+            outputStream.close()
+
+            // Log success
+            Log.d("Download", "Image saved to: ${outputFile.absolutePath}")
+
+        } catch (e: Exception) {
+            Log.e("Download", "Error downloading and saving image", e)
+        }
     }
     fun loadTattoos(context: Context): TattooResponse? {
         return try {

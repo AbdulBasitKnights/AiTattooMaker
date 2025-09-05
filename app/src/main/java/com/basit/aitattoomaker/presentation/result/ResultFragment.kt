@@ -19,6 +19,7 @@ import com.basit.aitattoomaker.presentation.MainViewModel
 import com.basit.aitattoomaker.presentation.result.adapter.ResultAdapter
 import com.basit.aitattoomaker.presentation.result.model.ResultItem
 import com.basit.aitattoomaker.presentation.utils.AppUtils
+import com.basit.aitattoomaker.presentation.utils.AppUtils.downloadAndSaveImage
 import com.basit.aitattoomaker.presentation.utils.DialogUtils.creationDialog
 import com.bumptech.glide.Glide
 import dagger.hilt.android.AndroidEntryPoint
@@ -103,6 +104,7 @@ class ResultFragment : Fragment() {
                     is GenerationUiState.Success -> {
                         creationDialog?.dismiss()
                         val data = state.data.response
+                        downloadAndSaveImage(mActivity?:requireActivity(),data.generated_img_url)
                         Glide.with(activity)
                             .load(data.generated_img_url)
                             .into(binding.currentImage)
