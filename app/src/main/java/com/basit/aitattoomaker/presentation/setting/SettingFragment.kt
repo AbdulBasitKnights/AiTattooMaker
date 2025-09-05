@@ -63,14 +63,14 @@ class SettingFragment : Fragment(), SettingsClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecycler()
-         /*   mActivity?.let {
+            mActivity?.let {
                 AppUtils.getMain(it)?.hidebottombar()
-            }*/
+            }
         mActivity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner) {
             mActivity?.showExitDialog(
                 onDiscard = {
                     // User clicked discard, handle accordingly
-                            findNavController().popBackStack(R.id.navigation_aicreate,false)
+                            findNavController().popBackStack(R.id.navigation_aicamera,false)
                 },
                 onNotNow = {
                     // User clicked not now, just dismiss dialog
@@ -78,7 +78,7 @@ class SettingFragment : Fragment(), SettingsClickListener {
             )
         }
         binding?.backActionbar?.setOnClickListener {
-            findNavController().popBackStack(R.id.navigation_aicreate,false)
+            findNavController().popBackStack(R.id.navigation_aicamera,false)
         }
     }
 
@@ -175,7 +175,7 @@ class SettingFragment : Fragment(), SettingsClickListener {
     override fun onSettingItemClick(which: String) {
         when(which){
             "Privacy Policy"->{
-                mActivity?.openLink("https://www.terafort.com/privacy.html")
+                mActivity?.openLink("https://tflsignatureapps.terafort.com/privacy-policy.html")
             }
             "Share App"->{
                 mActivity?.shareAppLink()

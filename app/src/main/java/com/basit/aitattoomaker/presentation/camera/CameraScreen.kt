@@ -170,8 +170,8 @@ class CameraScreen : Fragment() {
                     mActivity?.showExitDialog(
                         onDiscard = {
                             // User clicked discard, handle accordingly
-//                            mActivity?.finish()
-                            findNavController().popBackStack(R.id.navigation_aicreate,false)
+                            mActivity?.finish()
+//                            findNavController().popBackStack(R.id.navigation_aicreate,false)
                         },
                         onNotNow = {
                             // User clicked not now, just dismiss dialog
@@ -272,8 +272,8 @@ class CameraScreen : Fragment() {
                 mActivity?.showExitDialog(
                     onDiscard = {
                         // User clicked discard, handle accordingly
-//                        mActivity?.finish()
-                            findNavController().popBackStack(R.id.navigation_aicreate,false)
+                        mActivity?.finish()
+//                            findNavController().popBackStack(R.id.navigation_aicreate,false)
                     },
                     onNotNow = {
                         // User clicked not now, just dismiss dialog

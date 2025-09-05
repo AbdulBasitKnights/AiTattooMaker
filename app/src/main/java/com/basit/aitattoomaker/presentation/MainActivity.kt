@@ -46,9 +46,9 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
         if (binding.navView != null) {
             NavigationUI.setupWithNavController(binding.navView, navController)
-//            hidebottombar()
-//            navController.navigate(R.id.navigation_aicamera)
-            binding.navView.setOnNavigationItemSelectedListener { menuItem ->
+            hidebottombar()
+            navController.navigate(R.id.navigation_aicamera)
+          /*  binding.navView.setOnNavigationItemSelectedListener { menuItem ->
                 when (menuItem.itemId) {
                     R.id.navigation_aicreate -> {
                         showbottombar()
@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
 
-            }
+            }*/
         }
 
         registerUser()
